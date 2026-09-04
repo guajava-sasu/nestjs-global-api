@@ -193,7 +193,7 @@ export const DefautSchema = SchemaFactory.createForClass(Defaut);
 
 export type FicheBobineMereDocument = HydratedDocument<FicheBobineMere>;
 
-@Schema({ collection: 'fiches_bobine_mere', timestamps: true })
+@Schema({ collection: 'fiches-bobines', timestamps: true })
 export class FicheBobineMere {
   @Prop({ required: true, unique: true, index: true })
   bobine: string;
