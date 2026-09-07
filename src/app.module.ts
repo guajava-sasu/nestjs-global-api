@@ -4,6 +4,8 @@ import { AppController } from './app.controller.js';
 import { MongooseModule } from '@nestjs/mongoose';
 import { AppService } from './app.service.js';
 import { FicheBobineMereModule } from './fiche-bobine-mere/fiche-bobine-mere.module.js';
+import { ParcABobinesModule } from './parc-a-bobines/parc-a-bobines.module.js';
+import { ChutageModule } from './chutage/chutage.module.js';
 
 export const { ObserveModule, ObserveInstrument } = createObserveModule();
 
@@ -19,6 +21,8 @@ export const { ObserveModule, ObserveInstrument } = createObserveModule();
     }),
      MongooseModule.forRoot('mongodb://localhost:27017/nestjs-global-api'),
      FicheBobineMereModule,
+     ParcABobinesModule,
+      ChutageModule,
   ],
   controllers: [AppController],
   providers: [AppService],

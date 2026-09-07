@@ -14,6 +14,7 @@
     "start:dev": "nest start --watch",
     "start:debug": "nest start --debug --watch",
     "start:prod": "node dist/main",
+    "db:update:chutage": "npm run build && node dist/chutage/update-database.js",
     "lint": "oxlint src/ test/",
     "test": "vitest run",
     "test:watch": "vitest",
