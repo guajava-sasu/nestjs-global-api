@@ -1,91 +1,151 @@
+import { ApiProperty } from '@nestjs/swagger';
+import { Type } from 'class-transformer';
+import {
+  IsBoolean,
+  IsNumber,
+  IsString,
+  ValidateNested,
+} from 'class-validator';
+
 export class GeneralitesDto {
-  bobine: string;
-  lot: number;
-  montage: number;
-  commande: string;
-  client: string;
-  delai: number;
-  halle: string;
-  emplacement: string;
-  aspect: number;
-  planeite: number;
-  outilAmont: string;
-  codeRecuit: string;
-  type: string;
+  @ApiProperty() @IsString() bobine: string;
+  @ApiProperty() @IsNumber() lot: number;
+  @ApiProperty() @IsNumber() montage: number;
+  @ApiProperty() @IsString() commande: string;
+  @ApiProperty() @IsString() client: string;
+  @ApiProperty() @IsNumber() delai: number;
+  @ApiProperty() @IsString() halle: string;
+  @ApiProperty() @IsString() emplacement: string;
+  @ApiProperty() @IsNumber() aspect: number;
+  @ApiProperty() @IsNumber() planeite: number;
+  @ApiProperty() @IsString() outilAmont: string;
+  @ApiProperty() @IsString() codeRecuit: string;
+  @ApiProperty() @IsString() type: string;
 }
 
 export class DimensionsDto {
-  longueur: number;
-  larg: number;
-  epais: number;
-  poids: number;
-  diaExt: number;
-  diaArr: number;
-  diaHte: number;
-  outilAmont: string;
+  @ApiProperty() @IsNumber() longueur: number;
+  @ApiProperty() @IsNumber() larg: number;
+  @ApiProperty() @IsNumber() epais: number;
+  @ApiProperty() @IsNumber() poids: number;
+  @ApiProperty() @IsNumber() diaExt: number;
+  @ApiProperty() @IsNumber() diaArr: number;
+  @ApiProperty() @IsNumber() diaHte: number;
+  @ApiProperty() @IsString() outilAmont: string;
 }
 
 export class LimitesDto {
-  mini: number;
-  vise: number;
-  maxi: number;
+  @ApiProperty() @IsNumber() mini: number;
+  @ApiProperty() @IsNumber() vise: number;
+  @ApiProperty() @IsNumber() maxi: number;
 }
 
 export class RevetementsDto {
-  refAuto: boolean;
+  @ApiProperty() @IsBoolean() refAuto: boolean;
+
+  @ApiProperty({ type: LimitesDto })
+  @ValidateNested()
+  @Type(() => LimitesDto)
   avant: LimitesDto;
+
+  @ApiProperty({ type: LimitesDto })
+  @ValidateNested()
+  @Type(() => LimitesDto)
   arriere: LimitesDto;
 }
 
 export class VitesseCentreDto {
-  n2: number;
-  rg: number;
-  rgRef: number;
+  @ApiProperty() @IsNumber() n2: number;
+  @ApiProperty() @IsNumber() rg: number;
+  @ApiProperty() @IsNumber() rgRef: number;
 }
 
 export class ChutageDto {
-  debut: number;
-  fin: number;
-  causeDebut: string;
-  causeFin: string;
+  @ApiProperty() @IsNumber() debut: number;
+  @ApiProperty() @IsNumber() fin: number;
+  @ApiProperty() @IsString() causeDebut: string;
+  @ApiProperty() @IsString() causeFin: string;
 }
 
 export class FormatSortieLimitesDto {
-  larg: number;
-  epai: number;
+  @ApiProperty() @IsNumber() larg: number;
+  @ApiProperty() @IsNumber() epai: number;
 }
 
 export class FormatSortieDto {
+  @ApiProperty({ type: FormatSortieLimitesDto })
+  @ValidateNested()
+  @Type(() => FormatSortieLimitesDto)
   mini: FormatSortieLimitesDto;
+
+  @ApiProperty({ type: FormatSortieLimitesDto })
+  @ValidateNested()
+  @Type(() => FormatSortieLimitesDto)
   vise: FormatSortieLimitesDto;
+
+  @ApiProperty({ type: FormatSortieLimitesDto })
+  @ValidateNested()
+  @Type(() => FormatSortieLimitesDto)
   maxi: FormatSortieLimitesDto;
 }
 
 export class SuggestionDto {
-  ordre: number;
-  libelle: string;
+  @ApiProperty() @IsNumber() ordre: number;
+  @ApiProperty() @IsString() libelle: string;
 }
 
 export class DefautDto {
-  bobine: string;
-  numero: number;
-  type: string;
-  debut: number;
-  fin: number;
-  long: string;
-  face: string;
-  imp: number;
-  renseignementComplementaires: string;
+  @ApiProperty() @IsString() bobine: string;
+  @ApiProperty() @IsNumber() numero: number;
+  @ApiProperty() @IsString() type: string;
+  @ApiProperty() @IsNumber() debut: number;
+  @ApiProperty() @IsNumber() fin: number;
+  @ApiProperty() @IsString() long: string;
+  @ApiProperty() @IsString() face: string;
+  @ApiProperty() @IsNumber() imp: number;
+  @ApiProperty() @IsString() renseignementComplementaires: string;
 }
 
 export class CreateFicheBobineMereDto {
-  bobine: string;
+  @ApiProperty() @IsString() bobine: string;
+
+  @ApiProperty({ type: GeneralitesDto })
+  @ValidateNested()
+  @Type(() => GeneralitesDto)
   generalites: GeneralitesDto;
+
+  @ApiProperty({ type: DimensionsDto })
+  @ValidateNested()
+  @Type(() => DimensionsDto)
   dimensions: DimensionsDto;
+
+  @ApiProperty({ type: RevetementsDto })
+  @ValidateNested()
+  @Type(() => RevetementsDto)
   revetements: RevetementsDto;
+
+  @ApiProperty({ type: VitesseCentreDto })
+  @ValidateNested()
+  @Type(() => VitesseCentreDto)
   vitesseCentre: VitesseCentreDto;
+
+  @ApiProperty({ type: ChutageDto })
+  @ValidateNested()
+  @Type(() => ChutageDto)
   chutage: ChutageDto;
+
+  @ApiProperty({ type: FormatSortieDto })
+  @ValidateNested()
+  @Type(() => FormatSortieDto)
   formatSortie: FormatSortieDto;
+
+  @ApiProperty({ type: [SuggestionDto] })
+  @ValidateNested({ each: true })
+  @Type(() => SuggestionDto)
   suggestions: SuggestionDto[];
+
+  @ApiProperty({ type: [DefautDto] })
+  @ValidateNested({ each: true })
+  @Type(() => DefautDto)
   defauts: DefautDto[];
 }
