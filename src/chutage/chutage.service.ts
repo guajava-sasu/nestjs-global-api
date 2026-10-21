@@ -62,10 +62,15 @@ export class ChutageService implements OnModuleInit {
     return this.chuteBobineModel.find({ bobine }).sort({ position: 1 }).exec();
   }
 
+  findChutes() {
+    return this.chuteBobineModel.find().exec();
+  }
   findChutesRives(bobine: string) {
     return this.chuteRiveModel.find({ bobine }).exec();
   }
-
+  findAllChutesRives() {
+    return this.chuteRiveModel.find().exec();
+  }
   findPontsEtatPince() {
     return this.pontEtatPinceModel.find().exec();
   }
@@ -91,21 +96,25 @@ export class ChutageService implements OnModuleInit {
 }
 
 const stockageInitial = [
-  { type: 'N', bobine: '34993301', lot: '57297', montage: 49, largeur: '1439,0', epaisseur: 389, poids: 12764, cycle: '4O3', prod: 'GCR', diametre: 1345, halle: 'H11', client: 'MARCOR CUGGION0', priorite: 'P' },
-  { type: 'S', bobine: '35415201', lot: '64310', montage: 49, largeur: '1346,8', epaisseur: 391, poids: 20560, cycle: '6L9', prod: 'GCR', diametre: 1702, halle: 'H11', client: 'VERGAL OUDEN', priorite: 'P' },
-  { type: 'N', bobine: '34968301', lot: '54914', montage: 49, largeur: '1274,8', epaisseur: 366, poids: 15640, cycle: '6L9', prod: 'GCR', diametre: 1547, halle: 'H11', client: 'VERGAL OUDEN', priorite: 'P' },
-  { type: 'N', bobine: '34993300', lot: '57297', montage: 49, largeur: '1439,0', epaisseur: 389, poids: 12764, cycle: '4O3', prod: 'GCR', diametre: 1345, halle: 'H11', client: 'MARCOR CUGGION1', priorite: 'P' },
-  { type: 'N', bobine: '35415200', lot: '64310', montage: 49, largeur: '1346,8', epaisseur: 391, poids: 20560, cycle: '6L9', prod: 'GCR', diametre: 1702, halle: 'H11', client: 'VERGAL OUDEN', priorite: 'P' },
-  { type: 'S', bobine: '34968300', lot: '54914', montage: 49, largeur: '1274,8', epaisseur: 366, poids: 15640, cycle: '6L9', prod: 'GCR', diametre: 1547, halle: 'H11', client: 'VERGAL OUDEN', priorite: 'P' },
-  { type: 'S', bobine: '35423300', lot: '54914', montage: 49, largeur: '1274,5', epaisseur: 366, poids: 19080, cycle: '6L9', prod: 'GCR', diametre: 1687, halle: 'H11', client: 'VERGAL OUDEN', priorite: 'P' },
-  { type: 'S', bobine: '35187600', lot: '58412', montage: 51, largeur: '1320,0', epaisseur: 375, poids: 14200, cycle: '4O3', prod: 'GCR', diametre: 1410, halle: 'H11', client: 'TATA STEEL', priorite: '' },
-  { type: 'S', bobine: '35602400', lot: '65021', montage: 50, largeur: '1285,4', epaisseur: 382, poids: 18750, cycle: '6L9', prod: 'GCR', diametre: 1635, halle: 'H11', client: 'SALZGITTER AG', priorite: '' },
-  { type: 'S', bobine: '34871500', lot: '55803', montage: 48, largeur: '1310,2', epaisseur: 358, poids: 16320, cycle: '6L9', prod: 'GCR', diametre: 1580, halle: 'H11', client: 'THYSSENKRUPP', priorite: '' },
-  { type: 'S', bobine: '35539700', lot: '56178', montage: 50, largeur: '1298,0', epaisseur: 370, poids: 17450, cycle: '6L9', prod: 'GCR', diametre: 1660, halle: 'H11', client: 'VOESTALPINE', priorite: '' },
-  { type: 'N', bobine: '35187601', lot: '58412', montage: 51, largeur: '1320,0', epaisseur: 375, poids: 14200, cycle: '4O3', prod: 'GCR', diametre: 1410, halle: 'H11', client: 'TATA STEEL', priorite: '' },
-  { type: 'N', bobine: '35602401', lot: '65021', montage: 50, largeur: '1285,4', epaisseur: 382, poids: 18750, cycle: '6L9', prod: 'GCR', diametre: 1635, halle: 'H11', client: 'SALZGITTER AG', priorite: '' },
-  { type: 'N', bobine: '34871501', lot: '55803', montage: 48, largeur: '1310,2', epaisseur: 358, poids: 16320, cycle: '6L9', prod: 'GCR', diametre: 1580, halle: 'H11', client: 'THYSSENKRUPP', priorite: '' },
-  { type: 'N', bobine: '35539701', lot: '56178', montage: 50, largeur: '1298,0', epaisseur: 370, poids: 17450, cycle: '6L9', prod: 'GCR', diametre: 1660, halle: 'H11', client: 'VOESTALPINE', priorite: '' },
+  { type: 'N', bobine: '34993301', lot: '57297', montage: 49, largeur: '1439,0', epaisseur: 389, poids: 12764, cycle: '4O3', prod: 'GCR', diametre: 1345, halle: 'H11', client: 'MARCOR CUGGION0', calculPreset: { isValid: true, isCalculated: true }, reserve: true, Transition: true, AlerteTransition: { BackgroundColor: '#fef3c7', ForegroundColor: '#92400e', Message: 'Transition en attente;Verifier la temperature;Confirmer la reprise' } },
+  { type: 'S', bobine: '35415201', lot: '64310', montage: 49, largeur: '1346,8', epaisseur: 391, poids: 20560, cycle: '6L9', prod: 'GCR', diametre: 1702, halle: 'H11', client: 'VERGAL OUDEN', calculPreset: { isValid: false, isCalculated: true }, reserve: false, Transition: true, AlerteTransition: { BackgroundColor: '#fef3c7', ForegroundColor: '#92400e', Message: 'Transition en attente;Verifier la temperature;Confirmer la reprise' } },
+  { type: 'N', bobine: '34968301', lot: '54914', montage: 49, largeur: '1274,8', epaisseur: 366, poids: 15640, cycle: '6L9', prod: 'GCR', diametre: 1547, halle: 'H11', client: 'VERGAL OUDEN', calculPreset: { isValid: true, isCalculated: true }, reserve: true },
+  { type: 'N', bobine: '35423301', lot: '54914', montage: 49, largeur: '1274,5', epaisseur: 366, poids: 19080, cycle: '6L9', prod: 'GCR', diametre: 1687, halle: 'H11', client: 'VERGAL OUDEN', calculPreset: { isValid: false, isCalculated: false }, reserve: false },
+
+  { type: 'N', bobine: '34993300', lot: '57297', montage: 49, largeur: '1439,0', epaisseur: 389, poids: 12764, cycle: '4O3', prod: 'GCR', diametre: 1345, halle: 'P3', client: 'MARCOR CUGGION1', calculPreset: { isValid: false, isCalculated: false }, reserve: false },
+  { type: 'N', bobine: '35415200', lot: '64310', montage: 49, largeur: '1346,8', epaisseur: 391, poids: 20560, cycle: '6L9', prod: 'GCR', diametre: 1702, halle: 'P3', client: 'VERGAL OUDEN', calculPreset: { isValid: true, isCalculated: false }, reserve: false },
+  { type: 'S', bobine: '34968300', lot: '54914', montage: 49, largeur: '1274,8', epaisseur: 366, poids: 15640, cycle: '6L9', prod: 'GCR', diametre: 1547, halle: 'H11', client: 'VERGAL OUDEN', calculPreset: { isValid: true, isCalculated: false }, reserve: false },
+  { type: 'S', bobine: '35423300', lot: '54914', montage: 49, largeur: '1274,5', epaisseur: 366, poids: 19080, cycle: '6L9', prod: 'GCR', diametre: 1687, halle: 'H11', client: 'VERGAL OUDEN', calculPreset: { isValid: false, isCalculated: false }, reserve: false },
+
+  { type: 'S', bobine: '35187600', lot: '58412', montage: 51, largeur: '1320,0', epaisseur: 375, poids: 14200, cycle: '4O3', prod: 'GCR', diametre: 1410, halle: 'H11', client: 'TATA STEEL', calculPreset: { isValid: false, isCalculated: true }, reserve: false },
+  { type: 'S', bobine: '35602400', lot: '65021', montage: 50, largeur: '1285,4', epaisseur: 382, poids: 18750, cycle: '6L9', prod: 'GCR', diametre: 1635, halle: 'P3', client: 'SALZGITTER AG', calculPreset: { isValid: false, isCalculated: true }, reserve: false },
+  { type: 'S', bobine: '34871500', lot: '55803', montage: 48, largeur: '1310,2', epaisseur: 358, poids: 16320, cycle: '6L9', prod: 'GCR', diametre: 1580, halle: 'P3', client: 'THYSSENKRUPP', calculPreset: { isValid: false, isCalculated: true }, reserve: false },
+  { type: 'S', bobine: '35539700', lot: '56178', montage: 50, largeur: '1298,0', epaisseur: 370, poids: 17450, cycle: '6L9', prod: 'GCR', diametre: 1660, halle: 'H11', client: 'VOESTALPINE', calculPreset: { isValid: false, isCalculated: true }, reserve: false },
+
+  { type: 'N', bobine: '35187601', lot: '58412', montage: 51, largeur: '1320,0', epaisseur: 375, poids: 14200, cycle: '4O3', prod: 'GCR', diametre: 1410, halle: 'P3', client: 'TATA STEEL', calculPreset: { isValid: false, isCalculated: true }, reserve: true },
+  { type: 'N', bobine: '35602401', lot: '65021', montage: 50, largeur: '1285,4', epaisseur: 382, poids: 18750, cycle: '6L9', prod: 'GCR', diametre: 1635, halle: 'P3', client: 'SALZGITTER AG', calculPreset: { isValid: false, isCalculated: true }, reserve: true },
+  { type: 'N', bobine: '34871501', lot: '55803', montage: 48, largeur: '1310,2', epaisseur: 358, poids: 16320, cycle: '6L9', prod: 'GCR', diametre: 1580, halle: 'H11', client: 'THYSSENKRUPP', calculPreset: { isValid: true, isCalculated: true }, reserve: false },
+  { type: 'N', bobine: '35539701', lot: '56178', montage: 50, largeur: '1298,0', epaisseur: 370, poids: 17450, cycle: '6L9', prod: 'GCR', diametre: 1660, halle: 'H11', client: 'VOESTALPINE', calculPreset: { isValid: true, isCalculated: true }, reserve: false, Transition: true, AlerteTransition: { BackgroundColor: '#fef3c7', ForegroundColor: '#92400e', Message: 'Transition en attente;Verifier la temperature;Confirmer la reprise' } },
 ];
 
 const bobinesAChuterInitiales = [
@@ -114,11 +123,18 @@ const bobinesAChuterInitiales = [
 ];
 
 const chutesBobinesInitiales = [
-  { bobine: '33656000', lieu: 'E', position: 0, longueur: 2, poids: 10, defaut: 'CHT', imp: 31, revAV: 0, revAR: 0 }, { bobine: '33656000', lieu: 'S', position: 2, longueur: 3, poids: 15, defaut: 'HTE', imp: 21, revAV: 0, revAR: 0 },
-  { bobine: '33390900', lieu: 'E', position: 0, longueur: 3, poids: 15, defaut: 'CHT', imp: 31, revAV: 0, revAR: 0 }, { bobine: '33390900', lieu: 'S', position: 3, longueur: 15, poids: null, defaut: 'HTE', imp: 31, revAV: 0, revAR: 0 }, { bobine: '33390900', lieu: 'S', position: 6, longueur: 1, poids: 5, defaut: 'CHT', imp: 31, revAV: 73, revAR: 73 }, { bobine: '33390900', lieu: 'S', position: 4770, longueur: 2, poids: 10, defaut: 'CHT', imp: 31, revAV: 104, revAR: 104 }, { bobine: '33390900', lieu: 'E', position: 4772, longueur: 5, poids: 24, defaut: 'ICE', imp: 31, revAV: 0, revAR: 0 }, { bobine: '33390900', lieu: 'E', position: 4777, longueur: 1, poids: 5, defaut: 'HTE', imp: 21, revAV: 0, revAR: 0 }, { bobine: '33390900', lieu: 'E', position: 4778, longueur: 6, poids: 29, defaut: 'CHT', imp: 31, revAV: 0, revAR: 0 },
-  { bobine: '33461000', lieu: 'E', position: 0, longueur: 5, poids: 25, defaut: 'CHT', imp: 31, revAV: 0, revAR: 0 }, { bobine: '33461000', lieu: 'S', position: 5, longueur: 6, poids: 30, defaut: 'ICE', imp: 31, revAV: 80, revAR: 80 }, { bobine: '33619800', lieu: 'E', position: 0, longueur: 4, poids: 20, defaut: 'CHT', imp: 31, revAV: 0, revAR: 0 }, { bobine: '33619800', lieu: 'S', position: 4, longueur: 5, poids: null, defaut: 'HTE', imp: 21, revAV: 0, revAR: 0 }, { bobine: '33619800', lieu: 'E', position: 3200, longueur: 3, poids: 15, defaut: 'CHT', imp: 31, revAV: 95, revAR: 95 }, { bobine: '33607100', lieu: 'S', position: 0, longueur: 7, poids: 35, defaut: 'CHT', imp: 31, revAV: 0, revAR: 0 }, { bobine: '33607100', lieu: 'E', position: 7, longueur: 2, poids: 10, defaut: 'HTE', imp: 21, revAV: 0, revAR: 0 },
+  { bobine: '33656000', lieu: 'E', position: 0, longueur: 2, poids: 10, defaut: 'CHT', imputation: 31, revAV: 0, revAR: 0 }, { bobine: '33656000', lieu: 'S', position: 2, longueur: 3, poids: 15, defaut: 'HTE', imputation: 21, revAV: 0, revAR: 0 },
+  { bobine: '33390900', lieu: 'E', position: 0, longueur: 3, poids: 15, defaut: 'CHT', imputation: 31, revAV: 0, revAR: 0 }, { bobine: '33390900', lieu: 'S', position: 3, longueur: 15, poids: null, defaut: 'HTE', imputation: 31, revAV: 0, revAR: 0 }, { bobine: '33390900', lieu: 'S', position: 6, longueur: 1, poids: 5, defaut: 'CHT', imputation: 31, revAV: 73, revAR: 73 }, { bobine: '33390900', lieu: 'S', position: 4770, longueur: 2, poids: 10, defaut: 'CHT', imputation: 31, revAV: 104, revAR: 104 }, { bobine: '33390900', lieu: 'E', position: 4772, longueur: 5, poids: 24, defaut: 'ICE', imputation: 31, revAV: 0, revAR: 0 }, { bobine: '33390900', lieu: 'E', position: 4777, longueur: 1, poids: 5, defaut: 'HTE', imputation: 21, revAV: 0, revAR: 0 }, { bobine: '33390900', lieu: 'E', position: 4778, longueur: 6, poids: 29, defaut: 'CHT', imputation: 31, revAV: 0, revAR: 0 },
+  { bobine: '33461000', lieu: 'E', position: 0, longueur: 5, poids: 25, defaut: 'CHT', imputation: 31, revAV: 0, revAR: 0 }, { bobine: '33461000', lieu: 'S', position: 5, longueur: 6, poids: 30, defaut: 'ICE', imputation: 31, revAV: 80, revAR: 80 }, { bobine: '33619800', lieu: 'E', position: 0, longueur: 4, poids: 20, defaut: 'CHT', imputation: 31, revAV: 0, revAR: 0 }, { bobine: '33619800', lieu: 'S', position: 4, longueur: 5, poids: null, defaut: 'HTE', imputation: 21, revAV: 0, revAR: 0 }, { bobine: '33619800', lieu: 'E', position: 3200, longueur: 3, poids: 15, defaut: 'CHT', imputation: 31, revAV: 95, revAR: 95 }, { bobine: '33607100', lieu: 'S', position: 0, longueur: 7, poids: 35, defaut: 'CHT', imputation: 31, revAV: 0, revAR: 0 }, { bobine: '33607100', lieu: 'E', position: 7, longueur: 2, poids: 10, defaut: 'HTE', imputation: 21, revAV: 0, revAR: 0 },
 ];
 
 const chutesRivesInitiales = [
-  { bobine: '33656000', lieu: 'S', largeur: 20, longueur: 3800, poids: 380, defaut: 'CHR', imp: 31, revAV: 68, revAR: 68 }, { bobine: '33390900', lieu: 'S', largeur: 26, longueur: 4840, poids: 505, defaut: 'CHR', imp: 31, revAV: 72, revAR: 72 }, { bobine: '33461000', lieu: 'S', largeur: 22, longueur: 4100, poids: 420, defaut: 'CHR', imp: 31, revAV: 75, revAR: 75 }, { bobine: '33461002', lieu: 'E', largeur: 18, longueur: 4100, poids: 350, defaut: 'CHR', imp: 21, revAV: 0, revAR: 0 }, { bobine: '33619800', lieu: 'S', largeur: 24, longueur: 4500, poids: 460, defaut: 'CHR', imp: 31, revAV: 70, revAR: 70 }, { bobine: '33607102', lieu: 'S', largeur: 28, longueur: 5100, poids: 550, defaut: 'CHR', imp: 31, revAV: 78, revAR: 78 },
+  { bobine: '33656003', lieu: 'S', largeur: 20, longueur: 3800, poids: 380, defaut: 'CHR', imputation: 31, revAV: 68, revAR: 68 }, { bobine: '33390900', lieu: 'S', largeur: 26, longueur: 4840, poids: 505, defaut: 'CHR', imputation: 31, revAV: 72, revAR: 72 }, { bobine: '33461000', lieu: 'S', largeur: 22, longueur: 4100, poids: 420, defaut: 'CHR', imputation: 31, revAV: 75, revAR: 75 }, { bobine: '33461002', lieu: 'E', largeur: 18, longueur: 4100, poids: 350, defaut: 'CHR', imputation: 21, revAV: 0, revAR: 0 }, { bobine: '33619800', lieu: 'S', largeur: 24, longueur: 4500, poids: 460, defaut: 'CHR', imputation: 31, revAV: 70, revAR: 70 }, { bobine: '33607102', lieu: 'S', largeur: 28, longueur: 5100, poids: 550, defaut: 'CHR', imputation: 31, revAV: 78, revAR: 78 },
+    {identity:1, bobine: '33656000', lieu: 'S', largeur: 20, longueur: 3800, poids: 380, defaut: 'CHR', imputation: 31, revAV: 68, revAR: 68 },
+    {identity:2, bobine: '33390900', lieu: 'S', largeur: 26, longueur: 4840, poids: 505, defaut: 'CHR', imputation: 31, revAV: 72, revAR: 72 },
+    {identity:3, bobine: '33461000', lieu: 'S', largeur: 22, longueur: 4100, poids: 420, defaut: 'CHR', imputation: 31, revAV: 75, revAR: 75 },
+    {identity:4, bobine: '33461002', lieu: 'E', largeur: 18, longueur: 4100, poids: 350, defaut: 'CHR', imputation: 21, revAV: 0, revAR: 0 },
+    {identity:5, bobine: '33619800', lieu: 'S', largeur: 24, longueur: 4500, poids: 460, defaut: 'CHR', imputation: 31, revAV: 70, revAR: 70 },
+    {identity:6, bobine: '33607102', lieu: 'S', largeur: 28, longueur: 5100, poids: 550, defaut: 'CHR', imputation: 31, revAV: 78, revAR: 78 },
+   
 ];

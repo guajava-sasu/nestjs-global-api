@@ -5,7 +5,7 @@ import { ChutageService } from './chutage.service.js';
 @ApiTags('chutage')
 @Controller('chutage')
 export class ChutageController {
-  constructor(private readonly chutageService: ChutageService) {}
+  constructor(private readonly chutageService: ChutageService) { }
 
   @Get('chariots')
   @ApiOperation({ summary: 'Lister les chariots' })
@@ -51,12 +51,26 @@ export class ChutageController {
     return this.chutageService.findChutesBobines(bobine);
   }
 
+  @Get('chutes')
+  @ApiOperation({ summary: "Lister toutes les chutes" })
+  @ApiOkResponse({ description: 'Liste des chutes de la bobine' })
+  findChutes() {
+    return this.chutageService.findChutes();
+  }
+
   @Get('chutes-rives/:bobine')
   @ApiOperation({ summary: "Lister les chutes de rives d'une bobine" })
   @ApiParam({ name: 'bobine', description: 'Identifiant de la bobine' })
   @ApiOkResponse({ description: 'Liste des chutes de rives de la bobine' })
   findChutesRives(@Param('bobine') bobine: string) {
     return this.chutageService.findChutesRives(bobine);
+  }
+
+  @Get('chutes-rives')
+  @ApiOperation({ summary: "Lister toutes les chutes de rives" })
+  @ApiOkResponse({ description: 'Liste de toutes les chutes de rives' })
+  findAllChutesRives() {
+    return this.chutageService.findAllChutesRives();
   }
 
   @Get('ponts-etat-pince')

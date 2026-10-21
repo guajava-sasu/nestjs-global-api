@@ -1,4 +1,8 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import {
+  AlerteTransition,
+  AlerteTransitionSchema,
+} from '../../parc-a-bobines/entities/parc-a-bobine.entity.js';
 
 @Schema({ collection: 'chariots', timestamps: true })
 export class Chariot {
@@ -39,6 +43,16 @@ export class PreparationChargement {
 }
 export const PreparationChargementSchema = SchemaFactory.createForClass(PreparationChargement);
 
+@Schema({ _id: false })
+export class CalculPreset {
+  @Prop({ required: true })
+  isValid: boolean;
+
+  @Prop({ required: true })
+  isCalculated: boolean;
+}
+export const CalculPresetSchema = SchemaFactory.createForClass(CalculPreset);
+
 @Schema({ collection: 'bobines-stockage', timestamps: true })
 export class BobineStockage {
   @Prop({ required: true, enum: ['N', 'S'], index: true })
@@ -58,6 +72,18 @@ export class BobineStockage {
   @Prop({ required: true }) halle: string;
   @Prop({ required: true }) client: string;
   @Prop({ default: '' }) priorite: string;
+
+  @Prop({ default: false })
+  reserve?: boolean;
+
+  @Prop({ type: CalculPresetSchema })
+  calculPreset?: CalculPreset;
+
+  @Prop()
+  Transition?: boolean;
+
+  @Prop({ type: AlerteTransitionSchema })
+  AlerteTransition?: AlerteTransition;
 }
 export const BobineStockageSchema = SchemaFactory.createForClass(BobineStockage);
 
@@ -79,7 +105,7 @@ export class DetailChuteBobine {
   @Prop({ required: true }) longueur: number;
   @Prop({ type: Number, default: null }) poids: number | null;
   @Prop({ required: true }) defaut: string;
-  @Prop({ required: true }) imp: number;
+  @Prop({ required: true }) imputation: number;
   @Prop({ required: true }) revAV: number;
   @Prop({ required: true }) revAR: number;
 }
@@ -93,7 +119,7 @@ export class ChuteRive {
   @Prop({ required: true }) longueur: number;
   @Prop({ required: true }) poids: number;
   @Prop({ required: true }) defaut: string;
-  @Prop({ required: true }) imp: number;
+  @Prop({ required: true }) imputation: number;
   @Prop({ required: true }) revAV: number;
   @Prop({ required: true }) revAR: number;
 }

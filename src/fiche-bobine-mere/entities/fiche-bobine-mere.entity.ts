@@ -184,7 +184,7 @@ export class Defaut {
   face: string;
 
   @Prop({ required: true })
-  imp: number;
+  imputation: number;
 
   @Prop({ required: true })
   renseignementComplementaires: string;

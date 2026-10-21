@@ -138,7 +138,7 @@ function buildFilleFromMere(mereDocument: FicheBobineMereDocument, bobine: strin
       fin: defaut.fin,
       long: defaut.long,
       face: defaut.face,
-      imp: defaut.imp,
+      imputation: defaut.imputation,
       renseignementComplementaires: defaut.renseignementComplementaires,
     }));
 

@@ -102,7 +102,7 @@ export class DefautDto {
   @ApiProperty() @IsNumber() fin: number;
   @ApiProperty() @IsString() long: string;
   @ApiProperty() @IsString() face: string;
-  @ApiProperty() @IsNumber() imp: number;
+  @ApiProperty() @IsNumber() imputation: number;
   @ApiProperty() @IsString() renseignementComplementaires: string;
 }
 
