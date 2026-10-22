@@ -23,7 +23,85 @@
 
 ## Description
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+API REST NestJS pour les fiches de bobines, le chutage, le parc à bobines et les données de lingots. Les données sont stockées dans MongoDB.
+
+## Démarrage et configuration
+
+Prérequis : Node.js, npm et une instance MongoDB accessible.
+
+```bash
+npm install
+npm run start:dev
+```
+
+| Variable      | Valeur par défaut                             | Utilisation        |
+| ------------- | --------------------------------------------- | ------------------ |
+| `PORT`        | `3000`                                        | Port HTTP de l'API |
+| `MONGODB_URI` | `mongodb://localhost:27017/nestjs-global-api` | Connexion MongoDB  |
+
+L'API autorise les appels CORS depuis `localhost` et `127.0.0.1` sur tous les ports.
+
+## Swagger
+
+- Interface : [http://localhost:3000/api](http://localhost:3000/api)
+- Spécification OpenAPI : [http://localhost:3000/api-json](http://localhost:3000/api-json)
+- Vérification de l'API : `GET http://localhost:3000/`
+
+Remplacer `3000` si `PORT` est configuré.
+
+## Routes de l'API
+
+Les ressources CRUD acceptent `GET` (liste), `POST` (création), `GET /:id` (détail), `PATCH /:id` (modification) et `DELETE /:id` (suppression).
+
+### Lingots
+
+| Ressource                         | Routes                                                       |
+| --------------------------------- | ------------------------------------------------------------ |
+| Stock de lingots                  | `/lingots`, `/lingots/:id`                                   |
+| Livraisons fournisseur            | `/livraisons-fournisseurs`, `/livraisons-fournisseurs/:id`   |
+| Lignes de réception               | `/lignes-reception-lingots`, `/lignes-reception-lingots/:id` |
+| Réceptions avec lignes imbriquées | `/receptions-lingots`, `/receptions-lingots/:id`             |
+| États de stock journaliers        | `/etats-stock-journaliers`, `/etats-stock-journaliers/:id`   |
+| Mouvements                        | `/mouvements-lingots`, `/mouvements-lingots/:id`             |
+| Bilans matière journaliers        | `/bilans-lingots-jours`, `/bilans-lingots-jours/:id`         |
+
+Toutes les routes lingots ci-dessus acceptent les cinq méthodes CRUD. Les IDs métier provenant des exemples JSON sont acceptés dans les routes détail; les anciens ObjectId MongoDB restent compatibles.
+
+### Bobines et chutage
+
+| Ressource                    | Routes                                                                                                           |
+| ---------------------------- | ---------------------------------------------------------------------------------------------------------------- |
+| Fiches bobines mère          | CRUD `/fiche-bobine-mere`, `/fiche-bobine-mere/:id`                                                              |
+| Fiches bobines fille         | CRUD `/fiche-bobine-fille`, `/fiche-bobine-fille/:id`; `GET /fiche-bobine-fille/bobine-mere/:identiteBobineMere` |
+| Parc à bobines               | CRUD `/parc-a-bobines`, `/parc-a-bobines/:id`                                                                    |
+| Chariots                     | `GET /chutage/chariots`                                                                                          |
+| Demandes pontier             | `GET /chutage/demandes-pontier`                                                                                  |
+| Préparations de chargement   | `GET /chutage/preparations-chargement`                                                                           |
+| Bobines en stockage          | `GET /chutage/bobines-stockage`; filtre `?type=N` ou `?type=S`                                                   |
+| Bobines à chuter             | `GET /chutage/bobines-a-chuter`                                                                                  |
+| Chutes d'une bobine          | `GET /chutage/chutes-bobines/:bobine`                                                                            |
+| Toutes les chutes            | `GET /chutage/chutes`                                                                                            |
+| Chutes de rives d'une bobine | `GET /chutage/chutes-rives/:bobine`                                                                              |
+| Toutes les chutes de rives   | `GET /chutage/chutes-rives`                                                                                      |
+| État des ponts et pinces     | `GET /chutage/ponts-etat-pince`                                                                                  |
+
+## Exemples et données lingots
+
+Les contrats et exemples sont dans [`docs/api-examples/lingots`](docs/api-examples/lingots). Pour les charger dans MongoDB :
+
+```bash
+npm run db:seed:lingots
+```
+
+Le seed lit les six fichiers JSON, convertit leurs dates Mongo Extended JSON et synchronise les collections associées. Il génère 100 lingots depuis `lingots-preparation.json`; les livraisons, réceptions, états de stock, mouvements et bilans proviennent des autres fichiers. Les réceptions complètes et leurs lignes sont consultables séparément. Le seed insère ou met à jour les IDs présents, sans supprimer les autres documents.
+
+## Vérification
+
+```bash
+npm run build
+npm run lint
+npm test
+```
 
 ## Project setup
 

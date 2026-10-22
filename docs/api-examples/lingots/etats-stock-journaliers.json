@@ -1,0 +1,16 @@
+[
+  {
+    "id": "STOCK-2026-10-22-06",
+    "date": { "$date": "2026-10-22T06:00:00.000Z" },
+    "parType": {
+      "B": { "nombre": 16, "poids": 32.08 },
+      "OB": { "nombre": 9, "poids": 18.18 },
+      "VB": { "nombre": 6, "poids": 12.01 },
+      "BB": { "nombre": 10, "poids": 20.11 },
+      "N": { "nombre": 5, "poids": 10.03 }
+    },
+    "mattes": 2,
+    "createdAt": { "$date": "2026-10-22T06:05:00.000Z" },
+    "updatedAt": { "$date": "2026-10-22T06:05:00.000Z" }
+  }
+]

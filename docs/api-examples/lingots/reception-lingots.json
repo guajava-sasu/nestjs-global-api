@@ -1,0 +1,33 @@
+{
+  "id": "RECEPTION-NYRSTAR-262208411-01",
+  "codeFournisseur": "Nyrstar - Budel, The Netherlands",
+  "numeroCoulee": "262208411-01",
+  "dateReception": { "$date": "2026-10-22T09:13:19.602Z" },
+  "analyseFournisseur": {
+    "al": 0,
+    "fe": 0,
+    "pb": 0
+  },
+  "lignesReception": [
+    {
+      "numero": 1,
+      "numeroLingotCoulee": "262208411-01",
+      "typeLingot": "N",
+      "poids": 1937
+    },
+    {
+      "numero": 2,
+      "numeroLingotCoulee": "262208411-02",
+      "typeLingot": "N",
+      "poids": 1941
+    },
+    {
+      "numero": 3,
+      "numeroLingotCoulee": "",
+      "typeLingot": "N",
+      "poids": null
+    }
+  ],
+  "createdAt": { "$date": "2026-10-22T09:13:19.602Z" },
+  "updatedAt": { "$date": "2026-10-22T09:13:19.602Z" }
+}

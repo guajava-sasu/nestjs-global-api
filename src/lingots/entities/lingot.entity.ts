@@ -17,6 +17,7 @@ export class AnalyseLingot {
 export const AnalyseLingotSchema = SchemaFactory.createForClass(AnalyseLingot);
 
 export interface LigneReceptionLingot {
+  id?: string;
   numero: number;
   numeroLingotCoulee: string;
   typeLingot: string;
@@ -28,6 +29,9 @@ export type LigneReceptionLingotDocument =
 
 @Schema({ collection: 'lignes-reception-lingots', timestamps: true })
 export class LigneReceptionLingotRecord implements LigneReceptionLingot {
+  @Prop({ unique: true, sparse: true, index: true })
+  id?: string;
+
   @Prop({ required: true })
   numero: number;
 
@@ -42,6 +46,59 @@ export class LigneReceptionLingotRecord implements LigneReceptionLingot {
 }
 export const LigneReceptionLingotSchema = SchemaFactory.createForClass(
   LigneReceptionLingotRecord,
+);
+
+@Schema({ _id: false })
+export class LigneReceptionIntegree implements LigneReceptionLingot {
+  @Prop({ required: true })
+  numero: number;
+
+  @Prop({ required: true })
+  numeroLingotCoulee: string;
+
+  @Prop({ required: true })
+  typeLingot: string;
+
+  @Prop({ type: Number, default: null })
+  poids: number | null;
+}
+export const LigneReceptionIntegreeSchema = SchemaFactory.createForClass(
+  LigneReceptionIntegree,
+);
+
+export interface ReceptionLingot {
+  id: string;
+  codeFournisseur: string;
+  numeroCoulee: string;
+  dateReception: Date;
+  analyseFournisseur: AnalyseLingot;
+  lignesReception: LigneReceptionLingot[];
+}
+
+export type ReceptionLingotDocument = HydratedDocument<ReceptionLingotRecord>;
+
+@Schema({ collection: 'receptions-lingots', timestamps: true })
+export class ReceptionLingotRecord implements ReceptionLingot {
+  @Prop({ required: true, unique: true, index: true })
+  id: string;
+
+  @Prop({ required: true })
+  codeFournisseur: string;
+
+  @Prop({ required: true, index: true })
+  numeroCoulee: string;
+
+  @Prop({ required: true, type: Date })
+  dateReception: Date;
+
+  @Prop({ type: AnalyseLingotSchema, required: true })
+  analyseFournisseur: AnalyseLingot;
+
+  @Prop({ type: [LigneReceptionIntegreeSchema], required: true })
+  lignesReception: LigneReceptionLingot[];
+}
+export const ReceptionLingotSchema = SchemaFactory.createForClass(
+  ReceptionLingotRecord,
 );
 
 export interface LingotStock {
@@ -99,6 +156,7 @@ export const LingotStockSchema =
   SchemaFactory.createForClass(LingotStockRecord);
 
 export interface LivraisonFournisseur {
+  id?: string;
   dateLivraison: Date;
   fournisseur: string;
   numeroCoulee: string;
@@ -115,6 +173,9 @@ export type LivraisonFournisseurDocument =
 
 @Schema({ collection: 'livraisons-fournisseurs', timestamps: true })
 export class LivraisonFournisseurRecord implements LivraisonFournisseur {
+  @Prop({ unique: true, sparse: true, index: true })
+  id?: string;
+
   @Prop({ required: true, type: Date })
   dateLivraison: Date;
 
@@ -183,6 +244,7 @@ export const EtatStockParTypeSchema =
   SchemaFactory.createForClass(EtatStockParType);
 
 export interface EtatStockJournalier {
+  id?: string;
   date: Date;
   parType: Partial<Record<TypeLingot, EtatStockType>>;
   mattes: number;
@@ -193,6 +255,9 @@ export type EtatStockJournalierDocument =
 
 @Schema({ collection: 'etats-stock-journaliers', timestamps: true })
 export class EtatStockJournalierRecord implements EtatStockJournalier {
+  @Prop({ unique: true, sparse: true, index: true })
+  id?: string;
+
   @Prop({ required: true, type: Date, index: true })
   date: Date;
 
@@ -207,6 +272,7 @@ export const EtatStockJournalierSchema = SchemaFactory.createForClass(
 );
 
 export interface MouvementLingot {
+  id?: string;
   date: Date;
   poste: string;
   type: TypeLingot | 'MATTE';
@@ -222,6 +288,9 @@ export type MouvementLingotDocument = HydratedDocument<MouvementLingotRecord>;
 
 @Schema({ collection: 'mouvements-lingots', timestamps: true })
 export class MouvementLingotRecord implements MouvementLingot {
+  @Prop({ unique: true, sparse: true, index: true })
+  id?: string;
+
   @Prop({ required: true, type: Date, index: true })
   date: Date;
 
@@ -254,6 +323,7 @@ export const MouvementLingotSchema = SchemaFactory.createForClass(
 );
 
 export interface BilanLingotsJour {
+  id?: string;
   date: Date;
   pot: number;
   alM: number;
@@ -273,6 +343,9 @@ export type BilanLingotsJourDocument = HydratedDocument<BilanLingotsJourRecord>;
 
 @Schema({ collection: 'bilans-lingots-jours', timestamps: true })
 export class BilanLingotsJourRecord implements BilanLingotsJour {
+  @Prop({ unique: true, sparse: true, index: true })
+  id?: string;
+
   @Prop({ required: true, type: Date, index: true })
   date: Date;
 

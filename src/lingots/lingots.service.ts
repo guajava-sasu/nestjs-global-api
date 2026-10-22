@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { Model, Types } from 'mongoose';
 import {
   CreateBilanLingotsJourDto,
   CreateEtatStockJournalierDto,
@@ -8,12 +8,14 @@ import {
   CreateLingotStockDto,
   CreateLivraisonFournisseurDto,
   CreateMouvementLingotDto,
+  CreateReceptionLingotDto,
   UpdateBilanLingotsJourDto,
   UpdateEtatStockJournalierDto,
   UpdateLigneReceptionLingotDto,
   UpdateLingotStockDto,
   UpdateLivraisonFournisseurDto,
   UpdateMouvementLingotDto,
+  UpdateReceptionLingotDto,
 } from './dto/lingots.dto.js';
 import {
   BilanLingotsJourDocument,
@@ -28,7 +30,15 @@ import {
   LivraisonFournisseurRecord,
   MouvementLingotDocument,
   MouvementLingotRecord,
+  ReceptionLingotDocument,
+  ReceptionLingotRecord,
 } from './entities/lingot.entity.js';
+
+function idFilter(id: string) {
+  return Types.ObjectId.isValid(id)
+    ? { $or: [{ id }, { _id: new Types.ObjectId(id) }] }
+    : { id };
+}
 
 @Injectable()
 export class LingotsService {
@@ -39,6 +49,8 @@ export class LingotsService {
     private readonly livraisons: Model<LivraisonFournisseurDocument>,
     @InjectModel(LigneReceptionLingotRecord.name)
     private readonly lignesReception: Model<LigneReceptionLingotDocument>,
+    @InjectModel(ReceptionLingotRecord.name)
+    private readonly receptions: Model<ReceptionLingotDocument>,
     @InjectModel(EtatStockJournalierRecord.name)
     private readonly etatsStock: Model<EtatStockJournalierDocument>,
     @InjectModel(MouvementLingotRecord.name)
@@ -78,19 +90,22 @@ export class LingotsService {
     return this.livraisons.find().exec();
   }
   async findLivraison(id: string) {
-    const record = await this.livraisons.findById(id).exec();
+    const record = await this.livraisons.findOne(idFilter(id)).exec();
     if (!record) throw new NotFoundException('Livraison introuvable');
     return record;
   }
   async updateLivraison(id: string, data: UpdateLivraisonFournisseurDto) {
     const record = await this.livraisons
-      .findByIdAndUpdate(id, data, { new: true, runValidators: true })
+      .findOneAndUpdate(idFilter(id), data, {
+        new: true,
+        runValidators: true,
+      })
       .exec();
     if (!record) throw new NotFoundException('Livraison introuvable');
     return record;
   }
   async removeLivraison(id: string) {
-    const record = await this.livraisons.findByIdAndDelete(id).exec();
+    const record = await this.livraisons.findOneAndDelete(idFilter(id)).exec();
     if (!record) throw new NotFoundException('Livraison introuvable');
     return record;
   }
@@ -102,20 +117,55 @@ export class LingotsService {
     return this.lignesReception.find().exec();
   }
   async findLigneReception(id: string) {
-    const record = await this.lignesReception.findById(id).exec();
+    const record = await this.lignesReception.findOne(idFilter(id)).exec();
     if (!record) throw new NotFoundException('Ligne de réception introuvable');
     return record;
   }
   async updateLigneReception(id: string, data: UpdateLigneReceptionLingotDto) {
     const record = await this.lignesReception
-      .findByIdAndUpdate(id, data, { new: true, runValidators: true })
+      .findOneAndUpdate(idFilter(id), data, {
+        new: true,
+        runValidators: true,
+      })
       .exec();
     if (!record) throw new NotFoundException('Ligne de réception introuvable');
     return record;
   }
   async removeLigneReception(id: string) {
-    const record = await this.lignesReception.findByIdAndDelete(id).exec();
+    const record = await this.lignesReception
+      .findOneAndDelete(idFilter(id))
+      .exec();
     if (!record) throw new NotFoundException('Ligne de réception introuvable');
+    return record;
+  }
+
+  createReception(data: CreateReceptionLingotDto) {
+    return this.receptions.create(data);
+  }
+  findReceptions() {
+    return this.receptions.find().exec();
+  }
+  async findReception(id: string) {
+    const record = await this.receptions.findOne(idFilter(id)).exec();
+    if (!record)
+      throw new NotFoundException('Réception de lingots introuvable');
+    return record;
+  }
+  async updateReception(id: string, data: UpdateReceptionLingotDto) {
+    const record = await this.receptions
+      .findOneAndUpdate(idFilter(id), data, {
+        new: true,
+        runValidators: true,
+      })
+      .exec();
+    if (!record)
+      throw new NotFoundException('Réception de lingots introuvable');
+    return record;
+  }
+  async removeReception(id: string) {
+    const record = await this.receptions.findOneAndDelete(idFilter(id)).exec();
+    if (!record)
+      throw new NotFoundException('Réception de lingots introuvable');
     return record;
   }
 
@@ -126,19 +176,22 @@ export class LingotsService {
     return this.etatsStock.find().exec();
   }
   async findEtatStock(id: string) {
-    const record = await this.etatsStock.findById(id).exec();
+    const record = await this.etatsStock.findOne(idFilter(id)).exec();
     if (!record) throw new NotFoundException('État de stock introuvable');
     return record;
   }
   async updateEtatStock(id: string, data: UpdateEtatStockJournalierDto) {
     const record = await this.etatsStock
-      .findByIdAndUpdate(id, data, { new: true, runValidators: true })
+      .findOneAndUpdate(idFilter(id), data, {
+        new: true,
+        runValidators: true,
+      })
       .exec();
     if (!record) throw new NotFoundException('État de stock introuvable');
     return record;
   }
   async removeEtatStock(id: string) {
-    const record = await this.etatsStock.findByIdAndDelete(id).exec();
+    const record = await this.etatsStock.findOneAndDelete(idFilter(id)).exec();
     if (!record) throw new NotFoundException('État de stock introuvable');
     return record;
   }
@@ -150,19 +203,22 @@ export class LingotsService {
     return this.mouvements.find().exec();
   }
   async findMouvement(id: string) {
-    const record = await this.mouvements.findById(id).exec();
+    const record = await this.mouvements.findOne(idFilter(id)).exec();
     if (!record) throw new NotFoundException('Mouvement introuvable');
     return record;
   }
   async updateMouvement(id: string, data: UpdateMouvementLingotDto) {
     const record = await this.mouvements
-      .findByIdAndUpdate(id, data, { new: true, runValidators: true })
+      .findOneAndUpdate(idFilter(id), data, {
+        new: true,
+        runValidators: true,
+      })
       .exec();
     if (!record) throw new NotFoundException('Mouvement introuvable');
     return record;
   }
   async removeMouvement(id: string) {
-    const record = await this.mouvements.findByIdAndDelete(id).exec();
+    const record = await this.mouvements.findOneAndDelete(idFilter(id)).exec();
     if (!record) throw new NotFoundException('Mouvement introuvable');
     return record;
   }
@@ -174,19 +230,22 @@ export class LingotsService {
     return this.bilans.find().exec();
   }
   async findBilan(id: string) {
-    const record = await this.bilans.findById(id).exec();
+    const record = await this.bilans.findOne(idFilter(id)).exec();
     if (!record) throw new NotFoundException('Bilan journalier introuvable');
     return record;
   }
   async updateBilan(id: string, data: UpdateBilanLingotsJourDto) {
     const record = await this.bilans
-      .findByIdAndUpdate(id, data, { new: true, runValidators: true })
+      .findOneAndUpdate(idFilter(id), data, {
+        new: true,
+        runValidators: true,
+      })
       .exec();
     if (!record) throw new NotFoundException('Bilan journalier introuvable');
     return record;
   }
   async removeBilan(id: string) {
-    const record = await this.bilans.findByIdAndDelete(id).exec();
+    const record = await this.bilans.findOneAndDelete(idFilter(id)).exec();
     if (!record) throw new NotFoundException('Bilan journalier introuvable');
     return record;
   }

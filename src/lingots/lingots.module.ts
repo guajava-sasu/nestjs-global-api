@@ -13,6 +13,8 @@ import {
   LivraisonFournisseurSchema,
   MouvementLingotRecord,
   MouvementLingotSchema,
+  ReceptionLingotRecord,
+  ReceptionLingotSchema,
 } from './entities/lingot.entity.js';
 import { LingotsController } from './lingots.controller.js';
 import { LingotsService } from './lingots.service.js';
@@ -28,6 +30,10 @@ import { LingotsService } from './lingots.service.js';
       {
         name: LigneReceptionLingotRecord.name,
         schema: LigneReceptionLingotSchema,
+      },
+      {
+        name: ReceptionLingotRecord.name,
+        schema: ReceptionLingotSchema,
       },
       {
         name: EtatStockJournalierRecord.name,

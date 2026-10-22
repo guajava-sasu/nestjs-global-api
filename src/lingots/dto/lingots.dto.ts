@@ -21,6 +21,7 @@ export class AnalyseLingotDto {
 }
 
 export class CreateLigneReceptionLingotDto {
+  @ApiPropertyOptional() @IsOptional() @IsString() id?: string;
   @ApiProperty() @IsNumber() numero: number;
   @ApiProperty() @IsString() numeroLingotCoulee: string;
   @ApiProperty() @IsString() typeLingot: string;
@@ -47,6 +48,7 @@ export class CreateLingotStockDto {
 export class UpdateLingotStockDto extends PartialType(CreateLingotStockDto) {}
 
 export class CreateLivraisonFournisseurDto {
+  @ApiPropertyOptional() @IsOptional() @IsString() id?: string;
   @ApiProperty() @Type(() => Date) @IsDate() dateLivraison: Date;
   @ApiProperty() @IsString() fournisseur: string;
   @ApiProperty() @IsString() numeroCoulee: string;
@@ -65,6 +67,32 @@ export class CreateLivraisonFournisseurDto {
 }
 export class UpdateLivraisonFournisseurDto extends PartialType(
   CreateLivraisonFournisseurDto,
+) {}
+
+export class LigneReceptionIntegreeDto {
+  @ApiProperty() @IsNumber() numero: number;
+  @ApiProperty() @IsString() numeroLingotCoulee: string;
+  @ApiProperty() @IsString() typeLingot: string;
+  @ApiProperty({ nullable: true }) @IsOptional() @IsNumber() poids:
+    number | null;
+}
+
+export class CreateReceptionLingotDto {
+  @ApiProperty() @IsString() id: string;
+  @ApiProperty() @IsString() codeFournisseur: string;
+  @ApiProperty() @IsString() numeroCoulee: string;
+  @ApiProperty() @Type(() => Date) @IsDate() dateReception: Date;
+  @ApiProperty({ type: AnalyseLingotDto })
+  @ValidateNested()
+  @Type(() => AnalyseLingotDto)
+  analyseFournisseur: AnalyseLingotDto;
+  @ApiProperty({ type: [LigneReceptionIntegreeDto] })
+  @ValidateNested({ each: true })
+  @Type(() => LigneReceptionIntegreeDto)
+  lignesReception: LigneReceptionIntegreeDto[];
+}
+export class UpdateReceptionLingotDto extends PartialType(
+  CreateReceptionLingotDto,
 ) {}
 
 export class EtatStockTypeDto {
@@ -101,6 +129,7 @@ export class EtatStockParTypeDto {
 }
 
 export class CreateEtatStockJournalierDto {
+  @ApiPropertyOptional() @IsOptional() @IsString() id?: string;
   @ApiProperty() @Type(() => Date) @IsDate() date: Date;
   @ApiProperty({ type: EtatStockParTypeDto })
   @ValidateNested()
@@ -113,6 +142,7 @@ export class UpdateEtatStockJournalierDto extends PartialType(
 ) {}
 
 export class CreateMouvementLingotDto {
+  @ApiPropertyOptional() @IsOptional() @IsString() id?: string;
   @ApiProperty() @Type(() => Date) @IsDate() date: Date;
   @ApiProperty() @IsString() poste: string;
   @ApiProperty({ enum: [...typesLingot, 'MATTE'] })
@@ -130,6 +160,7 @@ export class UpdateMouvementLingotDto extends PartialType(
 ) {}
 
 export class CreateBilanLingotsJourDto {
+  @ApiPropertyOptional() @IsOptional() @IsString() id?: string;
   @ApiProperty() @Type(() => Date) @IsDate() date: Date;
   @ApiProperty() @IsNumber() pot: number;
   @ApiProperty() @IsNumber() alM: number;

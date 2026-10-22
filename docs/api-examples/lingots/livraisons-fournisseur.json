@@ -1,0 +1,24 @@
+[
+  {
+    "id": "LIV-NYRSTAR-262208411-01",
+    "dateLivraison": { "$date": "2026-10-22T09:13:19.602Z" },
+    "fournisseur": "Nyrstar - Budel, The Netherlands",
+    "numeroCoulee": "262208411-01",
+    "analyseFournisseur": {
+      "al": 99.72,
+      "fe": 0.25,
+      "pb": 0.03
+    },
+    "analyseArcelor": {
+      "al": 99.68,
+      "fe": 0.29,
+      "pb": 0.03
+    },
+    "nbLingots": 8,
+    "tonnage": 15.49,
+    "type": "N",
+    "couleeValidee": true,
+    "createdAt": { "$date": "2026-10-22T10:30:00.000Z" },
+    "updatedAt": { "$date": "2026-10-22T10:30:00.000Z" }
+  }
+]

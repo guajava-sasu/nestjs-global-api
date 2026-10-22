@@ -1,0 +1,27 @@
+[
+  {
+    "id": "MVT-2026-10-22-001",
+    "date": { "$date": "2026-10-22T09:25:00.000Z" },
+    "poste": "PONT-01",
+    "type": "N",
+    "numeroCoulee": "262208411-01",
+    "numeroLingot": 1,
+    "poids": 1937,
+    "al": 99.68,
+    "table": "T-03",
+    "creuset": "CR-12",
+    "createdAt": { "$date": "2026-10-22T09:25:10.000Z" },
+    "updatedAt": { "$date": "2026-10-22T09:25:10.000Z" }
+  },
+  {
+    "id": "MVT-2026-10-22-002",
+    "date": { "$date": "2026-10-22T10:00:00.000Z" },
+    "poste": "FOUR-02",
+    "type": "MATTE",
+    "poids": 1000,
+    "table": "T-01",
+    "creuset": "CR-04",
+    "createdAt": { "$date": "2026-10-22T10:00:10.000Z" },
+    "updatedAt": { "$date": "2026-10-22T10:00:10.000Z" }
+  }
+]

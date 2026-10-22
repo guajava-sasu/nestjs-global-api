@@ -1,0 +1,17 @@
+[
+  {
+    "id": "NYRSTAR-3031-262208411-02",
+    "alArcelor": 0,
+    "alFournisseur": 0,
+    "createdAt": { "$date": "2026-10-22T10:30:00.000Z" },
+    "dateReception": { "$date": "2026-05-04T00:00:00.000Z" },
+    "fournisseur": "Nyrstar - Budel, The Netherlands",
+    "numeroCoulee": "262208411-01",
+    "numeroLingot": 2,
+    "poids": 1941,
+    "type": "N",
+    "updatedAt": { "$date": "2026-10-22T10:30:00.000Z" },
+    "valide": true,
+    "preparation": "PM1"
+  }
+]

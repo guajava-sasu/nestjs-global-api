@@ -22,12 +22,14 @@ import {
   CreateLingotStockDto,
   CreateLivraisonFournisseurDto,
   CreateMouvementLingotDto,
+  CreateReceptionLingotDto,
   UpdateBilanLingotsJourDto,
   UpdateEtatStockJournalierDto,
   UpdateLigneReceptionLingotDto,
   UpdateLingotStockDto,
   UpdateLivraisonFournisseurDto,
   UpdateMouvementLingotDto,
+  UpdateReceptionLingotDto,
 } from './dto/lingots.dto.js';
 import { LingotsService } from './lingots.service.js';
 
@@ -111,6 +113,37 @@ export class LingotsController {
   @Delete('lignes-reception-lingots/:id')
   removeLigneReception(@Param('id') id: string) {
     return this.lingotsService.removeLigneReception(id);
+  }
+
+  @Post('receptions-lingots')
+  @ApiOperation({ summary: 'Créer une réception de lingots' })
+  @ApiCreatedResponse({ description: 'Réception créée' })
+  createReception(@Body() body: CreateReceptionLingotDto) {
+    return this.lingotsService.createReception(body);
+  }
+  @Get('receptions-lingots')
+  @ApiOperation({ summary: 'Lister les réceptions de lingots' })
+  @ApiOkResponse({ description: 'Liste des réceptions de lingots' })
+  findReceptions() {
+    return this.lingotsService.findReceptions();
+  }
+  @Get('receptions-lingots/:id')
+  @ApiParam({ name: 'id', description: 'Identifiant de la réception' })
+  findReception(@Param('id') id: string) {
+    return this.lingotsService.findReception(id);
+  }
+  @Patch('receptions-lingots/:id')
+  @ApiParam({ name: 'id', description: 'Identifiant de la réception' })
+  updateReception(
+    @Param('id') id: string,
+    @Body() body: UpdateReceptionLingotDto,
+  ) {
+    return this.lingotsService.updateReception(id, body);
+  }
+  @Delete('receptions-lingots/:id')
+  @ApiParam({ name: 'id', description: 'Identifiant de la réception' })
+  removeReception(@Param('id') id: string) {
+    return this.lingotsService.removeReception(id);
   }
 
   @Post('etats-stock-journaliers')
