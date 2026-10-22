@@ -1,18 +1,18 @@
 import { Module } from '@nestjs/common';
+import { MongooseModule } from '@nestjs/mongoose';
 import { createObserveModule } from '@nestjs/observe';
 import { AppController } from './app.controller.js';
-import { MongooseModule } from '@nestjs/mongoose';
 import { AppService } from './app.service.js';
-import { FicheBobineMereModule } from './fiche-bobine-mere/fiche-bobine-mere.module.js';
-import { FicheBobineFilleModule } from './fiche-bobine-fille/fiche-bobine-fille.module.js';
-import { ParcABobinesModule } from './parc-a-bobines/parc-a-bobines.module.js';
 import { ChutageModule } from './chutage/chutage.module.js';
+import { FicheBobineFilleModule } from './fiche-bobine-fille/fiche-bobine-fille.module.js';
+import { FicheBobineMereModule } from './fiche-bobine-mere/fiche-bobine-mere.module.js';
+import { LingotsModule } from './lingots/lingots.module.js';
+import { ParcABobinesModule } from './parc-a-bobines/parc-a-bobines.module.js';
 
 export const { ObserveModule, ObserveInstrument } = createObserveModule();
 
 @Module({
-  imports: 
-  [
+  imports: [
     // Distributed tracing, auto-correlated logs, request/job metrics, error
     // telemetry, alarms, and more — out of the box. Sign up at https://observe.nestjs.com
     // ObserveModule.forRoot({
@@ -20,11 +20,14 @@ export const { ObserveModule, ObserveInstrument } = createObserveModule();
     //   appSecret: 'YOUR_APP_SECRET',
     //   serviceId: 'nestjs-global-api',
     // }),
-     MongooseModule.forRoot('mongodb://localhost:27017/nestjs-global-api'),
-     FicheBobineMereModule,
-     FicheBobineFilleModule,
-     ParcABobinesModule,
-      ChutageModule,
+    MongooseModule.forRoot(
+      process.env.MONGODB_URI ?? 'mongodb://localhost:27017/nestjs-global-api',
+    ),
+    FicheBobineMereModule,
+    FicheBobineFilleModule,
+    ParcABobinesModule,
+    ChutageModule,
+    LingotsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

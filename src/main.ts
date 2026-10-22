@@ -1,5 +1,5 @@
-import { NestFactory } from '@nestjs/core';
 import { ValidationPipe } from '@nestjs/common';
+import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { AppModule, ObserveInstrument } from './app.module.js';
 
@@ -28,11 +28,11 @@ async function bootstrap() {
     .addTag('fiche-bobine-fille', 'Gestion des fiches bobine fille')
     .addTag('parc-a-bobines', 'Gestion du parc à bobines')
     .addTag('chutage', 'Gestion du chutage')
+    .addTag('lingots', 'Gestion des stocks et mouvements de lingots')
     .build();
   const swaggerDocument = SwaggerModule.createDocument(app, swaggerConfig);
   SwaggerModule.setup('api', app, swaggerDocument);
 
   await app.listen(process.env.PORT ?? 3000);
 }
-await bootstrap(); 
- 
+await bootstrap();

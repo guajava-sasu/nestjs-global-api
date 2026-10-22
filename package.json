@@ -15,6 +15,7 @@
     "start:debug": "nest start --debug --watch",
     "start:prod": "node dist/main",
     "db:update:chutage": "npm run build && node dist/chutage/update-database.js",
+    "db:seed:lingots": "npm run build && node dist/lingots/seed-lingots.js",
     "db:generate:bobines-filles": "npm run build && node dist/fiche-bobine-fille/generate-bobines-filles.js",
     "lint": "oxlint src/ test/",
     "test": "vitest run",
