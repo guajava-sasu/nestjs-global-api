@@ -71,7 +71,11 @@ const fournisseursLingots = [
   'TRAFIGUR',
 ];
 const postesPreparation = ['PM1', 'PM2', 'PO1'];
-const dateDebutJeu = new Date('2026-10-17T06:00:00.000Z');
+const dateFinJeu = new Date();
+dateFinJeu.setUTCHours(6, 0, 0, 0);
+const dateDebutJeu = new Date(
+  dateFinJeu.getTime() - (repetitionsParExemple - 1) * jourEnMs,
+);
 
 const operateursDeTrack: OperateurTracker[] = [
   {
@@ -217,7 +221,10 @@ async function seedLingots() {
         alArcelor: valide
           ? Number((alFournisseur + ((index % 3) - 1) * 0.006).toFixed(3))
           : 0,
-        dateReception: dateGeneree(dateDebutJeu, Math.floor(index / 5)),
+        dateReception: dateGeneree(
+          dateFinJeu,
+          -Math.floor((repetitionsParExemple - index - 1) / 5),
+        ),
         type: typesLingot[index % typesLingot.length] ?? 'B',
       };
 
@@ -235,7 +242,7 @@ async function seedLingots() {
       ...exemple,
       id: idGenere(requiredId(exemple), index),
       numeroCoulee: couleeGeneree(exemple.numeroCoulee, index),
-      dateLivraison: dateGeneree(exemple.dateLivraison, index),
+      dateLivraison: dateGeneree(dateDebutJeu, index),
       nbLingots: Math.max(1, exemple.nbLingots + (index % 5) - 2),
       tonnage: Number((exemple.tonnage + ((index % 5) - 2) * 0.08).toFixed(2)),
     })),
@@ -247,7 +254,7 @@ async function seedLingots() {
         ...exemple,
         id: idGenere(exemple.id, index),
         numeroCoulee,
-        dateReception: dateGeneree(exemple.dateReception, index),
+        dateReception: dateGeneree(dateDebutJeu, index),
         lignesReception: exemple.lignesReception.map((ligne) => ({
           ...ligne,
           numeroLingotCoulee: ligne.numeroLingotCoulee
@@ -289,7 +296,7 @@ async function seedLingots() {
       return {
         ...exemple,
         id: idGenere(requiredId(exemple), index),
-        date: dateGeneree(exemple.date, index),
+        date: dateGeneree(dateDebutJeu, index),
         parType,
         mattes: Math.max(
           0,
@@ -298,25 +305,72 @@ async function seedLingots() {
       };
     }),
   );
-  const mouvements = mouvementExamples.flatMap((exemple) =>
-    Array.from({ length: repetitionsParExemple }, (_, index) => ({
-      ...exemple,
-      id: idGenere(requiredId(exemple), index),
-      date: dateGeneree(exemple.date, index),
-      poids: exemple.poids + (index % 9) - 4,
-      ...(exemple.numeroCoulee
-        ? { numeroCoulee: couleeGeneree(exemple.numeroCoulee, index) }
-        : {}),
-      ...(exemple.numeroLingot !== undefined
-        ? { numeroLingot: exemple.numeroLingot + index }
-        : {}),
-    })),
+  const mouvementLingot = mouvementExamples.find(
+    (exemple) => exemple.type !== 'MATTE',
+  );
+  const mouvementMatte = mouvementExamples.find(
+    (exemple) => exemple.type === 'MATTE',
+  );
+  if (!mouvementLingot || !mouvementMatte) {
+    throw new Error('Les exemples doivent contenir un lingot et une matte.');
+  }
+
+  let nombreMouvementsLingot = 0;
+  let nombreMouvementsMatte = 0;
+  const postesMouvement = ['PONT-01', 'PONT-02'];
+  const mouvements: MouvementLingot[] = Array.from(
+    { length: repetitionsParExemple * 2 },
+    (_, index) => {
+      const estMatte = index % 20 === 19;
+      const exemple = estMatte ? mouvementMatte : mouvementLingot;
+      const indexExemple = estMatte
+        ? nombreMouvementsMatte++
+        : nombreMouvementsLingot++;
+      const date = dateGeneree(dateDebutJeu, Math.floor(index / 2));
+      date.setUTCHours(
+        estMatte ? 11 : index % 2 === 0 ? 9 : 10,
+        estMatte ? 0 : 25,
+        0,
+        0,
+      );
+
+      if (estMatte) {
+        return {
+          ...exemple,
+          id: idGenere(requiredId(exemple), indexExemple),
+          date,
+          poids: 998 + (indexExemple % 5),
+          poste: 'FOUR-02',
+          type: 'MATTE',
+          table: `T-0${(indexExemple % 4) + 1}`,
+          creuset: `CR-${String(4 + (indexExemple % 9)).padStart(2, '0')}`,
+        };
+      }
+
+      return {
+        ...exemple,
+        id: idGenere(requiredId(exemple), indexExemple),
+        date,
+        poste:
+          postesMouvement[indexExemple % postesMouvement.length] ?? 'PONT-01',
+        type: typesLingot[indexExemple % typesLingot.length] ?? 'B',
+        numeroCoulee: couleeGeneree(
+          mouvementLingot.numeroCoulee ?? '',
+          Math.floor(indexExemple / 5),
+        ),
+        numeroLingot: (indexExemple % 10) + 1,
+        poids: 1910 + ((indexExemple * 29) % 95),
+        al: Number((99.48 + (indexExemple % 9) * 0.035).toFixed(3)),
+        table: `T-0${(indexExemple % 4) + 1}`,
+        creuset: `CR-${String(4 + (indexExemple % 9)).padStart(2, '0')}`,
+      };
+    },
   );
   const bilans = bilanExamples.flatMap((exemple) =>
     Array.from({ length: repetitionsParExemple }, (_, index) => ({
       ...exemple,
       id: idGenere(requiredId(exemple), index),
-      date: dateGeneree(exemple.date, index),
+      date: dateGeneree(dateDebutJeu, index),
       mattes: exemple.mattes + (index % 3) - 1,
     })),
   );
@@ -354,6 +408,9 @@ async function seedLingots() {
   const ZoneModel = mongoose.model(ZoneRecord.name, ZoneSchema);
 
   const idsLingotsActifs = lingots.map((lingot) => lingot.id);
+  const idsMouvementsActifs = mouvements.map((mouvement) =>
+    requiredId(mouvement),
+  );
   const anciensIdsLingotsEtiquettes = [
     'NYRSTAR-3031-262208411',
     'BOLIDEN-1253091-B26227F5ZN0065',
@@ -376,6 +433,14 @@ async function seedLingots() {
         id: {
           $regex: `^${echapperRegex(exemple.id)}-\\d{3}$`,
           $nin: idsLingotsActifs,
+        },
+      }),
+    ),
+    ...mouvementExamples.map((exemple) =>
+      MouvementModel.deleteMany({
+        id: {
+          $regex: `^${echapperRegex(requiredId(exemple))}(?:-\\d{3})?$`,
+          $nin: idsMouvementsActifs,
         },
       }),
     ),
