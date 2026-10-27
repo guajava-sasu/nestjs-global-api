@@ -3,6 +3,76 @@ import { HydratedDocument } from 'mongoose';
 
 export type TypeLingot = 'B' | 'OB' | 'VB' | 'BB' | 'N';
 
+export interface OperateurTracker {
+  id: string;
+  username: string;
+  entreprise: string;
+  nom: string;
+  prenom: string;
+}
+
+export type OperateurTrackerDocument = HydratedDocument<OperateurTrackerRecord>;
+
+@Schema({
+  collection: 'operateurs-tracker',
+  timestamps: true,
+  versionKey: false,
+})
+export class OperateurTrackerRecord implements OperateurTracker {
+  @Prop({ required: true, unique: true, index: true })
+  id: string;
+
+  @Prop({ required: true, unique: true, index: true })
+  username: string;
+
+  @Prop({ required: true })
+  entreprise: string;
+
+  @Prop({ required: true })
+  nom: string;
+
+  @Prop({ required: true })
+  prenom: string;
+}
+export const OperateurTrackerSchema = SchemaFactory.createForClass(
+  OperateurTrackerRecord,
+);
+
+export const couleursZoneAutorisees = [
+  '#0072ce',
+  '#000014',
+  '#260c67',
+  '#932184',
+  '#e54749',
+  '#f09357',
+  '#ffdf88',
+] as const;
+
+export interface Zone {
+  id: number;
+  nom: string;
+  code: string;
+  couleur: string;
+}
+
+export type ZoneDocument = HydratedDocument<ZoneRecord>;
+
+@Schema({ collection: 'zones-lingots', timestamps: true, versionKey: false })
+export class ZoneRecord implements Zone {
+  @Prop({ required: true, unique: true, index: true })
+  id: number;
+
+  @Prop({ required: true })
+  nom: string;
+
+  @Prop({ required: true, unique: true })
+  code: string;
+
+  @Prop({ required: true, enum: [...couleursZoneAutorisees] })
+  couleur: string;
+}
+export const ZoneSchema = SchemaFactory.createForClass(ZoneRecord);
+
 @Schema({ _id: false })
 export class AnalyseLingot {
   @Prop({ required: true })

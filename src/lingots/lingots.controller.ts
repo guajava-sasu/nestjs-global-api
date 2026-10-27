@@ -22,14 +22,18 @@ import {
   CreateLingotStockDto,
   CreateLivraisonFournisseurDto,
   CreateMouvementLingotDto,
+  CreateOperateurTrackerDto,
   CreateReceptionLingotDto,
+  CreateZoneDto,
   UpdateBilanLingotsJourDto,
   UpdateEtatStockJournalierDto,
   UpdateLigneReceptionLingotDto,
   UpdateLingotStockDto,
   UpdateLivraisonFournisseurDto,
   UpdateMouvementLingotDto,
+  UpdateOperateurTrackerDto,
   UpdateReceptionLingotDto,
+  UpdateZoneDto,
 } from './dto/lingots.dto.js';
 import { LingotsService } from './lingots.service.js';
 
@@ -37,6 +41,51 @@ import { LingotsService } from './lingots.service.js';
 @Controller()
 export class LingotsController {
   constructor(private readonly lingotsService: LingotsService) {}
+
+  @Post('operateurs-tracker')
+  createOperateurTracker(@Body() body: CreateOperateurTrackerDto) {
+    return this.lingotsService.createOperateurTracker(body);
+  }
+  @Get('operateurs-tracker')
+  findOperateursTracker() {
+    return this.lingotsService.findOperateursTracker();
+  }
+  @Get('operateurs-tracker/:id')
+  findOperateurTracker(@Param('id') id: string) {
+    return this.lingotsService.findOperateurTracker(id);
+  }
+  @Patch('operateurs-tracker/:id')
+  updateOperateurTracker(
+    @Param('id') id: string,
+    @Body() body: UpdateOperateurTrackerDto,
+  ) {
+    return this.lingotsService.updateOperateurTracker(id, body);
+  }
+  @Delete('operateurs-tracker/:id')
+  removeOperateurTracker(@Param('id') id: string) {
+    return this.lingotsService.removeOperateurTracker(id);
+  }
+
+  @Post('zones')
+  createZone(@Body() body: CreateZoneDto) {
+    return this.lingotsService.createZone(body);
+  }
+  @Get('zones')
+  findZones() {
+    return this.lingotsService.findZones();
+  }
+  @Get('zones/:id')
+  findZone(@Param('id') id: string) {
+    return this.lingotsService.findZone(Number(id));
+  }
+  @Patch('zones/:id')
+  updateZone(@Param('id') id: string, @Body() body: UpdateZoneDto) {
+    return this.lingotsService.updateZone(Number(id), body);
+  }
+  @Delete('zones/:id')
+  removeZone(@Param('id') id: string) {
+    return this.lingotsService.removeZone(Number(id));
+  }
 
   @Post('lingots')
   @ApiOperation({ summary: 'Créer un lingot en stock' })

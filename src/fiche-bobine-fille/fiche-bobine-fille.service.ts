@@ -1,19 +1,25 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
+import {
+  FicheBobineMere,
+  FicheBobineMereDocument,
+} from '../fiche-bobine-mere/entities/fiche-bobine-mere.entity.js';
 import { CreateFicheBobineFilleDto } from './dto/create-fiche-bobine-fille.dto.js';
 import { UpdateFicheBobineFilleDto } from './dto/update-fiche-bobine-fille.dto.js';
 import {
   FicheBobineFille,
   FicheBobineFilleDocument,
 } from './entities/fiche-bobine-fille.entity.js';
-import {
-  FicheBobineMere,
-  FicheBobineMereDocument,
-} from '../fiche-bobine-mere/entities/fiche-bobine-mere.entity.js';
 
 const CODES_DECISION = ['ACCEPTE', 'REFUSE', 'ACCEPTE SOUS RESERVE'];
-const INSPECTEURS = ['J. DUPONT', 'M. LEROY', 'S. BERNARD', 'A. PETIT', 'C. MARTIN'];
+const INSPECTEURS = [
+  'J. DUPONT',
+  'M. LEROY',
+  'S. BERNARD',
+  'A. PETIT',
+  'C. MARTIN',
+];
 const TEXTES_LIBRES = [
   'RAS',
   'Conforme au cahier des charges',
@@ -51,7 +57,10 @@ export class FicheBobineFilleService {
     return fiche;
   }
 
-  async update(bobine: string, updateFicheBobineFilleDto: UpdateFicheBobineFilleDto) {
+  async update(
+    bobine: string,
+    updateFicheBobineFilleDto: UpdateFicheBobineFilleDto,
+  ) {
     const fiche = await this.ficheBobineFilleModel
       .findOneAndUpdate({ bobine }, updateFicheBobineFilleDto, { new: true })
       .exec();
@@ -62,7 +71,9 @@ export class FicheBobineFilleService {
   }
 
   async remove(bobine: string) {
-    const fiche = await this.ficheBobineFilleModel.findOneAndDelete({ bobine }).exec();
+    const fiche = await this.ficheBobineFilleModel
+      .findOneAndDelete({ bobine })
+      .exec();
     if (!fiche) {
       throw new NotFoundException(`Fiche bobine fille "${bobine}" introuvable`);
     }
@@ -76,10 +87,14 @@ export class FicheBobineFilleService {
   async generateRandomFilles(count: number) {
     const meres = await this.ficheBobineMereModel.find().exec();
     if (meres.length === 0) {
-      throw new NotFoundException('Aucune fiche bobine mère en base : impossible de générer des bobines filles');
+      throw new NotFoundException(
+        'Aucune fiche bobine mère en base : impossible de générer des bobines filles',
+      );
     }
 
-    const existingBobines = new Set((await this.ficheBobineFilleModel.distinct('bobine').exec()) as string[]);
+    const existingBobines = new Set(
+      (await this.ficheBobineFilleModel.distinct('bobine').exec()) as string[],
+    );
     const dtos: CreateFicheBobineFilleDto[] = [];
 
     for (let i = 0; i < count; i++) {
@@ -107,7 +122,10 @@ function jitter(value: number, percent = 2): number {
   return Math.round((value + delta) * 10) / 10;
 }
 
-function generateUniqueBobine(bobineMere: string, existing: Set<string>): string {
+function generateUniqueBobine(
+  bobineMere: string,
+  existing: Set<string>,
+): string {
   let bobine: string;
   do {
     bobine = `${bobineMere.slice(0, 6)}${randomInt(10, 99)}`;
@@ -115,7 +133,10 @@ function generateUniqueBobine(bobineMere: string, existing: Set<string>): string
   return bobine;
 }
 
-function buildFilleFromMere(mereDocument: FicheBobineMereDocument, bobine: string): CreateFicheBobineFilleDto {
+function buildFilleFromMere(
+  mereDocument: FicheBobineMereDocument,
+  bobine: string,
+): CreateFicheBobineFilleDto {
   const mere = mereDocument.toObject();
   const revetementsConsigne = {
     refAuto: mere.revetements.refAuto,
@@ -129,7 +150,12 @@ function buildFilleFromMere(mereDocument: FicheBobineMereDocument, bobine: strin
   };
 
   const defauts = (mere.defauts ?? [])
-    .filter(() => Math.random() < 0.4)
+    .filter(
+      (defaut) =>
+        typeof defaut.imputation === 'number' &&
+        Number.isFinite(defaut.imputation) &&
+        Math.random() < 0.4,
+    )
     .map((defaut) => ({
       bobine,
       numero: defaut.numero,
@@ -170,8 +196,14 @@ function buildFilleFromMere(mereDocument: FicheBobineMereDocument, bobine: strin
       consigne: revetementsConsigne,
       reel: {
         refAuto: revetementsConsigne.refAuto,
-        avant: { ...revetementsConsigne.avant, vise: jitter(revetementsConsigne.avant.vise, 3) },
-        arriere: { ...revetementsConsigne.arriere, vise: jitter(revetementsConsigne.arriere.vise, 3) },
+        avant: {
+          ...revetementsConsigne.avant,
+          vise: jitter(revetementsConsigne.avant.vise, 3),
+        },
+        arriere: {
+          ...revetementsConsigne.arriere,
+          vise: jitter(revetementsConsigne.arriere.vise, 3),
+        },
       },
     },
     formatSortie: {
@@ -201,4 +233,3 @@ function buildFilleFromMere(mereDocument: FicheBobineMereDocument, bobine: strin
     },
   };
 }
-

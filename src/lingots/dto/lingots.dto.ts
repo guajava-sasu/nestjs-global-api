@@ -11,8 +11,30 @@ import {
   ValidateNested,
 } from 'class-validator';
 import type { TypeLingot } from '../entities/lingot.entity.js';
+import { couleursZoneAutorisees } from '../entities/lingot.entity.js';
 
 const typesLingot: TypeLingot[] = ['B', 'OB', 'VB', 'BB', 'N'];
+
+export class CreateOperateurTrackerDto {
+  @ApiProperty() @IsString() id: string;
+  @ApiProperty() @IsString() username: string;
+  @ApiProperty() @IsString() entreprise: string;
+  @ApiProperty() @IsString() nom: string;
+  @ApiProperty() @IsString() prenom: string;
+}
+export class UpdateOperateurTrackerDto extends PartialType(
+  CreateOperateurTrackerDto,
+) {}
+
+export class CreateZoneDto {
+  @ApiProperty() @IsNumber() id: number;
+  @ApiProperty() @IsString() nom: string;
+  @ApiProperty() @IsString() code: string;
+  @ApiProperty({ enum: [...couleursZoneAutorisees] })
+  @IsIn([...couleursZoneAutorisees])
+  couleur: string;
+}
+export class UpdateZoneDto extends PartialType(CreateZoneDto) {}
 
 export class AnalyseLingotDto {
   @ApiProperty() @IsNumber() al: number;

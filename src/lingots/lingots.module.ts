@@ -13,8 +13,12 @@ import {
   LivraisonFournisseurSchema,
   MouvementLingotRecord,
   MouvementLingotSchema,
+  OperateurTrackerRecord,
+  OperateurTrackerSchema,
   ReceptionLingotRecord,
   ReceptionLingotSchema,
+  ZoneRecord,
+  ZoneSchema,
 } from './entities/lingot.entity.js';
 import { LingotsController } from './lingots.controller.js';
 import { LingotsService } from './lingots.service.js';
@@ -41,6 +45,11 @@ import { LingotsService } from './lingots.service.js';
       },
       { name: MouvementLingotRecord.name, schema: MouvementLingotSchema },
       { name: BilanLingotsJourRecord.name, schema: BilanLingotsJourSchema },
+      {
+        name: OperateurTrackerRecord.name,
+        schema: OperateurTrackerSchema,
+      },
+      { name: ZoneRecord.name, schema: ZoneSchema },
     ]),
   ],
   controllers: [LingotsController],

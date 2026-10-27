@@ -6,11 +6,15 @@ import type {
   LingotStock,
   LivraisonFournisseur,
   MouvementLingot,
+  OperateurTracker,
   ReceptionLingot,
+  TypeLingot,
+  Zone,
 } from './entities/lingot.entity.js';
 import {
   BilanLingotsJourRecord,
   BilanLingotsJourSchema,
+  couleursZoneAutorisees,
   EtatStockJournalierRecord,
   EtatStockJournalierSchema,
   LigneReceptionLingotRecord,
@@ -21,8 +25,12 @@ import {
   LivraisonFournisseurSchema,
   MouvementLingotRecord,
   MouvementLingotSchema,
+  OperateurTrackerRecord,
+  OperateurTrackerSchema,
   ReceptionLingotRecord,
   ReceptionLingotSchema,
+  ZoneRecord,
+  ZoneSchema,
 } from './entities/lingot.entity.js';
 
 const uri =
@@ -54,6 +62,102 @@ function requiredId(record: { id?: string }): string {
 
 const repetitionsParExemple = 50;
 const jourEnMs = 24 * 60 * 60 * 1000;
+const typesLingot: TypeLingot[] = ['B', 'OB', 'VB', 'BB', 'N'];
+const fournisseursLingots = [
+  'BOLESLAW',
+  'BOLIDEN',
+  'GLENCORE',
+  'NEXA',
+  'TRAFIGUR',
+];
+const postesPreparation = ['PM1', 'PM2', 'PO1'];
+const dateDebutJeu = new Date('2026-10-17T06:00:00.000Z');
+
+const operateursDeTrack: OperateurTracker[] = [
+  {
+    id: 'operateur-1',
+    username: 'marie.dupont',
+    entreprise: 'N3 Electryck',
+    nom: 'Dupont',
+    prenom: 'Marie',
+  },
+  {
+    id: 'operateur-2',
+    username: 'julien.martin',
+    entreprise: 'Mardyck Services',
+    nom: 'Martin',
+    prenom: 'Julien',
+  },
+  {
+    id: 'operateur-3',
+    username: 'camille.lefevre',
+    entreprise: 'N3 Electryck',
+    nom: 'Lefèvre',
+    prenom: 'Camille',
+  },
+  {
+    id: 'operateur-4',
+    username: 'sophie.moreau',
+    entreprise: 'ArcelorMittal',
+    nom: 'Moreau',
+    prenom: 'Sophie',
+  },
+  ...Array.from({ length: 46 }, (_, index): OperateurTracker => {
+    const prenoms = [
+      'Thomas',
+      'Claire',
+      'Nicolas',
+      'Emma',
+      'Lucas',
+      'Léa',
+      'Antoine',
+      'Sarah',
+      'Hugo',
+      'Manon',
+    ];
+    const noms = ['Bernard', 'Petit', 'Robert', 'Richard', 'Durand'];
+    const entreprises = ['N3 Electryck', 'Mardyck Services', 'ArcelorMittal'];
+    const prenom = prenoms[index % prenoms.length];
+    const nom = noms[Math.floor(index / prenoms.length)];
+    const username = `${prenom}.${nom}`
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .toLowerCase();
+
+    return {
+      id: `operateur-${index + 5}`,
+      username,
+      entreprise: entreprises[index % entreprises.length],
+      nom,
+      prenom,
+    };
+  }),
+];
+
+const zonesSansCouleur: Omit<Zone, 'couleur'>[] = [
+  { id: 1, nom: 'Réception matières', code: 'REC' },
+  { id: 2, nom: 'Stock lingots', code: 'STO' },
+  { id: 3, nom: 'Préparation', code: 'PRE' },
+  { id: 4, nom: 'Fusion', code: 'FUS' },
+  { id: 5, nom: 'Analyse', code: 'ANA' },
+  { id: 6, nom: 'Contrôle qualité', code: 'QUA' },
+  { id: 7, nom: 'Expédition', code: 'EXP' },
+  { id: 8, nom: 'Contrôle dimensionnel', code: 'DIM' },
+  { id: 9, nom: 'Four', code: 'FOU' },
+  { id: 10, nom: 'Refroidissement', code: 'REF' },
+  { id: 11, nom: 'Parc extérieur', code: 'PAR' },
+  { id: 12, nom: 'Maintenance', code: 'MAI' },
+  { id: 13, nom: 'Conditionnement', code: 'CON' },
+  { id: 14, nom: 'Laboratoire', code: 'LAB' },
+  { id: 15, nom: 'Zone déchets', code: 'DEC' },
+];
+
+const zones: Zone[] = zonesSansCouleur.map((zone, index) => ({
+  ...zone,
+  couleur:
+    couleursZoneAutorisees[index % couleursZoneAutorisees.length] ??
+    couleursZoneAutorisees[0],
+}));
 
 function idGenere(id: string, index: number): string {
   return index === 0 ? id : `${id}-${String(index + 1).padStart(3, '0')}`;
@@ -94,14 +198,37 @@ async function seedLingots() {
   );
 
   const lingots = stockExamples.flatMap((exemple) =>
-    Array.from({ length: repetitionsParExemple }, (_, index) => ({
-      ...exemple,
-      id: idGenere(exemple.id, index),
-      numeroLingot: exemple.numeroLingot + index,
-      numeroCoulee: couleeGeneree(exemple.numeroCoulee, index),
-      poids: exemple.poids + ((index * 37) % 41) - 20,
-      dateReception: dateGeneree(exemple.dateReception, Math.floor(index / 10)),
-    })),
+    Array.from({ length: repetitionsParExemple }, (_, index) => {
+      const valide = index % 11 !== 5;
+      const alFournisseur = Number((99.51 + (index % 8) * 0.035).toFixed(3));
+      const lingot: LingotStock = {
+        ...exemple,
+        id: idGenere(exemple.id, index),
+        numeroLingot: (index % 10) + 1,
+        numeroCoulee: couleeGeneree(
+          exemple.numeroCoulee,
+          Math.floor(index / 10),
+        ),
+        poids: 1980 + ((index * 17) % 41),
+        fournisseur:
+          fournisseursLingots[index % fournisseursLingots.length] ?? 'BOLIDEN',
+        valide,
+        alFournisseur,
+        alArcelor: valide
+          ? Number((alFournisseur + ((index % 3) - 1) * 0.006).toFixed(3))
+          : 0,
+        dateReception: dateGeneree(dateDebutJeu, Math.floor(index / 5)),
+        type: typesLingot[index % typesLingot.length] ?? 'B',
+      };
+
+      if (index < postesPreparation.length) {
+        lingot.preparation = postesPreparation[index] ?? 'PM1';
+      } else {
+        delete lingot.preparation;
+      }
+
+      return lingot;
+    }),
   );
   const livraisons = livraisonExamples.flatMap((exemple) =>
     Array.from({ length: repetitionsParExemple }, (_, index) => ({
@@ -137,12 +264,39 @@ async function seedLingots() {
     })),
   );
   const etatsStock = etatExamples.flatMap((exemple) =>
-    Array.from({ length: repetitionsParExemple }, (_, index) => ({
-      ...exemple,
-      id: idGenere(requiredId(exemple), index),
-      date: dateGeneree(exemple.date, index),
-      mattes: exemple.mattes + (index % 3) - 1,
-    })),
+    Array.from({ length: repetitionsParExemple }, (_, index) => {
+      const parType: EtatStockJournalier['parType'] = {};
+
+      typesLingot.forEach((type, typeIndex) => {
+        const reference = exemple.parType[type];
+        if (!reference) return;
+
+        const phase = typeIndex * 1.7;
+        const variationNombre = Math.round(
+          1.5 * (Math.sin(index * 0.55 + phase) - Math.sin(phase)),
+        );
+        const nombre = Math.max(0, reference.nombre + variationNombre);
+        const poidsMoyen = reference.poids / reference.nombre;
+        const variationPoids =
+          0.08 * (Math.sin(index * 0.8 + phase) - Math.sin(phase));
+
+        parType[type] = {
+          nombre,
+          poids: Number((nombre * poidsMoyen + variationPoids).toFixed(2)),
+        };
+      });
+
+      return {
+        ...exemple,
+        id: idGenere(requiredId(exemple), index),
+        date: dateGeneree(exemple.date, index),
+        parType,
+        mattes: Math.max(
+          0,
+          exemple.mattes + (index === 0 ? 0 : (index % 3) - 1),
+        ),
+      };
+    }),
   );
   const mouvements = mouvementExamples.flatMap((exemple) =>
     Array.from({ length: repetitionsParExemple }, (_, index) => ({
@@ -193,6 +347,11 @@ async function seedLingots() {
     BilanLingotsJourRecord.name,
     BilanLingotsJourSchema,
   );
+  const OperateurTrackerModel = mongoose.model(
+    OperateurTrackerRecord.name,
+    OperateurTrackerSchema,
+  );
+  const ZoneModel = mongoose.model(ZoneRecord.name, ZoneSchema);
 
   const idsLingotsActifs = lingots.map((lingot) => lingot.id);
   const anciensIdsLingotsEtiquettes = [
@@ -203,13 +362,14 @@ async function seedLingots() {
     'NYRSTAR-3417-262451610',
   ];
   await Promise.all([
-    LingotModel.deleteMany({
-      id: {
-        $in: anciensIdsLingotsEtiquettes.filter(
-          (id) => !idsLingotsActifs.includes(id),
-        ),
-      },
-    }),
+    ...anciensIdsLingotsEtiquettes.map((id) =>
+      LingotModel.deleteMany({
+        id: {
+          $regex: `^${echapperRegex(id)}(?:-[0-9]{2})?(?:-[0-9]{3})?$`,
+          $nin: idsLingotsActifs,
+        },
+      }),
+    ),
     LingotModel.deleteMany({ id: /^LINGOT-\d{4}$/ }),
     ...stockExamples.map((exemple) =>
       LingotModel.deleteMany({
@@ -225,7 +385,10 @@ async function seedLingots() {
     ...lingots.map((lingot) =>
       LingotModel.updateOne(
         { id: lingot.id },
-        { $set: lingot },
+        {
+          $set: lingot,
+          ...(!lingot.preparation ? { $unset: { preparation: 1 } } : {}),
+        },
         { upsert: true },
       ),
     ),
@@ -271,11 +434,21 @@ async function seedLingots() {
         { upsert: true },
       ),
     ),
+    ...operateursDeTrack.map((operateur) =>
+      OperateurTrackerModel.updateOne(
+        { id: operateur.id },
+        { $set: operateur },
+        { upsert: true },
+      ),
+    ),
+    ...zones.map((zone) =>
+      ZoneModel.updateOne({ id: zone.id }, { $set: zone }, { upsert: true }),
+    ),
   ];
 
   await Promise.all(operations);
   console.info(
-    `Données synchronisées dans ${mongoose.connection.name}: ${lingots.length} lingots, ${livraisons.length} livraisons, ${receptions.length} réceptions, ${lignesReception.length} lignes de réception, ${etatsStock.length} états de stock, ${mouvements.length} mouvements et ${bilans.length} bilans.`,
+    `Données synchronisées dans ${mongoose.connection.name}: ${lingots.length} lingots, ${livraisons.length} livraisons, ${receptions.length} réceptions, ${lignesReception.length} lignes de réception, ${etatsStock.length} états de stock, ${mouvements.length} mouvements, ${bilans.length} bilans, ${operateursDeTrack.length} opérateurs et ${zones.length} zones.`,
   );
 }
 

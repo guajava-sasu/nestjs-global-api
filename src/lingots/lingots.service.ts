@@ -8,14 +8,18 @@ import {
   CreateLingotStockDto,
   CreateLivraisonFournisseurDto,
   CreateMouvementLingotDto,
+  CreateOperateurTrackerDto,
   CreateReceptionLingotDto,
+  CreateZoneDto,
   UpdateBilanLingotsJourDto,
   UpdateEtatStockJournalierDto,
   UpdateLigneReceptionLingotDto,
   UpdateLingotStockDto,
   UpdateLivraisonFournisseurDto,
   UpdateMouvementLingotDto,
+  UpdateOperateurTrackerDto,
   UpdateReceptionLingotDto,
+  UpdateZoneDto,
 } from './dto/lingots.dto.js';
 import {
   BilanLingotsJourDocument,
@@ -30,8 +34,12 @@ import {
   LivraisonFournisseurRecord,
   MouvementLingotDocument,
   MouvementLingotRecord,
+  OperateurTrackerDocument,
+  OperateurTrackerRecord,
   ReceptionLingotDocument,
   ReceptionLingotRecord,
+  ZoneDocument,
+  ZoneRecord,
 } from './entities/lingot.entity.js';
 
 function idFilter(id: string) {
@@ -57,7 +65,59 @@ export class LingotsService {
     private readonly mouvements: Model<MouvementLingotDocument>,
     @InjectModel(BilanLingotsJourRecord.name)
     private readonly bilans: Model<BilanLingotsJourDocument>,
+    @InjectModel(OperateurTrackerRecord.name)
+    private readonly operateursTracker: Model<OperateurTrackerDocument>,
+    @InjectModel(ZoneRecord.name)
+    private readonly zones: Model<ZoneDocument>,
   ) {}
+
+  createOperateurTracker(data: CreateOperateurTrackerDto) {
+    return this.operateursTracker.create(data);
+  }
+  findOperateursTracker() {
+    return this.operateursTracker.find().exec();
+  }
+  async findOperateurTracker(id: string) {
+    const record = await this.operateursTracker.findOne({ id }).exec();
+    if (!record) throw new NotFoundException('Opérateur Tracker introuvable');
+    return record;
+  }
+  async updateOperateurTracker(id: string, data: UpdateOperateurTrackerDto) {
+    const record = await this.operateursTracker
+      .findOneAndUpdate({ id }, data, { new: true, runValidators: true })
+      .exec();
+    if (!record) throw new NotFoundException('Opérateur Tracker introuvable');
+    return record;
+  }
+  async removeOperateurTracker(id: string) {
+    const record = await this.operateursTracker.findOneAndDelete({ id }).exec();
+    if (!record) throw new NotFoundException('Opérateur Tracker introuvable');
+    return record;
+  }
+
+  createZone(data: CreateZoneDto) {
+    return this.zones.create(data);
+  }
+  findZones() {
+    return this.zones.find().sort({ id: 1 }).exec();
+  }
+  async findZone(id: number) {
+    const record = await this.zones.findOne({ id }).exec();
+    if (!record) throw new NotFoundException('Zone introuvable');
+    return record;
+  }
+  async updateZone(id: number, data: UpdateZoneDto) {
+    const record = await this.zones
+      .findOneAndUpdate({ id }, data, { new: true, runValidators: true })
+      .exec();
+    if (!record) throw new NotFoundException('Zone introuvable');
+    return record;
+  }
+  async removeZone(id: number) {
+    const record = await this.zones.findOneAndDelete({ id }).exec();
+    if (!record) throw new NotFoundException('Zone introuvable');
+    return record;
+  }
 
   createLingot(data: CreateLingotStockDto) {
     return this.lingots.create(data);
