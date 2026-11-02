@@ -32,7 +32,7 @@ import {
   ZoneRecord,
   ZoneSchema,
 } from './entities/lingot.entity.js';
-
+import { fournisseursConnus } from './lingot-stock-conversion.js';
 const uri =
   process.env.MONGODB_URI ?? 'mongodb://localhost:27017/nestjs-global-api';
 
@@ -63,13 +63,7 @@ function requiredId(record: { id?: string }): string {
 const repetitionsParExemple = 50;
 const jourEnMs = 24 * 60 * 60 * 1000;
 const typesLingot: TypeLingot[] = ['B', 'OB', 'VB', 'BB', 'N'];
-const fournisseursLingots = [
-  'BOLESLAW',
-  'BOLIDEN',
-  'GLENCORE',
-  'NEXA',
-  'TRAFIGUR',
-];
+const fournisseursLingots = fournisseursConnus;
 const postesPreparation = ['PM1', 'PM2', 'PO1'];
 const dateFinJeu = new Date();
 dateFinJeu.setUTCHours(6, 0, 0, 0);
