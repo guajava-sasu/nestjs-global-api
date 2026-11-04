@@ -3,7 +3,7 @@ import type {
   LingotStock,
   LingotStockRecord,
   TypeLingot,
-} from './entities/lingot.entity.js';
+} from './entities/lingot.entity.old.js';
 
 export interface LegacyLingotStockReel {
   I_LGT_FOU_DATE: string;
@@ -92,7 +92,7 @@ export function parserDateParis(valeur: string): Date {
 }
 
 // La date de mise à jour source se termine par une fraction de seconde ("…:51:01", "…:37:546", "…:29:5") non gérée
-function retirerCentiemes(valeur: string): string {
+export function retirerCentiemes(valeur: string): string {
   return valeur.trim().replace(/^(.*:\d{2}):\d{1,3}$/, '$1');
 }
 

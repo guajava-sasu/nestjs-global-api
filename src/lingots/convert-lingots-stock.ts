@@ -2,7 +2,7 @@ import mongoose from 'mongoose';
 import {
   LingotStockRecord,
   LingotStockSchema,
-} from './entities/lingot.entity.js';
+} from './entities/lingot.entity.old.js';
 import {
   importerLingotsStock,
   type LegacyLingotStockReel,

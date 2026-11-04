@@ -3,7 +3,15 @@ import { HydratedDocument } from 'mongoose';
 
 export type TypeLingot = 'B' | 'OB' | 'VB' | 'BB' | 'N';
 
-export interface OperateurTracker {
+export type LingotDocument = HydratedDocument<LingotRecord>;
+export type InventaireDocument = HydratedDocument<InventaireRecord>;
+export type MatteDocument = HydratedDocument<MatteRecord>;
+export type OperateurDocument = HydratedDocument<OperateurRecord>;
+export type FournisseurDocument = HydratedDocument<FournisseurRecord>;
+export type TauxAluminiumDocument = HydratedDocument<TauxAluminiumRecord>;
+export type PositionDocument = HydratedDocument<PositionRecord>;
+
+export interface Operateur {
   id: string;
   username: string;
   entreprise: string;
@@ -11,18 +19,16 @@ export interface OperateurTracker {
   prenom: string;
 }
 
-export type OperateurTrackerDocument = HydratedDocument<OperateurTrackerRecord>;
-
 @Schema({
-  collection: 'operateurs-tracker',
+  collection: 'operateurs-lingots',
   timestamps: true,
   versionKey: false,
 })
-export class OperateurTrackerRecord implements OperateurTracker {
+export class OperateurRecord implements Operateur {
   @Prop({ required: true, unique: true, index: true })
   id: string;
 
-  @Prop({ required: true, unique: true, index: true })
+  @Prop({ required: true })
   username: string;
 
   @Prop({ required: true })
@@ -34,427 +40,212 @@ export class OperateurTrackerRecord implements OperateurTracker {
   @Prop({ required: true })
   prenom: string;
 }
-export const OperateurTrackerSchema = SchemaFactory.createForClass(
-  OperateurTrackerRecord,
-);
+export const OperateurSchema = SchemaFactory.createForClass(OperateurRecord);
 
-export const couleursZoneAutorisees = [
-  '#0072ce',
-  '#000014',
-  '#260c67',
-  '#932184',
-  '#e54749',
-  '#f09357',
-  '#ffdf88',
-] as const;
-
-export interface Zone {
-  id: number;
-  nom: string;
-  code: string;
-  couleur: string;
+export interface Lingot {
+  id: string;
+  codeQR: string;
+  fournisseur: Fournisseur;
+  numeroCoulee: string;
+  numeroLingot: number;
+  poids: number;
+  type: TypeLingot;
+  tauxAluminium: TauxAluminium;
+  dateReception: Date;
+  reference: string;
+  positionActuelle: Position;
+  /**Liste des changement de position du lingot au fil du temps */
+  mouvements: Mouvement[];
 }
 
-export type ZoneDocument = HydratedDocument<ZoneRecord>;
-
-@Schema({ collection: 'zones-lingots', timestamps: true, versionKey: false })
-export class ZoneRecord implements Zone {
-  @Prop({ required: true, unique: true, index: true })
-  id: number;
-
-  @Prop({ required: true })
-  nom: string;
-
-  @Prop({ required: true, unique: true })
-  code: string;
-
-  @Prop({ required: true, enum: [...couleursZoneAutorisees] })
-  couleur: string;
-}
-export const ZoneSchema = SchemaFactory.createForClass(ZoneRecord);
-
-@Schema({ _id: false })
-export class AnalyseLingot {
-  @Prop({ required: true })
-  al: number;
-
-  @Prop({ required: true })
-  fe: number;
-
-  @Prop({ required: true })
-  pb: number;
-}
-export const AnalyseLingotSchema = SchemaFactory.createForClass(AnalyseLingot);
-
-export interface LigneReceptionLingot {
-  id?: string;
-  numero: number;
-  numeroLingotCoulee: string;
-  typeLingot: string;
-  poids: number | null;
-}
-
-export type LigneReceptionLingotDocument =
-  HydratedDocument<LigneReceptionLingotRecord>;
-
-@Schema({ collection: 'lignes-reception-lingots', timestamps: true })
-export class LigneReceptionLingotRecord implements LigneReceptionLingot {
+@Schema({
+  collection: 'fournisseurs-lingots',
+  timestamps: true,
+  versionKey: false,
+})
+export class FournisseurRecord implements Fournisseur {
   @Prop({ unique: true, sparse: true, index: true })
   id?: string;
 
   @Prop({ required: true })
-  numero: number;
+  nom: string;
 
   @Prop({ required: true })
-  numeroLingotCoulee: string;
-
-  @Prop({ required: true })
-  typeLingot: string;
-
-  @Prop({ type: Number, default: null })
-  poids: number | null;
+  code: string;
 }
-export const LigneReceptionLingotSchema = SchemaFactory.createForClass(
-  LigneReceptionLingotRecord,
-);
+export const FournisseurSchema =
+  SchemaFactory.createForClass(FournisseurRecord);
+
+export interface Fournisseur {
+  id?: string;
+  nom: string;
+  code: string;
+}
+
+@Schema({
+  collection: 'taux-aluminium-lingots',
+  timestamps: true,
+  versionKey: false,
+})
+export class TauxAluminiumRecord implements TauxAluminium {
+  @Prop({ unique: true, sparse: true, index: true })
+  id?: string;
+
+  @Prop({ required: true })
+  nom: string;
+
+  @Prop({ required: true })
+  couleur: string;
+}
+export const TauxAluminiumSchema =
+  SchemaFactory.createForClass(TauxAluminiumRecord);
+
+export interface TauxAluminium {
+  id?: string;
+  nom: string;
+  couleur: string;
+}
+
+@Schema({
+  collection: 'positions-lingots',
+  timestamps: true,
+  versionKey: false,
+})
+export class PositionRecord implements Position {
+  @Prop({ unique: true, sparse: true, index: true })
+  id?: string;
+
+  @Prop({ required: true })
+  code: string;
+
+  @Prop({ required: true })
+  nom: string;
+}
+export const PositionSchema = SchemaFactory.createForClass(PositionRecord);
 
 @Schema({ _id: false })
-export class LigneReceptionIntegree implements LigneReceptionLingot {
-  @Prop({ required: true })
-  numero: number;
+export class MouvementRecord implements Mouvement {
+  @Prop({ unique: true, sparse: true, index: true })
+  id?: string;
 
-  @Prop({ required: true })
-  numeroLingotCoulee: string;
+  @Prop({ required: true, type: Date })
+  date: Date;
 
-  @Prop({ required: true })
-  typeLingot: string;
+  @Prop({ type: OperateurSchema, required: true })
+  operateur: Operateur;
 
-  @Prop({ type: Number, default: null })
-  poids: number | null;
+  @Prop({ type: PositionSchema, required: true })
+  position: Position;
 }
-export const LigneReceptionIntegreeSchema = SchemaFactory.createForClass(
-  LigneReceptionIntegree,
-);
+export const MouvementSchema = SchemaFactory.createForClass(MouvementRecord);
 
-export interface ReceptionLingot {
-  id: string;
-  codeFournisseur: string;
-  numeroCoulee: string;
-  dateReception: Date;
-  analyseFournisseur: AnalyseLingot;
-  lignesReception: LigneReceptionLingot[];
-}
-
-export type ReceptionLingotDocument = HydratedDocument<ReceptionLingotRecord>;
-
-@Schema({ collection: 'receptions-lingots', timestamps: true })
-export class ReceptionLingotRecord implements ReceptionLingot {
+@Schema({ collection: 'lingots', timestamps: true, versionKey: false })
+export class LingotRecord implements Lingot {
   @Prop({ required: true, unique: true, index: true })
   id: string;
 
-  @Prop({ required: true })
-  codeFournisseur: string;
+  @Prop({ required: true, unique: true, index: true })
+  codeQR: string;
+
+  @Prop({ type: FournisseurSchema, required: true })
+  fournisseur: Fournisseur;
 
   @Prop({ required: true, index: true })
   numeroCoulee: string;
 
-  @Prop({ required: true, type: Date })
-  dateReception: Date;
-
-  @Prop({ type: AnalyseLingotSchema, required: true })
-  analyseFournisseur: AnalyseLingot;
-
-  @Prop({ type: [LigneReceptionIntegreeSchema], required: true })
-  lignesReception: LigneReceptionLingot[];
-}
-export const ReceptionLingotSchema = SchemaFactory.createForClass(
-  ReceptionLingotRecord,
-);
-
-export interface LingotStock {
-  id: string;
-  poids: number;
-  fournisseur: string;
-  numeroCoulee: string;
-  valide: boolean;
+  @Prop({ required: true, min: 0 })
   numeroLingot: number;
-  alFournisseur: number;
-  alArcelor: number;
-  dateReception: Date;
-  type: TypeLingot;
-  preparation?: string;
-}
-
-export type LingotStockDocument = HydratedDocument<LingotStockRecord>;
-
-@Schema({ collection: 'lingots-stock', timestamps: true, versionKey: false })
-export class LingotStockRecord implements LingotStock {
-  @Prop({ required: true, unique: true, index: true })
-  id: string;
 
   @Prop({ required: true, min: 0 })
   poids: number;
-
-  @Prop({ required: true })
-  fournisseur: string;
-
-  @Prop({ required: true, index: true })
-  numeroCoulee: string;
-
-  @Prop({ required: true, default: false })
-  valide: boolean;
-
-  @Prop({ required: true })
-  numeroLingot: number;
-
-  @Prop({ required: true })
-  alFournisseur: number;
-
-  @Prop({ required: true })
-  alArcelor: number;
-
-  @Prop({ required: true, type: Date })
-  dateReception: Date;
 
   @Prop({ required: true, enum: ['B', 'OB', 'VB', 'BB', 'N'] })
   type: TypeLingot;
 
-  @Prop()
-  preparation?: string;
-}
-export const LingotStockSchema =
-  SchemaFactory.createForClass(LingotStockRecord);
+  @Prop({ type: TauxAluminiumSchema, required: true })
+  tauxAluminium: TauxAluminium;
 
-export interface LivraisonFournisseur {
+  @Prop({ required: true, type: Date })
+  dateReception: Date;
+
+  @Prop({ required: true })
+  reference: string;
+
+  @Prop({ type: PositionSchema, required: true })
+  positionActuelle: Position;
+
+  @Prop({ type: [MouvementSchema], default: [] })
+  mouvements: Mouvement[];
+}
+export const LingotSchema = SchemaFactory.createForClass(LingotRecord);
+
+export interface Inventaire {
   id?: string;
-  dateLivraison: Date;
-  fournisseur: string;
-  numeroCoulee: string;
-  analyseFournisseur: AnalyseLingot;
-  analyseArcelor: AnalyseLingot;
-  nbLingots: number;
-  tonnage: number;
-  type: TypeLingot;
-  couleeValidee: boolean;
+  date: Date;
+  operateur: Operateur;
+  lingots: Lingot[];
 }
 
-export type LivraisonFournisseurDocument =
-  HydratedDocument<LivraisonFournisseurRecord>;
-
-@Schema({ collection: 'livraisons-fournisseurs', timestamps: true })
-export class LivraisonFournisseurRecord implements LivraisonFournisseur {
+@Schema({
+  collection: 'inventaires-lingots',
+  timestamps: true,
+  versionKey: false,
+})
+export class InventaireRecord implements Inventaire {
   @Prop({ unique: true, sparse: true, index: true })
   id?: string;
 
   @Prop({ required: true, type: Date })
-  dateLivraison: Date;
+  date: Date;
 
-  @Prop({ required: true })
-  fournisseur: string;
+  @Prop({ type: OperateurSchema, required: true })
+  operateur: Operateur;
 
-  @Prop({ required: true, index: true })
-  numeroCoulee: string;
-
-  @Prop({ type: AnalyseLingotSchema, required: true })
-  analyseFournisseur: AnalyseLingot;
-
-  @Prop({ type: AnalyseLingotSchema, required: true })
-  analyseArcelor: AnalyseLingot;
-
-  @Prop({ required: true, min: 0 })
-  nbLingots: number;
-
-  @Prop({ required: true, min: 0 })
-  tonnage: number;
-
-  @Prop({ required: true, enum: ['B', 'OB', 'VB', 'BB', 'N'] })
-  type: TypeLingot;
-
-  @Prop({ required: true, default: false })
-  couleeValidee: boolean;
+  @Prop({ type: [LingotSchema], default: [] })
+  lingots: Lingot[];
 }
-export const LivraisonFournisseurSchema = SchemaFactory.createForClass(
-  LivraisonFournisseurRecord,
-);
+export const InventaireSchema = SchemaFactory.createForClass(InventaireRecord);
 
-export interface EtatStockType {
-  nombre: number;
-  poids: number;
-}
-
-@Schema({ _id: false })
-export class EtatStockTypeRecord implements EtatStockType {
-  @Prop({ required: true })
-  nombre: number;
-
-  @Prop({ required: true })
-  poids: number;
-}
-export const EtatStockTypeSchema =
-  SchemaFactory.createForClass(EtatStockTypeRecord);
-
-@Schema({ _id: false })
-export class EtatStockParType {
-  @Prop({ type: EtatStockTypeSchema })
-  B?: EtatStockType;
-
-  @Prop({ type: EtatStockTypeSchema })
-  OB?: EtatStockType;
-
-  @Prop({ type: EtatStockTypeSchema })
-  VB?: EtatStockType;
-
-  @Prop({ type: EtatStockTypeSchema })
-  BB?: EtatStockType;
-
-  @Prop({ type: EtatStockTypeSchema })
-  N?: EtatStockType;
-}
-export const EtatStockParTypeSchema =
-  SchemaFactory.createForClass(EtatStockParType);
-
-export interface EtatStockJournalier {
+export interface Matte {
   id?: string;
   date: Date;
-  parType: Partial<Record<TypeLingot, EtatStockType>>;
-  mattes: number;
+  quantite: number;
+  action: string; // ajout ou suppression
+  nouveauTotal: number;
+  operateur: Operateur;
 }
 
-export type EtatStockJournalierDocument =
-  HydratedDocument<EtatStockJournalierRecord>;
-
-@Schema({ collection: 'etats-stock-journaliers', timestamps: true })
-export class EtatStockJournalierRecord implements EtatStockJournalier {
+@Schema({ collection: 'matte-lingots', timestamps: true, versionKey: false })
+export class MatteRecord implements Matte {
   @Prop({ unique: true, sparse: true, index: true })
   id?: string;
 
-  @Prop({ required: true, type: Date, index: true })
+  @Prop({ required: true, type: Date })
   date: Date;
-
-  @Prop({ type: EtatStockParTypeSchema, required: true })
-  parType: Partial<Record<TypeLingot, EtatStockType>>;
-
-  @Prop({ required: true, default: 0 })
-  mattes: number;
-}
-export const EtatStockJournalierSchema = SchemaFactory.createForClass(
-  EtatStockJournalierRecord,
-);
-
-export interface MouvementLingot {
-  id?: string;
-  date: Date;
-  poste: string;
-  type: TypeLingot | 'MATTE';
-  numeroCoulee?: string;
-  numeroLingot?: number;
-  poids: number;
-  al?: number;
-  table?: string;
-  creuset: string;
-}
-
-export type MouvementLingotDocument = HydratedDocument<MouvementLingotRecord>;
-
-@Schema({ collection: 'mouvements-lingots', timestamps: true })
-export class MouvementLingotRecord implements MouvementLingot {
-  @Prop({ unique: true, sparse: true, index: true })
-  id?: string;
-
-  @Prop({ required: true, type: Date, index: true })
-  date: Date;
-
-  @Prop({ required: true })
-  poste: string;
-
-  @Prop({ required: true, enum: ['B', 'OB', 'VB', 'BB', 'N', 'MATTE'] })
-  type: TypeLingot | 'MATTE';
-
-  @Prop()
-  numeroCoulee?: string;
-
-  @Prop()
-  numeroLingot?: number;
 
   @Prop({ required: true, min: 0 })
-  poids: number;
+  quantite: number;
 
-  @Prop()
-  al?: number;
+  @Prop({ required: true, enum: ['ajout', 'suppression'] })
+  action: string;
 
-  @Prop()
-  table?: string;
+  @Prop({ required: true, min: 0 })
+  nouveauTotal: number;
 
-  @Prop({ required: true })
-  creuset: string;
+  @Prop({ type: OperateurSchema, required: true })
+  operateur: Operateur;
 }
-export const MouvementLingotSchema = SchemaFactory.createForClass(
-  MouvementLingotRecord,
-);
+export const MatteSchema = SchemaFactory.createForClass(MatteRecord);
 
-export interface BilanLingotsJour {
+export interface Position {
+  id?: string;
+  code: string;
+  nom: string;
+}
+
+export interface Mouvement {
   id?: string;
   date: Date;
-  pot: number;
-  alM: number;
-  alA: number;
-  alN: number;
-  alJ: number;
-  typeBc: number;
-  typeJ: number;
-  typeO: number;
-  typeV: number;
-  typeB: number;
-  typeN: number;
-  mattes: number;
+  operateur: Operateur;
+  position: Position;
 }
-
-export type BilanLingotsJourDocument = HydratedDocument<BilanLingotsJourRecord>;
-
-@Schema({ collection: 'bilans-lingots-jours', timestamps: true })
-export class BilanLingotsJourRecord implements BilanLingotsJour {
-  @Prop({ unique: true, sparse: true, index: true })
-  id?: string;
-
-  @Prop({ required: true, type: Date, index: true })
-  date: Date;
-
-  @Prop({ required: true })
-  pot: number;
-
-  @Prop({ required: true })
-  alM: number;
-
-  @Prop({ required: true })
-  alA: number;
-
-  @Prop({ required: true })
-  alN: number;
-
-  @Prop({ required: true })
-  alJ: number;
-
-  @Prop({ required: true })
-  typeBc: number;
-
-  @Prop({ required: true })
-  typeJ: number;
-
-  @Prop({ required: true })
-  typeO: number;
-
-  @Prop({ required: true })
-  typeV: number;
-
-  @Prop({ required: true })
-  typeB: number;
-
-  @Prop({ required: true })
-  typeN: number;
-
-  @Prop({ required: true })
-  mattes: number;
-}
-export const BilanLingotsJourSchema = SchemaFactory.createForClass(
-  BilanLingotsJourRecord,
-);

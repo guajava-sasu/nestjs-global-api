@@ -10,8 +10,8 @@ import {
   IsString,
   ValidateNested,
 } from 'class-validator';
-import type { TypeLingot } from '../entities/lingot.entity.js';
-import { couleursZoneAutorisees } from '../entities/lingot.entity.js';
+import type { TypeLingot } from '../entities/lingot.entity.old.js';
+import { couleursZoneAutorisees } from '../entities/lingot.entity.old.js';
 
 const typesLingot: TypeLingot[] = ['B', 'OB', 'VB', 'BB', 'N'];
 

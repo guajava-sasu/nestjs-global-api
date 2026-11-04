@@ -1,6 +1,22 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import {
+  FournisseurRecord,
+  FournisseurSchema,
+  InventaireRecord,
+  InventaireSchema,
+  LingotRecord,
+  LingotSchema,
+  MatteRecord,
+  MatteSchema,
+  OperateurRecord,
+  OperateurSchema,
+  PositionRecord,
+  PositionSchema,
+  TauxAluminiumRecord,
+  TauxAluminiumSchema,
+} from './entities/lingot.entity.js';
+import {
   BilanLingotsJourRecord,
   BilanLingotsJourSchema,
   EtatStockJournalierRecord,
@@ -19,13 +35,20 @@ import {
   ReceptionLingotSchema,
   ZoneRecord,
   ZoneSchema,
-} from './entities/lingot.entity.js';
+} from './entities/lingot.entity.old.js';
 import { LingotsController } from './lingots.controller.js';
 import { LingotsService } from './lingots.service.js';
 
 @Module({
   imports: [
     MongooseModule.forFeature([
+      { name: LingotRecord.name, schema: LingotSchema },
+      { name: OperateurRecord.name, schema: OperateurSchema },
+      { name: FournisseurRecord.name, schema: FournisseurSchema },
+      { name: TauxAluminiumRecord.name, schema: TauxAluminiumSchema },
+      { name: PositionRecord.name, schema: PositionSchema },
+      { name: InventaireRecord.name, schema: InventaireSchema },
+      { name: MatteRecord.name, schema: MatteSchema },
       { name: LingotStockRecord.name, schema: LingotStockSchema },
       {
         name: LivraisonFournisseurRecord.name,

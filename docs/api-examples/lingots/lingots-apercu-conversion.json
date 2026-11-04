@@ -1,0 +1,94 @@
+[
+  {
+    "id": "NYRSTAR-3031-178425-019",
+    "codeQR": "A_GENERER-NYRSTAR-3031-178425-019",
+    "fournisseur": {
+      "nom": "NON RENSEIGNE",
+      "code": "NON RENSEIGNE"
+    },
+    "numeroCoulee": "178425",
+    "numeroLingot": 19,
+    "poids": 1922,
+    "type": "OB",
+    "tauxAluminium": {
+      "nom": "NON RENSEIGNE",
+      "couleur": "inconnue"
+    },
+    "dateReception": "2025-10-15T11:07:00.000Z",
+    "reference": "NYRSTAR-3031-178425-019",
+    "positionActuelle": {
+      "code": "Stock",
+      "nom": "En stock"
+    },
+    "mouvements": []
+  },
+  {
+    "id": "NYRSTAR-3031-178425-020",
+    "codeQR": "A_GENERER-NYRSTAR-3031-178425-020",
+    "fournisseur": {
+      "nom": "NON RENSEIGNE",
+      "code": "NON RENSEIGNE"
+    },
+    "numeroCoulee": "178425",
+    "numeroLingot": 20,
+    "poids": 1940,
+    "type": "OB",
+    "tauxAluminium": {
+      "nom": "NON RENSEIGNE",
+      "couleur": "inconnue"
+    },
+    "dateReception": "2025-10-15T11:07:00.000Z",
+    "reference": "NYRSTAR-3031-178425-020",
+    "positionActuelle": {
+      "code": "Stock",
+      "nom": "En stock"
+    },
+    "mouvements": []
+  },
+  {
+    "id": "NYRSTAR-3031-178425-021",
+    "codeQR": "A_GENERER-NYRSTAR-3031-178425-021",
+    "fournisseur": {
+      "nom": "NON RENSEIGNE",
+      "code": "NON RENSEIGNE"
+    },
+    "numeroCoulee": "178425",
+    "numeroLingot": 21,
+    "poids": 1897,
+    "type": "OB",
+    "tauxAluminium": {
+      "nom": "NON RENSEIGNE",
+      "couleur": "inconnue"
+    },
+    "dateReception": "2025-10-15T11:07:00.000Z",
+    "reference": "NYRSTAR-3031-178425-021",
+    "positionActuelle": {
+      "code": "Stock",
+      "nom": "En stock"
+    },
+    "mouvements": []
+  },
+  {
+    "id": "NYRSTAR-3031-178425-025",
+    "codeQR": "A_GENERER-NYRSTAR-3031-178425-025",
+    "fournisseur": {
+      "nom": "NON RENSEIGNE",
+      "code": "NON RENSEIGNE"
+    },
+    "numeroCoulee": "178425",
+    "numeroLingot": 25,
+    "poids": 1904,
+    "type": "OB",
+    "tauxAluminium": {
+      "nom": "NON RENSEIGNE",
+      "couleur": "inconnue"
+    },
+    "dateReception": "2025-10-15T11:07:00.000Z",
+    "reference": "NYRSTAR-3031-178425-025",
+    "positionActuelle": {
+      "code": "Stock",
+      "nom": "En stock"
+    },
+    "mouvements": []
+  }
+]

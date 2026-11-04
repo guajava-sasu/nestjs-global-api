@@ -40,7 +40,7 @@ import {
   ReceptionLingotRecord,
   ZoneDocument,
   ZoneRecord,
-} from './entities/lingot.entity.js';
+} from './entities/lingot.entity.old.js';
 
 function idFilter(id: string) {
   return Types.ObjectId.isValid(id)

@@ -10,7 +10,7 @@ import type {
   ReceptionLingot,
   TypeLingot,
   Zone,
-} from './entities/lingot.entity.js';
+} from './entities/lingot.entity.old.js';
 import {
   BilanLingotsJourRecord,
   BilanLingotsJourSchema,
@@ -31,7 +31,7 @@ import {
   ReceptionLingotSchema,
   ZoneRecord,
   ZoneSchema,
-} from './entities/lingot.entity.js';
+} from './entities/lingot.entity.old.js';
 import { fournisseursConnus } from './lingot-stock-conversion.js';
 const uri =
   process.env.MONGODB_URI ?? 'mongodb://localhost:27017/nestjs-global-api';
