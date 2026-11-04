@@ -19,6 +19,7 @@
     "db:seed:lingots": "npm run build && node dist/lingots/seed-lingots.js",
     "db:seed:lingots-csv": "npm run build && node dist/lingots/seed-lingots-csv.js",
     "db:seed:lingot-references": "npm run build && node dist/lingots/seed-lingot-references.js",
+    "db:seed:gestion-lingots": "npm run build && node dist/lingots/seed-lingot-references.js && node dist/lingots/seed-lingots-csv.js",
     "db:convert:lingots-stock": "npm run build && node dist/lingots/convert-lingots-stock.js",
     "db:generate:bobines-filles": "npm run build && node dist/fiche-bobine-fille/generate-bobines-filles.js",
     "lint": "oxlint src/ test/",

@@ -1,5 +1,5 @@
-import { readFile } from 'node:fs/promises';
 import mongoose from 'mongoose';
+import { readFile } from 'node:fs/promises';
 import type { Lingot, TypeLingot } from './entities/lingot.entity.js';
 import { LingotRecord, LingotSchema } from './entities/lingot.entity.js';
 import {
@@ -7,6 +7,7 @@ import {
   retirerCentiemes,
   type LegacyLingotStockReel,
 } from './lingot-stock-conversion.js';
+import { LINGOTS_DATABASE_NAME } from './lingots.constants.js';
 
 const uri =
   process.env.MONGODB_URI ?? 'mongodb://localhost:27017/nestjs-global-api';
@@ -23,21 +24,23 @@ const colonnesRequises = [
 function nombreCsv(valeur: string, colonne: string, ligne: number): number {
   const nombre = Number(valeur);
   if (!Number.isFinite(nombre)) {
-    throw new Error(`Valeur numerique invalide pour ${colonne}, ligne ${ligne}.`);
+    throw new Error(
+      `Valeur numerique invalide pour ${colonne}, ligne ${ligne}.`,
+    );
   }
   return nombre;
 }
 
 async function lireCsv(): Promise<LegacyLingotStockReel[]> {
   const contenu = await readFile(
-    new URL(
-      '../../docs/api-examples/lingots/T_LGT_STK.csv',
-      import.meta.url,
-    ),
+    new URL('../../docs/api-examples/lingots/T_LGT_STK.csv', import.meta.url),
     'utf8',
   );
   const lignes = contenu.replace(/^\uFEFF/, '').split(/\r?\n/);
-  const entetes = lignes.shift()?.split(';').map((entete) => entete.trim());
+  const entetes = lignes
+    .shift()
+    ?.split(';')
+    .map((entete) => entete.trim());
 
   if (!entetes) throw new Error('Le CSV est vide.');
 
@@ -98,11 +101,7 @@ async function lireCsv(): Promise<LegacyLingotStockReel[]> {
       ...(dateBain ? { D_LGT_STK_DAT_BAIN: dateBain } : {}),
       ...(pot
         ? {
-            D_LGT_STK_POT: nombreCsv(
-              pot,
-              'D_LGT_STK_POT',
-              numeroLigne,
-            ),
+            D_LGT_STK_POT: nombreCsv(pot, 'D_LGT_STK_POT', numeroLigne),
           }
         : {}),
       ...(preparation ? { D_LGT_STK_PREPA: preparation } : {}),
@@ -132,9 +131,7 @@ function convertirLingot(source: LegacyLingotStockReel): Lingot {
     poids: source.D_LGT_STK_PDS,
     type,
     tauxAluminium: { nom: 'NON RENSEIGNE', couleur: 'inconnue' },
-    dateReception: parserDateParis(
-      retirerCentiemes(source.I_LGT_FOU_DATE),
-    ),
+    dateReception: parserDateParis(retirerCentiemes(source.I_LGT_FOU_DATE)),
     reference: id,
     positionActuelle: { code: 'Stock', nom: 'En stock' },
     mouvements: [],
@@ -147,12 +144,14 @@ async function seedLingotsCsv() {
   const ids = new Set<string>();
   for (const lingot of lingots) {
     if (ids.has(lingot.id)) {
-      throw new Error(`Identifiant lingot duplique dans le CSV : ${lingot.id}.`);
+      throw new Error(
+        `Identifiant lingot duplique dans le CSV : ${lingot.id}.`,
+      );
     }
     ids.add(lingot.id);
   }
 
-  await mongoose.connect(uri);
+  await mongoose.connect(uri, { dbName: LINGOTS_DATABASE_NAME });
   const LingotModel = mongoose.model(LingotRecord.name, LingotSchema);
   const resultats = await Promise.all(
     lingots.map((lingot) =>

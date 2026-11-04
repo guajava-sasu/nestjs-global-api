@@ -7,6 +7,7 @@ import {
   TauxAluminiumRecord,
   TauxAluminiumSchema,
 } from './entities/lingot.entity.js';
+import { LINGOTS_DATABASE_NAME } from './lingots.constants.js';
 
 const uri =
   process.env.MONGODB_URI ?? 'mongodb://localhost:27017/nestjs-global-api';
@@ -45,7 +46,7 @@ const tauxAluminium = [
 ];
 
 async function seedLingotReferences() {
-  await mongoose.connect(uri);
+  await mongoose.connect(uri, { dbName: LINGOTS_DATABASE_NAME });
 
   const FournisseurModel = mongoose.model(
     FournisseurRecord.name,

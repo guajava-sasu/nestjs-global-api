@@ -2,7 +2,6 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument } from 'mongoose';
 
 export type TypeLingot = 'B' | 'OB' | 'VB' | 'BB' | 'N';
-
 export type LingotDocument = HydratedDocument<LingotRecord>;
 export type InventaireDocument = HydratedDocument<InventaireRecord>;
 export type MatteDocument = HydratedDocument<MatteRecord>;

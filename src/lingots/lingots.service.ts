@@ -1,46 +1,36 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
+import { randomUUID } from 'node:crypto';
 import {
-  CreateBilanLingotsJourDto,
-  CreateEtatStockJournalierDto,
-  CreateLigneReceptionLingotDto,
-  CreateLingotStockDto,
-  CreateLivraisonFournisseurDto,
-  CreateMouvementLingotDto,
-  CreateOperateurTrackerDto,
-  CreateReceptionLingotDto,
-  CreateZoneDto,
-  UpdateBilanLingotsJourDto,
-  UpdateEtatStockJournalierDto,
-  UpdateLigneReceptionLingotDto,
-  UpdateLingotStockDto,
-  UpdateLivraisonFournisseurDto,
-  UpdateMouvementLingotDto,
-  UpdateOperateurTrackerDto,
-  UpdateReceptionLingotDto,
-  UpdateZoneDto,
-} from './dto/lingots.dto.js';
+  CreateFournisseurDto,
+  CreateInventaireDto,
+  CreateLingotDto,
+  CreateMatteDto,
+  CreateMouvementDto,
+  CreateOperateurDto,
+  CreatePositionDto,
+  CreateTauxAluminiumDto,
+  UpdateFournisseurDto,
+  UpdateInventaireDto,
+  UpdateLingotDto,
+  UpdateMatteDto,
+  UpdateMouvementDto,
+  UpdateOperateurDto,
+  UpdatePositionDto,
+  UpdateTauxAluminiumDto,
+} from './dto/lingot.dto.js';
 import {
-  BilanLingotsJourDocument,
-  BilanLingotsJourRecord,
-  EtatStockJournalierDocument,
-  EtatStockJournalierRecord,
-  LigneReceptionLingotDocument,
-  LigneReceptionLingotRecord,
-  LingotStockDocument,
-  LingotStockRecord,
-  LivraisonFournisseurDocument,
-  LivraisonFournisseurRecord,
-  MouvementLingotDocument,
-  MouvementLingotRecord,
-  OperateurTrackerDocument,
-  OperateurTrackerRecord,
-  ReceptionLingotDocument,
-  ReceptionLingotRecord,
-  ZoneDocument,
-  ZoneRecord,
-} from './entities/lingot.entity.old.js';
+  FournisseurRecord,
+  InventaireRecord,
+  LingotRecord,
+  MatteRecord,
+  Mouvement,
+  OperateurRecord,
+  PositionRecord,
+  TauxAluminiumRecord,
+} from './entities/lingot.entity.js';
+import { LINGOTS_CONNECTION_NAME } from './lingots.constants.js';
 
 function idFilter(id: string) {
   return Types.ObjectId.isValid(id)
@@ -51,262 +41,260 @@ function idFilter(id: string) {
 @Injectable()
 export class LingotsService {
   constructor(
-    @InjectModel(LingotStockRecord.name)
-    private readonly lingots: Model<LingotStockDocument>,
-    @InjectModel(LivraisonFournisseurRecord.name)
-    private readonly livraisons: Model<LivraisonFournisseurDocument>,
-    @InjectModel(LigneReceptionLingotRecord.name)
-    private readonly lignesReception: Model<LigneReceptionLingotDocument>,
-    @InjectModel(ReceptionLingotRecord.name)
-    private readonly receptions: Model<ReceptionLingotDocument>,
-    @InjectModel(EtatStockJournalierRecord.name)
-    private readonly etatsStock: Model<EtatStockJournalierDocument>,
-    @InjectModel(MouvementLingotRecord.name)
-    private readonly mouvements: Model<MouvementLingotDocument>,
-    @InjectModel(BilanLingotsJourRecord.name)
-    private readonly bilans: Model<BilanLingotsJourDocument>,
-    @InjectModel(OperateurTrackerRecord.name)
-    private readonly operateursTracker: Model<OperateurTrackerDocument>,
-    @InjectModel(ZoneRecord.name)
-    private readonly zones: Model<ZoneDocument>,
+    @InjectModel(LingotRecord.name, LINGOTS_CONNECTION_NAME)
+    private readonly lingots: Model<LingotRecord>,
+    @InjectModel(OperateurRecord.name, LINGOTS_CONNECTION_NAME)
+    private readonly operateurs: Model<OperateurRecord>,
+    @InjectModel(FournisseurRecord.name, LINGOTS_CONNECTION_NAME)
+    private readonly fournisseurs: Model<FournisseurRecord>,
+    @InjectModel(TauxAluminiumRecord.name, LINGOTS_CONNECTION_NAME)
+    private readonly tauxAluminium: Model<TauxAluminiumRecord>,
+    @InjectModel(PositionRecord.name, LINGOTS_CONNECTION_NAME)
+    private readonly positions: Model<PositionRecord>,
+    @InjectModel(InventaireRecord.name, LINGOTS_CONNECTION_NAME)
+    private readonly inventaires: Model<InventaireRecord>,
+    @InjectModel(MatteRecord.name, LINGOTS_CONNECTION_NAME)
+    private readonly mattes: Model<MatteRecord>,
   ) {}
 
-  createOperateurTracker(data: CreateOperateurTrackerDto) {
-    return this.operateursTracker.create(data);
+  createOperateur(data: CreateOperateurDto) {
+    return this.operateurs.create(data);
   }
-  findOperateursTracker() {
-    return this.operateursTracker.find().exec();
+  findOperateurs() {
+    return this.operateurs.find().sort({ id: 1 }).exec();
   }
-  async findOperateurTracker(id: string) {
-    const record = await this.operateursTracker.findOne({ id }).exec();
-    if (!record) throw new NotFoundException('Opérateur Tracker introuvable');
-    return record;
+  async findOperateur(id: string) {
+    return this.findRecord(this.operateurs, id, 'Opérateur introuvable');
   }
-  async updateOperateurTracker(id: string, data: UpdateOperateurTrackerDto) {
-    const record = await this.operateursTracker
-      .findOneAndUpdate({ id }, data, { new: true, runValidators: true })
-      .exec();
-    if (!record) throw new NotFoundException('Opérateur Tracker introuvable');
-    return record;
+  async updateOperateur(id: string, data: UpdateOperateurDto) {
+    return this.updateRecord(
+      this.operateurs,
+      id,
+      data,
+      'Opérateur introuvable',
+    );
   }
-  async removeOperateurTracker(id: string) {
-    const record = await this.operateursTracker.findOneAndDelete({ id }).exec();
-    if (!record) throw new NotFoundException('Opérateur Tracker introuvable');
-    return record;
+  async removeOperateur(id: string) {
+    return this.removeRecord(this.operateurs, id, 'Opérateur introuvable');
   }
 
-  createZone(data: CreateZoneDto) {
-    return this.zones.create(data);
+  createFournisseur(data: CreateFournisseurDto) {
+    return this.fournisseurs.create({ ...data, id: data.id ?? randomUUID() });
   }
-  findZones() {
-    return this.zones.find().sort({ id: 1 }).exec();
+  findFournisseurs() {
+    return this.fournisseurs.find().sort({ nom: 1 }).exec();
   }
-  async findZone(id: number) {
-    const record = await this.zones.findOne({ id }).exec();
-    if (!record) throw new NotFoundException('Zone introuvable');
-    return record;
+  async findFournisseur(id: string) {
+    return this.findRecord(this.fournisseurs, id, 'Fournisseur introuvable');
   }
-  async updateZone(id: number, data: UpdateZoneDto) {
-    const record = await this.zones
-      .findOneAndUpdate({ id }, data, { new: true, runValidators: true })
-      .exec();
-    if (!record) throw new NotFoundException('Zone introuvable');
-    return record;
+  async updateFournisseur(id: string, data: UpdateFournisseurDto) {
+    return this.updateRecord(
+      this.fournisseurs,
+      id,
+      data,
+      'Fournisseur introuvable',
+    );
   }
-  async removeZone(id: number) {
-    const record = await this.zones.findOneAndDelete({ id }).exec();
-    if (!record) throw new NotFoundException('Zone introuvable');
-    return record;
+  async removeFournisseur(id: string) {
+    return this.removeRecord(this.fournisseurs, id, 'Fournisseur introuvable');
   }
 
-  createLingot(data: CreateLingotStockDto) {
+  createTauxAluminium(data: CreateTauxAluminiumDto) {
+    return this.tauxAluminium.create({ ...data, id: data.id ?? randomUUID() });
+  }
+  findTauxAluminium() {
+    return this.tauxAluminium.find().sort({ nom: 1 }).exec();
+  }
+  async findTauxAluminiumById(id: string) {
+    return this.findRecord(
+      this.tauxAluminium,
+      id,
+      'Taux d’aluminium introuvable',
+    );
+  }
+  async updateTauxAluminium(id: string, data: UpdateTauxAluminiumDto) {
+    return this.updateRecord(
+      this.tauxAluminium,
+      id,
+      data,
+      'Taux d’aluminium introuvable',
+    );
+  }
+  async removeTauxAluminium(id: string) {
+    return this.removeRecord(
+      this.tauxAluminium,
+      id,
+      'Taux d’aluminium introuvable',
+    );
+  }
+
+  createPosition(data: CreatePositionDto) {
+    return this.positions.create({ ...data, id: data.id ?? randomUUID() });
+  }
+  findPositions() {
+    return this.positions.find().sort({ nom: 1 }).exec();
+  }
+  async findPosition(id: string) {
+    return this.findRecord(this.positions, id, 'Position introuvable');
+  }
+  async updatePosition(id: string, data: UpdatePositionDto) {
+    return this.updateRecord(this.positions, id, data, 'Position introuvable');
+  }
+  async removePosition(id: string) {
+    return this.removeRecord(this.positions, id, 'Position introuvable');
+  }
+
+  createLingot(data: CreateLingotDto) {
     return this.lingots.create(data);
   }
   findLingots() {
-    return this.lingots.find().exec();
+    return this.lingots.find().sort({ id: 1 }).exec();
   }
   async findLingot(id: string) {
-    const record = await this.lingots.findOne({ id }).exec();
-    if (!record) throw new NotFoundException(`Lingot "${id}" introuvable`);
-    return record;
+    return this.findRecord(this.lingots, id, `Lingot "${id}" introuvable`);
   }
-  async updateLingot(id: string, data: UpdateLingotStockDto) {
-    const record = await this.lingots
-      .findOneAndUpdate({ id }, data, { new: true, runValidators: true })
-      .exec();
-    if (!record) throw new NotFoundException(`Lingot "${id}" introuvable`);
-    return record;
+  async updateLingot(id: string, data: UpdateLingotDto) {
+    return this.updateRecord(
+      this.lingots,
+      id,
+      data,
+      `Lingot "${id}" introuvable`,
+    );
   }
   async removeLingot(id: string) {
-    const record = await this.lingots.findOneAndDelete({ id }).exec();
-    if (!record) throw new NotFoundException(`Lingot "${id}" introuvable`);
+    return this.removeRecord(this.lingots, id, `Lingot "${id}" introuvable`);
+  }
+
+  createInventaire(data: CreateInventaireDto) {
+    return this.inventaires.create({ ...data, id: data.id ?? randomUUID() });
+  }
+  findInventaires() {
+    return this.inventaires.find().sort({ date: -1 }).exec();
+  }
+  async findInventaire(id: string) {
+    return this.findRecord(this.inventaires, id, 'Inventaire introuvable');
+  }
+  async updateInventaire(id: string, data: UpdateInventaireDto) {
+    return this.updateRecord(
+      this.inventaires,
+      id,
+      data,
+      'Inventaire introuvable',
+    );
+  }
+  async removeInventaire(id: string) {
+    return this.removeRecord(this.inventaires, id, 'Inventaire introuvable');
+  }
+
+  createMatte(data: CreateMatteDto) {
+    return this.mattes.create({ ...data, id: data.id ?? randomUUID() });
+  }
+  findMattes() {
+    return this.mattes.find().sort({ date: -1 }).exec();
+  }
+  async findMatte(id: string) {
+    return this.findRecord(this.mattes, id, 'Mouvement de matte introuvable');
+  }
+  async updateMatte(id: string, data: UpdateMatteDto) {
+    return this.updateRecord(
+      this.mattes,
+      id,
+      data,
+      'Mouvement de matte introuvable',
+    );
+  }
+  async removeMatte(id: string) {
+    return this.removeRecord(this.mattes, id, 'Mouvement de matte introuvable');
+  }
+
+  async createMouvement(lingotId: string, data: CreateMouvementDto) {
+    const mouvement: Mouvement = { ...data, id: data.id ?? randomUUID() };
+    const lingot = await this.lingots
+      .findOneAndUpdate(
+        idFilter(lingotId),
+        { $push: { mouvements: mouvement } },
+        { new: true, runValidators: true },
+      )
+      .exec();
+    if (!lingot)
+      throw new NotFoundException(`Lingot "${lingotId}" introuvable`);
+    return lingot.mouvements.find((item) => item.id === mouvement.id);
+  }
+  async findMouvements(lingotId: string) {
+    return (await this.findLingot(lingotId)).mouvements;
+  }
+  async findMouvement(lingotId: string, mouvementId: string) {
+    const lingot = await this.findLingot(lingotId);
+    const mouvement = lingot.mouvements.find((item) => item.id === mouvementId);
+    if (!mouvement) throw new NotFoundException('Mouvement introuvable');
+    return mouvement;
+  }
+  async updateMouvement(
+    lingotId: string,
+    mouvementId: string,
+    data: UpdateMouvementDto,
+  ) {
+    const fields = Object.fromEntries(
+      Object.entries(data)
+        .filter(([key]) => key !== 'id')
+        .map(([key, value]) => [`mouvements.$.${key}`, value]),
+    );
+    if (Object.keys(fields).length === 0) {
+      return this.findMouvement(lingotId, mouvementId);
+    }
+
+    const lingot = await this.lingots
+      .findOneAndUpdate(
+        { ...idFilter(lingotId), 'mouvements.id': mouvementId },
+        { $set: fields },
+        { new: true, runValidators: true },
+      )
+      .exec();
+    if (!lingot) throw new NotFoundException('Mouvement introuvable');
+    return lingot.mouvements.find((item) => item.id === mouvementId);
+  }
+  async removeMouvement(lingotId: string, mouvementId: string) {
+    const mouvement = await this.findMouvement(lingotId, mouvementId);
+    const lingot = await this.lingots
+      .findOneAndUpdate(
+        { ...idFilter(lingotId), 'mouvements.id': mouvementId },
+        { $pull: { mouvements: { id: mouvementId } } },
+        { new: true },
+      )
+      .exec();
+    if (!lingot) throw new NotFoundException('Mouvement introuvable');
+    return mouvement;
+  }
+
+  private async findRecord<T>(model: Model<T>, id: string, message: string) {
+    const record = await model.findOne(idFilter(id)).exec();
+    if (!record) throw new NotFoundException(message);
     return record;
   }
 
-  createLivraison(data: CreateLivraisonFournisseurDto) {
-    return this.livraisons.create(data);
-  }
-  findLivraisons() {
-    return this.livraisons.find().exec();
-  }
-  async findLivraison(id: string) {
-    const record = await this.livraisons.findOne(idFilter(id)).exec();
-    if (!record) throw new NotFoundException('Livraison introuvable');
-    return record;
-  }
-  async updateLivraison(id: string, data: UpdateLivraisonFournisseurDto) {
-    const record = await this.livraisons
-      .findOneAndUpdate(idFilter(id), data, {
-        new: true,
-        runValidators: true,
-      })
+  private async updateRecord<T>(
+    model: Model<T>,
+    id: string,
+    data: object,
+    message: string,
+  ) {
+    const record = await model
+      .findOneAndUpdate(
+        idFilter(id),
+        { $set: data },
+        {
+          new: true,
+          runValidators: true,
+        },
+      )
       .exec();
-    if (!record) throw new NotFoundException('Livraison introuvable');
-    return record;
-  }
-  async removeLivraison(id: string) {
-    const record = await this.livraisons.findOneAndDelete(idFilter(id)).exec();
-    if (!record) throw new NotFoundException('Livraison introuvable');
+    if (!record) throw new NotFoundException(message);
     return record;
   }
 
-  createLigneReception(data: CreateLigneReceptionLingotDto) {
-    return this.lignesReception.create(data);
-  }
-  findLignesReception() {
-    return this.lignesReception.find().exec();
-  }
-  async findLigneReception(id: string) {
-    const record = await this.lignesReception.findOne(idFilter(id)).exec();
-    if (!record) throw new NotFoundException('Ligne de réception introuvable');
-    return record;
-  }
-  async updateLigneReception(id: string, data: UpdateLigneReceptionLingotDto) {
-    const record = await this.lignesReception
-      .findOneAndUpdate(idFilter(id), data, {
-        new: true,
-        runValidators: true,
-      })
-      .exec();
-    if (!record) throw new NotFoundException('Ligne de réception introuvable');
-    return record;
-  }
-  async removeLigneReception(id: string) {
-    const record = await this.lignesReception
-      .findOneAndDelete(idFilter(id))
-      .exec();
-    if (!record) throw new NotFoundException('Ligne de réception introuvable');
-    return record;
-  }
-
-  createReception(data: CreateReceptionLingotDto) {
-    return this.receptions.create(data);
-  }
-  findReceptions() {
-    return this.receptions.find().exec();
-  }
-  async findReception(id: string) {
-    const record = await this.receptions.findOne(idFilter(id)).exec();
-    if (!record)
-      throw new NotFoundException('Réception de lingots introuvable');
-    return record;
-  }
-  async updateReception(id: string, data: UpdateReceptionLingotDto) {
-    const record = await this.receptions
-      .findOneAndUpdate(idFilter(id), data, {
-        new: true,
-        runValidators: true,
-      })
-      .exec();
-    if (!record)
-      throw new NotFoundException('Réception de lingots introuvable');
-    return record;
-  }
-  async removeReception(id: string) {
-    const record = await this.receptions.findOneAndDelete(idFilter(id)).exec();
-    if (!record)
-      throw new NotFoundException('Réception de lingots introuvable');
-    return record;
-  }
-
-  createEtatStock(data: CreateEtatStockJournalierDto) {
-    return this.etatsStock.create(data);
-  }
-  findEtatsStock() {
-    return this.etatsStock.find().exec();
-  }
-  async findEtatStock(id: string) {
-    const record = await this.etatsStock.findOne(idFilter(id)).exec();
-    if (!record) throw new NotFoundException('État de stock introuvable');
-    return record;
-  }
-  async updateEtatStock(id: string, data: UpdateEtatStockJournalierDto) {
-    const record = await this.etatsStock
-      .findOneAndUpdate(idFilter(id), data, {
-        new: true,
-        runValidators: true,
-      })
-      .exec();
-    if (!record) throw new NotFoundException('État de stock introuvable');
-    return record;
-  }
-  async removeEtatStock(id: string) {
-    const record = await this.etatsStock.findOneAndDelete(idFilter(id)).exec();
-    if (!record) throw new NotFoundException('État de stock introuvable');
-    return record;
-  }
-
-  createMouvement(data: CreateMouvementLingotDto) {
-    return this.mouvements.create(data);
-  }
-  findMouvements() {
-    return this.mouvements.find().exec();
-  }
-  async findMouvement(id: string) {
-    const record = await this.mouvements.findOne(idFilter(id)).exec();
-    if (!record) throw new NotFoundException('Mouvement introuvable');
-    return record;
-  }
-  async updateMouvement(id: string, data: UpdateMouvementLingotDto) {
-    const record = await this.mouvements
-      .findOneAndUpdate(idFilter(id), data, {
-        new: true,
-        runValidators: true,
-      })
-      .exec();
-    if (!record) throw new NotFoundException('Mouvement introuvable');
-    return record;
-  }
-  async removeMouvement(id: string) {
-    const record = await this.mouvements.findOneAndDelete(idFilter(id)).exec();
-    if (!record) throw new NotFoundException('Mouvement introuvable');
-    return record;
-  }
-
-  createBilan(data: CreateBilanLingotsJourDto) {
-    return this.bilans.create(data);
-  }
-  findBilans() {
-    return this.bilans.find().exec();
-  }
-  async findBilan(id: string) {
-    const record = await this.bilans.findOne(idFilter(id)).exec();
-    if (!record) throw new NotFoundException('Bilan journalier introuvable');
-    return record;
-  }
-  async updateBilan(id: string, data: UpdateBilanLingotsJourDto) {
-    const record = await this.bilans
-      .findOneAndUpdate(idFilter(id), data, {
-        new: true,
-        runValidators: true,
-      })
-      .exec();
-    if (!record) throw new NotFoundException('Bilan journalier introuvable');
-    return record;
-  }
-  async removeBilan(id: string) {
-    const record = await this.bilans.findOneAndDelete(idFilter(id)).exec();
-    if (!record) throw new NotFoundException('Bilan journalier introuvable');
+  private async removeRecord<T>(model: Model<T>, id: string, message: string) {
+    const record = await model.findOneAndDelete(idFilter(id)).exec();
+    if (!record) throw new NotFoundException(message);
     return record;
   }
 }
