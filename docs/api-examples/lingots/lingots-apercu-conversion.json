@@ -16,7 +16,7 @@
     },
     "dateReception": "2025-10-15T11:07:00.000Z",
     "reference": "NYRSTAR-3031-178425-019",
-    "positionActuelle": {
+    "zone": {
       "code": "Stock",
       "nom": "En stock"
     },
@@ -39,7 +39,7 @@
     },
     "dateReception": "2025-10-15T11:07:00.000Z",
     "reference": "NYRSTAR-3031-178425-020",
-    "positionActuelle": {
+    "zone": {
       "code": "Stock",
       "nom": "En stock"
     },
@@ -62,7 +62,7 @@
     },
     "dateReception": "2025-10-15T11:07:00.000Z",
     "reference": "NYRSTAR-3031-178425-021",
-    "positionActuelle": {
+    "zone": {
       "code": "Stock",
       "nom": "En stock"
     },
@@ -85,7 +85,7 @@
     },
     "dateReception": "2025-10-15T11:07:00.000Z",
     "reference": "NYRSTAR-3031-178425-025",
-    "positionActuelle": {
+    "zone": {
       "code": "Stock",
       "nom": "En stock"
     },

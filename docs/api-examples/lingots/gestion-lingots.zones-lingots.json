@@ -1,0 +1,112 @@
+[{
+  "_id": {
+    "$oid": "6aec4718d73e05c4be86ac48"
+  },
+  "id": "POSITION-OPERATEUR-1",
+  "code": "PO1",
+  "createdAt": {
+    "$date": "2026-11-05T09:06:32.522Z"
+  },
+  "nom": "Zone operateur 1",
+  "updatedAt": {
+    "$date": "2026-11-05T09:06:32.522Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "6aec4718d73e05c4be86ac4c"
+  },
+  "id": "POSITION-OPERATEUR-2",
+  "code": "PO2",
+  "createdAt": {
+    "$date": "2026-11-05T09:06:32.522Z"
+  },
+  "nom": "Zone operateur 2",
+  "updatedAt": {
+    "$date": "2026-11-05T09:06:32.522Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "6aec4718d73e05c4be86ac4d"
+  },
+  "id": "POSITION-MOTEUR-1",
+  "code": "PM1",
+  "createdAt": {
+    "$date": "2026-11-05T09:06:32.522Z"
+  },
+  "nom": "Zone moteur 1",
+  "updatedAt": {
+    "$date": "2026-11-05T09:06:32.522Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "6aec4718d73e05c4be86ac4e"
+  },
+  "id": "POSITION-MOTEUR-2",
+  "code": "PM2",
+  "createdAt": {
+    "$date": "2026-11-05T09:06:32.522Z"
+  },
+  "nom": "Zone moteur 2",
+  "updatedAt": {
+    "$date": "2026-11-05T09:06:32.522Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "6aec4718d73e05c4be86ac4f"
+  },
+  "id": "EN-STOCK",
+  "code": "Stock",
+  "createdAt": {
+    "$date": "2026-11-05T09:06:32.522Z"
+  },
+  "nom": "En stock",
+  "updatedAt": {
+    "$date": "2026-11-05T09:06:32.522Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "6aec4718d73e05c4be86ac50"
+  },
+  "id": "COULEE-OPERATEUR",
+  "code": "CO",
+  "createdAt": {
+    "$date": "2026-11-05T09:06:32.522Z"
+  },
+  "nom": "Coulée Opérateur",
+  "updatedAt": {
+    "$date": "2026-11-05T09:06:32.522Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "6aec4718d73e05c4be86ac51"
+  },
+  "id": "COULEE-MOTEUR",
+  "code": "CM",
+  "createdAt": {
+    "$date": "2026-11-05T09:06:32.522Z"
+  },
+  "nom": "Coulée moteur",
+  "updatedAt": {
+    "$date": "2026-11-05T09:06:32.522Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "6aec4718d73e05c4be86ac53"
+  },
+  "id": "TRANSFERT-GALMA1",
+  "code": "GALMA1",
+  "createdAt": {
+    "$date": "2026-11-05T09:06:32.522Z"
+  },
+  "nom": "Transfert halle vers GALMA1",
+  "updatedAt": {
+    "$date": "2026-11-05T09:06:32.522Z"
+  }
+}]

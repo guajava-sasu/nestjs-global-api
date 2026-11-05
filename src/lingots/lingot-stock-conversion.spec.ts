@@ -1,7 +1,9 @@
 import { describe, expect, it } from 'vitest';
+import { Types } from 'mongoose';
 import {
   convertirLingotStock,
   parserDateParis,
+  retirerCentiemes,
   type LegacyLingotStockReel,
 } from './lingot-stock-conversion.js';
 
@@ -17,58 +19,101 @@ const source: LegacyLingotStockReel = {
   D_LGT_STK_TYP_APA: 'B ',
 };
 
-describe('convertirLingotStock', () => {
-  const dateImport = new Date('2026-10-30T13:00:00.000Z');
+const fixe = {
+  choisir: <T>(valeurs: readonly T[]): T => valeurs[0] as T,
+  fournisseurs: [
+    { _id: new Types.ObjectId(), nom: 'Boleslaw', code: 'BOLESLAW' },
+  ],
+  tauxAluminium: [
+    {
+      _id: new Types.ObjectId(),
+      nom: 'AL069',
+      couleur: 'orange',
+      type: 'B' as const,
+    },
+  ],
+  zones: [{ _id: new Types.ObjectId(), code: 'S', nom: 'Stock' }],
+};
 
-  it('convertit un enregistrement de l’ancien modèle', () => {
-    expect(convertirLingotStock(source, undefined, dateImport)).toEqual({
-      id: 'NYRSTAR-3031-21544-005',
-      poids: 1975,
-      fournisseur: 'NON RENSEIGNE',
+describe('convertirLingotStock', () => {
+  it('convertit un lingot legacy vers le modèle LingotRecord', () => {
+    const dateImport = new Date('2026-11-01T00:00:00Z');
+
+    const lingot = convertirLingotStock(source, fixe, dateImport);
+
+    expect(lingot).toMatchObject({
       numeroCoulee: '21544',
-      valide: false,
       numeroLingot: 5,
-      alFournisseur: 0,
-      alArcelor: 0,
-      dateReception: new Date('2026-04-09T12:04:00.000Z'),
-      type: 'B',
+      poids: 1975,
+      codeQR: '3031-21544-005',
+      fournisseur: fixe.fournisseurs[0],
+      tauxAluminium: fixe.tauxAluminium[0],
+      dateReception: parserDateParis('09/04/2026 14:04'),
+      zone: fixe.zones[0],
       createdAt: dateImport,
-      updatedAt: new Date('2026-04-10T09:07:51.000Z'),
+      updatedAt: parserDateParis('10/04/2026 11:07:51'),
     });
+    expect(lingot._id).toBeInstanceOf(Types.ObjectId);
+    expect(lingot).not.toHaveProperty('type');
   });
 
-  it('accepte une fraction de seconde de 1 à 3 chiffres dans les dates source', () => {
-    expect(
-      convertirLingotStock({
-        ...source,
-        I_LGT_FOU_DATE: '26/10/2026 08:43:20:983',
-      }).dateReception,
-    ).toEqual(new Date('2026-10-26T07:43:20.000Z'));
-    expect(
-      convertirLingotStock({
-        ...source,
-        D_LGT_STK_DAT_MAJ: '08/10/2026 11:03:37:546',
-      }).updatedAt,
-    ).toEqual(new Date('2026-10-08T09:03:37.000Z'));
-    expect(
-      convertirLingotStock({
-        ...source,
-        D_LGT_STK_DAT_MAJ: '29/09/2026 11:11:29:5',
-      }).updatedAt,
-    ).toEqual(new Date('2026-09-29T09:11:29.000Z'));
+  it('utilise les choix aléatoires fournis pour fournisseur et taux', () => {
+    const dernier = <T>(valeurs: readonly T[]): T =>
+      valeurs[valeurs.length - 1] as T;
+    const fournisseurs = [
+      ...fixe.fournisseurs,
+      { _id: new Types.ObjectId(), nom: 'Fournisseur 2', code: 'F2' },
+    ];
+    const tauxAluminium = [
+      ...fixe.tauxAluminium,
+      {
+        _id: new Types.ObjectId(),
+        nom: 'AL00',
+        couleur: 'blanc',
+        type: 'B' as const,
+      },
+    ];
+    const lingot = convertirLingotStock(source, {
+      ...fixe,
+      choisir: dernier,
+      fournisseurs,
+      tauxAluminium,
+    });
+
+    expect(lingot.tauxAluminium.nom).toBe('AL00');
+    expect(lingot.fournisseur).toEqual(fournisseurs[1]);
+  });
+
+  it('refuse la conversion si aucun fournisseur n’est fourni', () => {
+    expect(() => convertirLingotStock(source)).toThrow(
+      'Aucun fournisseur disponible dans la base de données.',
+    );
+  });
+
+  it('parse la date de réception avec fraction de seconde, heure de Paris', () => {
+    const lingot = convertirLingotStock(
+      { ...source, I_LGT_FOU_DATE: '26/10/2026 08:43:20:983' },
+      fixe,
+    );
+
+    expect(lingot.dateReception.toISOString()).toBe('2026-10-26T07:43:20.000Z');
+  });
+
+  it('retire une fraction de seconde de 1 à 3 chiffres', () => {
+    expect(retirerCentiemes('10/04/2026 11:07:51:01')).toBe(
+      '10/04/2026 11:07:51',
+    );
+    expect(retirerCentiemes('10/04/2026 11:07:37:546')).toBe(
+      '10/04/2026 11:07:37',
+    );
+    expect(retirerCentiemes('10/04/2026 11:07:29:5')).toBe(
+      '10/04/2026 11:07:29',
+    );
   });
 
   it('rejette un type de lingot inconnu', () => {
     expect(() =>
-      convertirLingotStock({ ...source, D_LGT_STK_TYP_APA: 'XX' }),
-    ).toThrow('Type de lingot inconnu');
-  });
-});
-
-describe('parserDateParis', () => {
-  it('applique l’heure d’hiver en janvier', () => {
-    expect(parserDateParis('15/01/2026 10:00')).toEqual(
-      new Date('2026-01-15T09:00:00.000Z'),
-    );
+      convertirLingotStock({ ...source, D_LGT_STK_TYP_APA: 'XX' }, fixe),
+    ).toThrow("Aucun taux d'aluminium pour le type XX.");
   });
 });

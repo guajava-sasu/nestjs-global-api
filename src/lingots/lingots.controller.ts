@@ -7,24 +7,27 @@ import {
   Patch,
   Post,
 } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiOperation, ApiParam, ApiTags } from '@nestjs/swagger';
 import {
   CreateFournisseurDto,
+  CreateHistoriqueStockDto,
   CreateInventaireDto,
   CreateLingotDto,
   CreateMatteDto,
   CreateMouvementDto,
+  CreateMouvementCollectionDto,
   CreateOperateurDto,
-  CreatePositionDto,
   CreateTauxAluminiumDto,
+  CreateZoneDto,
   UpdateFournisseurDto,
+  UpdateHistoriqueStockDto,
   UpdateInventaireDto,
   UpdateLingotDto,
   UpdateMatteDto,
   UpdateMouvementDto,
   UpdateOperateurDto,
-  UpdatePositionDto,
   UpdateTauxAluminiumDto,
+  UpdateZoneDto,
 } from './dto/lingot.dto.js';
 import { LingotsService } from './lingots.service.js';
 
@@ -102,25 +105,25 @@ export class LingotsController {
     return this.lingotsService.removeTauxAluminium(id);
   }
 
-  @Post('positions-lingots')
-  createPosition(@Body() body: CreatePositionDto) {
-    return this.lingotsService.createPosition(body);
+  @Post('zones-lingots')
+  createZone(@Body() body: CreateZoneDto) {
+    return this.lingotsService.createZone(body);
   }
-  @Get('positions-lingots')
-  findPositions() {
-    return this.lingotsService.findPositions();
+  @Get('zones-lingots')
+  findZones() {
+    return this.lingotsService.findZones();
   }
-  @Get('positions-lingots/:id')
-  findPosition(@Param('id') id: string) {
-    return this.lingotsService.findPosition(id);
+  @Get('zones-lingots/:id')
+  findZone(@Param('id') id: string) {
+    return this.lingotsService.findZone(id);
   }
-  @Patch('positions-lingots/:id')
-  updatePosition(@Param('id') id: string, @Body() body: UpdatePositionDto) {
-    return this.lingotsService.updatePosition(id, body);
+  @Patch('zones-lingots/:id')
+  updateZone(@Param('id') id: string, @Body() body: UpdateZoneDto) {
+    return this.lingotsService.updateZone(id, body);
   }
-  @Delete('positions-lingots/:id')
-  removePosition(@Param('id') id: string) {
-    return this.lingotsService.removePosition(id);
+  @Delete('zones-lingots/:id')
+  removeZone(@Param('id') id: string) {
+    return this.lingotsService.removeZone(id);
   }
 
   @Post('lingots')
@@ -142,6 +145,43 @@ export class LingotsController {
   @Delete('lingots/:id')
   removeLingot(@Param('id') id: string) {
     return this.lingotsService.removeLingot(id);
+  }
+
+  @ApiTags('mouvements-lingots')
+  @ApiOperation({ summary: 'Créer un mouvement de lingot' })
+  @Post('mouvements-lingots')
+  createMouvementCollection(@Body() body: CreateMouvementCollectionDto) {
+    return this.lingotsService.createMouvementCollection(body);
+  }
+  @ApiTags('mouvements-lingots')
+  @ApiOperation({ summary: 'Lister les mouvements de lingots' })
+  @Get('mouvements-lingots')
+  findAllMouvements() {
+    return this.lingotsService.findAllMouvements();
+  }
+  @ApiTags('mouvements-lingots')
+  @ApiOperation({ summary: 'Obtenir un mouvement par son _id MongoDB' })
+  @ApiParam({ name: 'id', description: '_id MongoDB du mouvement' })
+  @Get('mouvements-lingots/:id')
+  findMouvementById(@Param('id') id: string) {
+    return this.lingotsService.findMouvementById(id);
+  }
+  @ApiTags('mouvements-lingots')
+  @ApiOperation({ summary: 'Modifier un mouvement de lingot' })
+  @ApiParam({ name: 'id', description: '_id MongoDB du mouvement' })
+  @Patch('mouvements-lingots/:id')
+  updateMouvementById(
+    @Param('id') id: string,
+    @Body() body: UpdateMouvementDto,
+  ) {
+    return this.lingotsService.updateMouvementById(id, body);
+  }
+  @ApiTags('mouvements-lingots')
+  @ApiOperation({ summary: 'Supprimer un mouvement de lingot' })
+  @ApiParam({ name: 'id', description: '_id MongoDB du mouvement' })
+  @Delete('mouvements-lingots/:id')
+  removeMouvementById(@Param('id') id: string) {
+    return this.lingotsService.removeMouvementById(id);
   }
 
   @Post('lingots/:lingotId/mouvements')
@@ -191,10 +231,7 @@ export class LingotsController {
     return this.lingotsService.findInventaire(id);
   }
   @Patch('inventaires-lingots/:id')
-  updateInventaire(
-    @Param('id') id: string,
-    @Body() body: UpdateInventaireDto,
-  ) {
+  updateInventaire(@Param('id') id: string, @Body() body: UpdateInventaireDto) {
     return this.lingotsService.updateInventaire(id, body);
   }
   @Delete('inventaires-lingots/:id')
@@ -221,5 +258,29 @@ export class LingotsController {
   @Delete('matte-lingots/:id')
   removeMatte(@Param('id') id: string) {
     return this.lingotsService.removeMatte(id);
+  }
+
+  @Post('historique-stock-lingots')
+  createHistoriqueStock(@Body() body: CreateHistoriqueStockDto) {
+    return this.lingotsService.createHistoriqueStock(body);
+  }
+  @Get('historique-stock-lingots')
+  findHistoriquesStock() {
+    return this.lingotsService.findHistoriquesStock();
+  }
+  @Get('historique-stock-lingots/:id')
+  findHistoriqueStock(@Param('id') id: string) {
+    return this.lingotsService.findHistoriqueStock(id);
+  }
+  @Patch('historique-stock-lingots/:id')
+  updateHistoriqueStock(
+    @Param('id') id: string,
+    @Body() body: UpdateHistoriqueStockDto,
+  ) {
+    return this.lingotsService.updateHistoriqueStock(id, body);
+  }
+  @Delete('historique-stock-lingots/:id')
+  removeHistoriqueStock(@Param('id') id: string) {
+    return this.lingotsService.removeHistoriqueStock(id);
   }
 }

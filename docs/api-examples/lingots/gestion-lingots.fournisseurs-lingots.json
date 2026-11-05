@@ -1,0 +1,70 @@
+[{
+  "_id": {
+    "$oid": "6aec4718d73e05c4be86ac46"
+  },
+  "id": "BOLIDEN",
+  "code": "BOLIDEN",
+  "createdAt": {
+    "$date": "2026-11-05T09:06:32.521Z"
+  },
+  "nom": "Boliden",
+  "updatedAt": {
+    "$date": "2026-11-05T09:06:32.521Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "6aec4718d73e05c4be86ac47"
+  },
+  "id": "NYRSTAR",
+  "code": "NYRSTAR",
+  "createdAt": {
+    "$date": "2026-11-05T09:06:32.521Z"
+  },
+  "nom": "Nyrstar",
+  "updatedAt": {
+    "$date": "2026-11-05T09:06:32.521Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "6aec4718d73e05c4be86ac49"
+  },
+  "id": "GLENCORE",
+  "code": "GLENCORE",
+  "createdAt": {
+    "$date": "2026-11-05T09:06:32.521Z"
+  },
+  "nom": "Glencore plc",
+  "updatedAt": {
+    "$date": "2026-11-05T09:06:32.521Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "6aec4718d73e05c4be86ac4a"
+  },
+  "id": "LUNDIN-MINING",
+  "code": "LUNDIN",
+  "createdAt": {
+    "$date": "2026-11-05T09:06:32.522Z"
+  },
+  "nom": "Lundin Mining",
+  "updatedAt": {
+    "$date": "2026-11-05T09:06:32.522Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "6aec4718d73e05c4be86ac4b"
+  },
+  "id": "TECK-RESOURCES",
+  "code": "TECK",
+  "createdAt": {
+    "$date": "2026-11-05T09:06:32.522Z"
+  },
+  "nom": "Teck Resources Limited",
+  "updatedAt": {
+    "$date": "2026-11-05T09:06:32.522Z"
+  }
+}]

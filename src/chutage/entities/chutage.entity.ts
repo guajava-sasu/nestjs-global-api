@@ -28,7 +28,8 @@ export class DemandePontier {
   @Prop({ default: '' })
   chariot: string;
 }
-export const DemandePontierSchema = SchemaFactory.createForClass(DemandePontier);
+export const DemandePontierSchema =
+  SchemaFactory.createForClass(DemandePontier);
 
 @Schema({ collection: 'preparations-chargement', timestamps: true })
 export class PreparationChargement {
@@ -41,7 +42,9 @@ export class PreparationChargement {
   @Prop({ type: Number, default: null })
   chariot: number | null;
 }
-export const PreparationChargementSchema = SchemaFactory.createForClass(PreparationChargement);
+export const PreparationChargementSchema = SchemaFactory.createForClass(
+  PreparationChargement,
+);
 
 @Schema({ _id: false })
 export class CalculPreset {
@@ -85,7 +88,8 @@ export class BobineStockage {
   @Prop({ type: AlerteTransitionSchema })
   AlerteTransition?: AlerteTransition;
 }
-export const BobineStockageSchema = SchemaFactory.createForClass(BobineStockage);
+export const BobineStockageSchema =
+  SchemaFactory.createForClass(BobineStockage);
 
 @Schema({ collection: 'bobines-chutage', timestamps: true })
 export class BobineAChuter {
@@ -101,7 +105,7 @@ export const BobineAChuterSchema = SchemaFactory.createForClass(BobineAChuter);
 export class DetailChuteBobine {
   @Prop({ required: true, index: true }) bobine: string;
   @Prop({ required: true, enum: ['E', 'S'] }) lieu: string;
-  @Prop({ required: true }) position: number;
+  @Prop({ required: true }) zone: number;
   @Prop({ required: true }) longueur: number;
   @Prop({ type: Number, default: null }) poids: number | null;
   @Prop({ required: true }) defaut: string;
@@ -109,7 +113,8 @@ export class DetailChuteBobine {
   @Prop({ required: true }) revAV: number;
   @Prop({ required: true }) revAR: number;
 }
-export const DetailChuteBobineSchema = SchemaFactory.createForClass(DetailChuteBobine);
+export const DetailChuteBobineSchema =
+  SchemaFactory.createForClass(DetailChuteBobine);
 
 @Schema({ collection: 'chutes-rives', timestamps: true })
 export class ChuteRive {

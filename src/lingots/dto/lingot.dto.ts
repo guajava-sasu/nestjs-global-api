@@ -9,58 +9,63 @@ import {
   IsString,
   ValidateNested,
 } from 'class-validator';
-import type { TypeLingot } from '../entities/lingot.entity.js';
-
-const typesLingot: TypeLingot[] = ['B', 'OB', 'VB', 'BB', 'N'];
 
 export class CreateOperateurDto {
-  @ApiProperty() @IsString() id: string;
   @ApiProperty() @IsString() username: string;
   @ApiProperty() @IsString() entreprise: string;
   @ApiProperty() @IsString() nom: string;
   @ApiProperty() @IsString() prenom: string;
+  @ApiProperty() @IsString() codeQR: string;
 }
 export class UpdateOperateurDto extends PartialType(CreateOperateurDto) {}
 
 export class CreateFournisseurDto {
-  @ApiPropertyOptional() @IsOptional() @IsString() id?: string;
   @ApiProperty() @IsString() nom: string;
   @ApiProperty() @IsString() code: string;
 }
 export class UpdateFournisseurDto extends PartialType(CreateFournisseurDto) {}
 
 export class CreateTauxAluminiumDto {
-  @ApiPropertyOptional() @IsOptional() @IsString() id?: string;
   @ApiProperty() @IsString() nom: string;
   @ApiProperty() @IsString() couleur: string;
+  @ApiProperty({ description: 'Type associé au taux, par exemple B ou OB' })
+  @IsString()
+  type: string;
 }
 export class UpdateTauxAluminiumDto extends PartialType(
   CreateTauxAluminiumDto,
 ) {}
 
-export class CreatePositionDto {
-  @ApiPropertyOptional() @IsOptional() @IsString() id?: string;
+export class CreateZoneDto {
   @ApiProperty() @IsString() code: string;
   @ApiProperty() @IsString() nom: string;
 }
-export class UpdatePositionDto extends PartialType(CreatePositionDto) {}
+export class UpdateZoneDto extends PartialType(CreateZoneDto) {}
 
 export class CreateMouvementDto {
-  @ApiPropertyOptional() @IsOptional() @IsString() id?: string;
   @ApiProperty() @Type(() => Date) @IsDate() date: Date;
+  @ApiPropertyOptional({ type: CreateZoneDto, nullable: true })
+  @IsOptional()
+  @ValidateNested()
+  @Type(() => CreateZoneDto)
+  depart?: CreateZoneDto | null;
+  @ApiProperty({ type: CreateZoneDto })
+  @ValidateNested()
+  @Type(() => CreateZoneDto)
+  arrivee: CreateZoneDto;
   @ApiProperty({ type: CreateOperateurDto })
   @ValidateNested()
   @Type(() => CreateOperateurDto)
   operateur: CreateOperateurDto;
-  @ApiProperty({ type: CreatePositionDto })
-  @ValidateNested()
-  @Type(() => CreatePositionDto)
-  position: CreatePositionDto;
+}
+export class CreateMouvementCollectionDto extends CreateMouvementDto {
+  @ApiProperty({ description: '_id MongoDB du lingot associé' })
+  @IsString()
+  lingotId: string;
 }
 export class UpdateMouvementDto extends PartialType(CreateMouvementDto) {}
 
 export class CreateLingotDto {
-  @ApiProperty() @IsString() id: string;
   @ApiProperty() @IsString() codeQR: string;
   @ApiProperty({ type: CreateFournisseurDto })
   @ValidateNested()
@@ -69,26 +74,21 @@ export class CreateLingotDto {
   @ApiProperty() @IsString() numeroCoulee: string;
   @ApiProperty() @IsNumber() numeroLingot: number;
   @ApiProperty() @IsNumber() poids: number;
-  @ApiProperty({ enum: typesLingot }) @IsIn(typesLingot) type: TypeLingot;
   @ApiProperty({ type: CreateTauxAluminiumDto })
   @ValidateNested()
   @Type(() => CreateTauxAluminiumDto)
   tauxAluminium: CreateTauxAluminiumDto;
   @ApiProperty() @Type(() => Date) @IsDate() dateReception: Date;
-  @ApiProperty() @IsString() reference: string;
-  @ApiProperty({ type: CreatePositionDto })
+  @ApiProperty({ type: CreateZoneDto })
   @ValidateNested()
-  @Type(() => CreatePositionDto)
-  positionActuelle: CreatePositionDto;
-  @ApiProperty({ type: [CreateMouvementDto] })
-  @ValidateNested({ each: true })
-  @Type(() => CreateMouvementDto)
-  mouvements: CreateMouvementDto[];
+  @Type(() => CreateZoneDto)
+  zone: CreateZoneDto;
+  @ApiPropertyOptional() @IsOptional() @Type(() => Date) @IsDate()
+  dateFusion?: Date;
 }
 export class UpdateLingotDto extends PartialType(CreateLingotDto) {}
 
 export class CreateInventaireDto {
-  @ApiPropertyOptional() @IsOptional() @IsString() id?: string;
   @ApiProperty() @Type(() => Date) @IsDate() date: Date;
   @ApiProperty({ type: CreateOperateurDto })
   @ValidateNested()
@@ -102,7 +102,6 @@ export class CreateInventaireDto {
 export class UpdateInventaireDto extends PartialType(CreateInventaireDto) {}
 
 export class CreateMatteDto {
-  @ApiPropertyOptional() @IsOptional() @IsString() id?: string;
   @ApiProperty() @Type(() => Date) @IsDate() date: Date;
   @ApiProperty() @IsNumber() quantite: number;
   @ApiProperty({ enum: ['ajout', 'suppression'] })
@@ -115,3 +114,28 @@ export class CreateMatteDto {
   operateur: CreateOperateurDto;
 }
 export class UpdateMatteDto extends PartialType(CreateMatteDto) {}
+
+export class CreateQuantiteParTauxDto {
+  @ApiProperty({ type: CreateTauxAluminiumDto })
+  @ValidateNested()
+  @Type(() => CreateTauxAluminiumDto)
+  taux: CreateTauxAluminiumDto;
+
+  @ApiProperty() @IsNumber() poids: number;
+}
+
+export class CreateHistoriqueStockDto {
+  @ApiProperty() @Type(() => Date) @IsDate() date: Date;
+  @ApiProperty() @IsNumber() quantiteMatte: number;
+  @ApiProperty({ type: CreateFournisseurDto })
+  @ValidateNested()
+  @Type(() => CreateFournisseurDto)
+  fournisseur: CreateFournisseurDto;
+  @ApiProperty({ type: [CreateQuantiteParTauxDto] })
+  @ValidateNested({ each: true })
+  @Type(() => CreateQuantiteParTauxDto)
+  quantiteParTaux: CreateQuantiteParTauxDto[];
+}
+export class UpdateHistoriqueStockDto extends PartialType(
+  CreateHistoriqueStockDto,
+) {}

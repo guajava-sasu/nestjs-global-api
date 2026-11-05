@@ -1,0 +1,43 @@
+[{
+  "_id": {
+    "$oid": "6aec4718d73e05c4be86ac52"
+  },
+  "id": "AL039",
+  "couleur": "bleu",
+  "createdAt": {
+    "$date": "2026-11-05T09:06:32.522Z"
+  },
+  "nom": "AL039",
+    "couleur": "Orange",
+  "updatedAt": {
+    "$date": "2026-11-05T09:06:32.522Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "6aec4718d73e05c4be86ac54"
+  },
+  "id": "AL069",
+  "couleur": "orange",
+  "createdAt": {
+    "$date": "2026-11-05T09:06:32.522Z"
+  },
+  "nom": "AL069",
+  "updatedAt": {
+    "$date": "2026-11-05T09:06:32.522Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "6aec4718d73e05c4be86ac55"
+  },
+  "id": "AL00",
+  "couleur": "blanc",
+  "createdAt": {
+    "$date": "2026-11-05T09:06:32.522Z"
+  },
+  "nom": "AL00",
+  "updatedAt": {
+    "$date": "2026-11-05T09:06:32.522Z"
+  }
+}]

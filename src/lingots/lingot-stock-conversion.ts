@@ -1,9 +1,11 @@
-import type { AnyBulkWriteOperation, Model } from 'mongoose';
+import { Types, type AnyBulkWriteOperation, type Model } from 'mongoose';
 import type {
-  LingotStock,
-  LingotStockRecord,
-  TypeLingot,
-} from './entities/lingot.entity.old.js';
+  Fournisseur,
+  Lingot,
+  LingotRecord,
+  TauxAluminium,
+  Zone,
+} from './entities/lingot.entity.js';
 
 export interface LegacyLingotStockReel {
   I_LGT_FOU_DATE: string;
@@ -15,19 +17,13 @@ export interface LegacyLingotStockReel {
   D_LGT_STK_PREPA?: string;
   D_LGT_STK_DAT_MAJ: string;
   D_LGT_STK_TYP_APA: string;
+  D_LGT_STK_DAT_MK?: string;
 }
 
-export type LingotStockImporte = LingotStock & {
+export type LingotStockImporte = Lingot & {
   createdAt: Date;
   updatedAt: Date;
 };
-
-export interface ValeursParDefautLingotStock {
-  fournisseur: string;
-  alFournisseur: number;
-  alArcelor: number;
-  valide: boolean;
-}
 
 export interface RapportImportLingotStock {
   lus: number;
@@ -36,24 +32,18 @@ export interface RapportImportLingotStock {
   erreurs: string[];
 }
 
-export const valeursParDefautLingotStock: ValeursParDefautLingotStock = {
-  fournisseur: 'NON RENSEIGNE',
-  alFournisseur: 0,
-  alArcelor: 0,
-  valide: false,
-};
+export interface OptionsConversionLingotStock {
+  fournisseurs?: readonly Fournisseur[];
+  tauxAluminium?: readonly TauxAluminium[];
+  zones?: readonly Zone[];
+  choisir?: <T>(valeurs: readonly T[]) => T;
+}
 
-export const fournisseursConnus: readonly string[] = [
-  'BOLESLAW',
-  'BOLIDEN',
-  'GLENCORE',
-  'NEXA',
-  'TRAFIGUR',
-];
-
-const typesLingot: readonly TypeLingot[] = ['B', 'OB', 'VB', 'BB', 'N'];
 const fuseauSource = 'Europe/Paris';
 const tailleLotDefaut = 1000;
+
+const choisirAleatoirement = <T>(valeurs: readonly T[]): T =>
+  valeurs[Math.floor(Math.random() * valeurs.length)] as T;
 
 // Décalage (ms) de Europe/Paris par rapport à UTC à un instant donné (heure d'été incluse)
 function decalageParisMs(instantMs: number): number {
@@ -91,35 +81,56 @@ export function parserDateParis(valeur: string): Date {
   return new Date(approximation - decalageParisMs(approximation));
 }
 
-// La date de mise à jour source se termine par une fraction de seconde ("…:51:01", "…:37:546", "…:29:5") non gérée
+// La date source se termine par une fraction de seconde ("…:51:01", "…:37:546", "…:29:5") non gérée
 export function retirerCentiemes(valeur: string): string {
   return valeur.trim().replace(/^(.*:\d{2}):\d{1,3}$/, '$1');
 }
 
 export function convertirLingotStock(
   source: LegacyLingotStockReel,
-  valeurs: ValeursParDefautLingotStock = valeursParDefautLingotStock,
+  options: OptionsConversionLingotStock = {},
   dateImport: Date = new Date(),
 ): LingotStockImporte {
-  const type = source.D_LGT_STK_TYP_APA.trim() as TypeLingot;
-  if (!typesLingot.includes(type)) {
-    throw new Error(`Type de lingot inconnu : "${source.D_LGT_STK_TYP_APA}"`);
+  const type = source.D_LGT_STK_TYP_APA.trim();
+
+  const choisir = options.choisir ?? choisirAleatoirement;
+  const fournisseurs = options.fournisseurs ?? [];
+  const tauxAluminium = (options.tauxAluminium ?? []).filter(
+    (taux) => taux.type === type,
+  );
+  const zones = options.zones ?? [];
+
+  if (!fournisseurs?.length) {
+    throw new Error('Aucun fournisseur disponible dans la base de données.');
+  }
+  if (!tauxAluminium.length) {
+    throw new Error(`Aucun taux d'aluminium pour le type ${type}.`);
+  }
+  if (!zones.length) {
+    throw new Error('Aucune zone disponible dans la base de données.');
   }
 
   const numeroCoulee = String(source.I_LGT_STK_COUL);
   const numeroLingot = source.I_LGT_STK_NUM;
+  const codeQR = `3031-${numeroCoulee}-${String(numeroLingot).padStart(3, '0')}`;
 
   return {
-    id: `NYRSTAR-3031-${numeroCoulee}-${String(numeroLingot).padStart(3, '0')}`,
-    poids: source.D_LGT_STK_PDS,
-    fournisseur: valeurs.fournisseur,
+    _id: new Types.ObjectId(),
+    codeQR,
+    fournisseur: choisir(fournisseurs),
     numeroCoulee,
-    valide: valeurs.valide,
     numeroLingot,
-    alFournisseur: valeurs.alFournisseur,
-    alArcelor: valeurs.alArcelor,
+    poids: source.D_LGT_STK_PDS,
+    tauxAluminium: choisir(tauxAluminium),
     dateReception: parserDateParis(retirerCentiemes(source.I_LGT_FOU_DATE)),
-    type,
+    zone: choisir(zones),
+    ...(source.D_LGT_STK_DAT_MK?.trim()
+      ? {
+          dateFusion: parserDateParis(
+            retirerCentiemes(source.D_LGT_STK_DAT_MK),
+          ),
+        }
+      : {}),
     createdAt: dateImport,
     updatedAt: parserDateParis(retirerCentiemes(source.D_LGT_STK_DAT_MAJ)),
   };
@@ -128,18 +139,14 @@ export function convertirLingotStock(
 // Lit les sources par curseur, convertit et upsert par lots sur `id` (idempotent)
 export async function importerLingotsStock(
   sources: AsyncIterable<LegacyLingotStockReel>,
-  modele: Model<LingotStockRecord>,
-  options: {
+  modele: Model<LingotRecord>,
+  options: OptionsConversionLingotStock & {
     taille?: number;
-    valeurs?: ValeursParDefautLingotStock;
-    fournisseurs?: readonly string[];
     dateImport?: Date;
   } = {},
 ): Promise<RapportImportLingotStock> {
   const taille = options.taille ?? tailleLotDefaut;
   const dateImport = options.dateImport ?? new Date();
-  const fournisseurs = options.fournisseurs ?? fournisseursConnus;
-  const valeursBase = options.valeurs ?? valeursParDefautLingotStock;
   const rapport: RapportImportLingotStock = {
     lus: 0,
     importes: 0,
@@ -147,7 +154,7 @@ export async function importerLingotsStock(
     erreurs: [],
   };
 
-  let lot: AnyBulkWriteOperation<LingotStockRecord>[] = [];
+  let lot: AnyBulkWriteOperation<LingotRecord>[] = [];
 
   const envoyerLot = async () => {
     if (lot.length === 0) return;
@@ -162,18 +169,11 @@ export async function importerLingotsStock(
   for await (const source of sources) {
     rapport.lus++;
     try {
-      const fournisseur =
-        fournisseurs[Math.floor(Math.random() * fournisseurs.length)] ??
-        valeursBase.fournisseur;
-      const lingot = convertirLingotStock(
-        source,
-        { ...valeursBase, fournisseur },
-        dateImport,
-      );
+      const lingot = convertirLingotStock(source, options, dateImport);
       lot.push({
         replaceOne: {
-          filter: { id: lingot.id },
-          replacement: lingot,
+          filter: { codeQR: lingot.codeQR },
+          replacement: lingot as LingotRecord,
           upsert: true,
         },
       });
