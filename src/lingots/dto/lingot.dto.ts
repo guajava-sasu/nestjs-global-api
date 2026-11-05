@@ -7,6 +7,7 @@ import {
   IsNumber,
   IsOptional,
   IsString,
+  Matches,
   ValidateNested,
 } from 'class-validator';
 
@@ -27,10 +28,15 @@ export class UpdateFournisseurDto extends PartialType(CreateFournisseurDto) {}
 
 export class CreateTauxAluminiumDto {
   @ApiProperty() @IsString() nom: string;
-  @ApiProperty() @IsString() couleur: string;
-  @ApiProperty({ description: 'Type associé au taux, par exemple B ou OB' })
-  @IsString()
-  type: string;
+  @ApiProperty({
+    description:
+      'Couleur hexadécimale issue du design system @n3ga2/design-system',
+    example: '#0072ce',
+  })
+  @Matches(/^#[0-9a-f]{6}$/i, {
+    message: 'couleur doit être une valeur hexadécimale (#rrggbb)',
+  })
+  couleur: string;
 }
 export class UpdateTauxAluminiumDto extends PartialType(
   CreateTauxAluminiumDto,
@@ -83,7 +89,10 @@ export class CreateLingotDto {
   @ValidateNested()
   @Type(() => CreateZoneDto)
   zone: CreateZoneDto;
-  @ApiPropertyOptional() @IsOptional() @Type(() => Date) @IsDate()
+  @ApiPropertyOptional()
+  @IsOptional()
+  @Type(() => Date)
+  @IsDate()
   dateFusion?: Date;
 }
 export class UpdateLingotDto extends PartialType(CreateLingotDto) {}
@@ -115,7 +124,7 @@ export class CreateMatteDto {
 }
 export class UpdateMatteDto extends PartialType(CreateMatteDto) {}
 
-export class CreateQuantiteParTauxDto {
+export class CreatePoidsParTauxDto {
   @ApiProperty({ type: CreateTauxAluminiumDto })
   @ValidateNested()
   @Type(() => CreateTauxAluminiumDto)
@@ -126,15 +135,19 @@ export class CreateQuantiteParTauxDto {
 
 export class CreateHistoriqueStockDto {
   @ApiProperty() @Type(() => Date) @IsDate() date: Date;
-  @ApiProperty() @IsNumber() quantiteMatte: number;
-  @ApiProperty({ type: CreateFournisseurDto })
+  @ApiPropertyOptional({ type: Number, nullable: true })
+  @IsOptional()
+  @IsNumber()
+  quantiteMatte?: number | null;
+  @ApiPropertyOptional({ type: CreateFournisseurDto, nullable: true })
+  @IsOptional()
   @ValidateNested()
   @Type(() => CreateFournisseurDto)
-  fournisseur: CreateFournisseurDto;
-  @ApiProperty({ type: [CreateQuantiteParTauxDto] })
+  fournisseur?: CreateFournisseurDto | null;
+  @ApiProperty({ type: [CreatePoidsParTauxDto] })
   @ValidateNested({ each: true })
-  @Type(() => CreateQuantiteParTauxDto)
-  quantiteParTaux: CreateQuantiteParTauxDto[];
+  @Type(() => CreatePoidsParTauxDto)
+  quantiteParTaux: CreatePoidsParTauxDto[];
 }
 export class UpdateHistoriqueStockDto extends PartialType(
   CreateHistoriqueStockDto,

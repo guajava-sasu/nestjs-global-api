@@ -36,9 +36,14 @@ export interface Mouvement {
 export interface HistoriqueStock {
   _id: Types.ObjectId;
   date: Date;
-  quantiteMatte: number;
-  fournisseur: Fournisseur;
-  quantiteParTaux: { taux: TauxAluminium; poids: number }[];
+  quantiteMatte: number | null;
+  fournisseur: Fournisseur | null;
+  quantiteParTaux: PoidsParTaux[];
+}
+
+interface PoidsParTaux {
+  taux: TauxAluminium;
+  poids: number;
 }
 
 export interface Lingot {
@@ -74,8 +79,6 @@ export interface TauxAluminium {
   _id: Types.ObjectId;
   nom: string;
   couleur: string;
-  /**  'B' | 'OB' | 'VB' | 'BB' | 'N' */
-  type: string;
 }
 
 export interface Fournisseur {
@@ -136,9 +139,6 @@ export class TauxAluminiumRecord {
 
   @Prop({ required: true })
   couleur: string;
-
-  @Prop({ required: true })
-  type: string;
 }
 export const TauxAluminiumSchema =
   SchemaFactory.createForClass(TauxAluminiumRecord);
@@ -191,6 +191,9 @@ export class LingotRecord {
 export const LingotSchema = SchemaFactory.createForClass(LingotRecord);
 export const LingotSnapshotSchema = LingotSchema.clone();
 LingotSnapshotSchema.clearIndexes();
+// Un même lingot apparaît dans plusieurs mouvements : pas d'index unique sur ses copies.
+LingotSnapshotSchema.path('codeQR').unique(false).index(false);
+LingotSnapshotSchema.path('numeroCoulee').index(false);
 
 @Schema({
   collection: 'mouvements-lingots',
@@ -254,16 +257,17 @@ export class MatteRecord {
 }
 export const MatteSchema = SchemaFactory.createForClass(MatteRecord);
 
+// Sous-document embarqué dans HistoriqueStock, sans collection ni _id propres.
 @Schema({ _id: false })
-export class QuantiteParTauxRecord {
+export class PoidsParTauxRecord {
   @Prop({ type: TauxAluminiumSchema, required: true })
   taux: TauxAluminium;
 
   @Prop({ required: true, min: 0 })
   poids: number;
 }
-export const QuantiteParTauxSchema =
-  SchemaFactory.createForClass(QuantiteParTauxRecord);
+export const PoidsParTauxSchema =
+  SchemaFactory.createForClass(PoidsParTauxRecord);
 
 @Schema({
   collection: 'historique-stock-lingots',
@@ -275,14 +279,15 @@ export class HistoriqueStockRecord {
   @Prop({ required: true, type: Date, index: true })
   date: Date;
 
-  @Prop({ required: true, min: 0 })
-  quantiteMatte: number;
+  @Prop({ type: Number, min: 0, default: null })
+  quantiteMatte: number | null;
 
-  @Prop({ type: FournisseurSchema, required: true })
-  fournisseur: Fournisseur;
+  @Prop({ type: FournisseurSchema, default: null })
+  fournisseur: Fournisseur | null;
 
-  @Prop({ type: [QuantiteParTauxSchema], default: [] })
+  @Prop({ type: [PoidsParTauxSchema], default: [] })
   quantiteParTaux: HistoriqueStock['quantiteParTaux'];
 }
-export const HistoriqueStockSchema =
-  SchemaFactory.createForClass(HistoriqueStockRecord);
+export const HistoriqueStockSchema = SchemaFactory.createForClass(
+  HistoriqueStockRecord,
+);

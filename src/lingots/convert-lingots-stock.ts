@@ -42,7 +42,9 @@ try {
     ZoneModel.find().lean().exec(),
   ]);
   if (!fournisseurs.length || !tauxAluminium.length || !zones.length) {
-    throw new Error('Les référentiels de gestion_lingots doivent être chargés.');
+    throw new Error(
+      'Les référentiels de gestion_lingots doivent être chargés.',
+    );
   }
 
   const sources = mongoose.connection

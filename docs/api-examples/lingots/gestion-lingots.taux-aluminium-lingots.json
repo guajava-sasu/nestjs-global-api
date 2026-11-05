@@ -1,43 +1,30 @@
-[{
-  "_id": {
-    "$oid": "6aec4718d73e05c4be86ac52"
+[
+  {
+    "_id": {
+      "$oid": "6aec4718d73e05c4be86ac52"
+    },
+    "nom": "AL039",
+    "couleur": "#0072ce"
   },
-  "id": "AL039",
-  "couleur": "bleu",
-  "createdAt": {
-    "$date": "2026-11-05T09:06:32.522Z"
+  {
+    "_id": {
+      "$oid": "6aec4718d73e05c4be86ac54"
+    },
+    "nom": "AL069",
+    "couleur": "#ff3700"
   },
-  "nom": "AL039",
-    "couleur": "Orange",
-  "updatedAt": {
-    "$date": "2026-11-05T09:06:32.522Z"
+  {
+    "_id": {
+      "$oid": "6aec4718d73e05c4be86ac55"
+    },
+    "nom": "AL00",
+    "couleur": "#260c67"
+  },
+  {
+    "_id": {
+      "$oid": "6aec884035f1ca35e6679528"
+    },
+    "nom": "AL099",
+    "couleur": "#151515"
   }
-},
-{
-  "_id": {
-    "$oid": "6aec4718d73e05c4be86ac54"
-  },
-  "id": "AL069",
-  "couleur": "orange",
-  "createdAt": {
-    "$date": "2026-11-05T09:06:32.522Z"
-  },
-  "nom": "AL069",
-  "updatedAt": {
-    "$date": "2026-11-05T09:06:32.522Z"
-  }
-},
-{
-  "_id": {
-    "$oid": "6aec4718d73e05c4be86ac55"
-  },
-  "id": "AL00",
-  "couleur": "blanc",
-  "createdAt": {
-    "$date": "2026-11-05T09:06:32.522Z"
-  },
-  "nom": "AL00",
-  "updatedAt": {
-    "$date": "2026-11-05T09:06:32.522Z"
-  }
-}]
+]

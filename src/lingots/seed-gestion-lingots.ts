@@ -21,11 +21,11 @@ import {
   ZoneRecord,
   ZoneSchema,
 } from './entities/lingot.entity.js';
-import { LINGOTS_DATABASE_NAME } from './lingots.constants.js';
 import {
   convertirLingotStock,
   type LegacyLingotStockReel,
 } from './lingot-stock-conversion.js';
+import { LINGOTS_DATABASE_NAME } from './lingots.constants.js';
 
 const uri =
   process.env.MONGODB_URI ?? 'mongodb://localhost:27017/nestjs-global-api';
@@ -66,7 +66,8 @@ function verifierAutorisationReset(): void {
 }
 
 function choisirAleatoirement<T>(valeurs: readonly T[]): T {
-  if (valeurs.length === 0) throw new Error('Impossible de choisir une liste vide.');
+  if (valeurs.length === 0)
+    throw new Error('Impossible de choisir une liste vide.');
   return valeurs[Math.floor(Math.random() * valeurs.length)] as T;
 }
 
@@ -120,7 +121,10 @@ async function lireCsv(): Promise<LegacyLingotStockReel[]> {
     'utf8',
   );
   const lignes = contenu.replace(/^\uFEFF/, '').split(/\r?\n/);
-  const entetes = lignes.shift()?.split(';').map((entete) => entete.trim());
+  const entetes = lignes
+    .shift()
+    ?.split(';')
+    .map((entete) => entete.trim());
   if (!entetes) throw new Error('Le fichier T_LGT_STK.csv est vide.');
   const indexParColonne = new Map(
     entetes.map((entete, index) => [entete, index]),
@@ -191,23 +195,26 @@ function creerOperateurs(): Operateur[] {
 
 function creerTauxAluminium(
   exemples: Array<Record<string, unknown>>,
-  types: string[],
 ): TauxAluminium[] {
-  return exemples.flatMap((exemple) =>
-    types.map((type) => ({
-      _id: new Types.ObjectId(),
-      nom: String(exemple.nom),
-      couleur: String(exemple.couleur),
-      type,
-    })),
-  );
+  return exemples.map((exemple) => ({
+    _id:
+      exemple._id instanceof Types.ObjectId
+        ? exemple._id
+        : new Types.ObjectId(),
+    nom: String(exemple.nom),
+    couleur: String(exemple.couleur),
+  }));
 }
 
 async function seedGestionLingots(): Promise<void> {
   verifierAutorisationReset();
   const [fournisseursExemples, tauxExemples, sources] = await Promise.all([
-    lireJson<Record<string, unknown>>('gestion-lingots.fournisseurs-lingots.json'),
-    lireJson<Record<string, unknown>>('gestion-lingots.taux-aluminium-lingots.json'),
+    lireJson<Record<string, unknown>>(
+      'gestion-lingots.fournisseurs-lingots.json',
+    ),
+    lireJson<Record<string, unknown>>(
+      'gestion-lingots.taux-aluminium-lingots.json',
+    ),
     lireCsv(),
   ]);
 
@@ -219,26 +226,17 @@ async function seedGestionLingots(): Promise<void> {
     nom: String(exemple.nom),
     code: String(exemple.code),
   }));
-  const types = [...new Set(sources.map((source) => source.D_LGT_STK_TYP_APA.trim()))]
-    .filter(Boolean);
-  if (types.length === 0) {
-    throw new Error('Aucun type de taux présent dans le CSV.');
-  }
-  const tauxAluminium = creerTauxAluminium(tauxExemples, types);
+  const tauxAluminium = creerTauxAluminium(tauxExemples);
   const zones: Zone[] = zonesDefinies.map((zone) => ({
     ...zone,
     _id: new Types.ObjectId(),
   }));
   const operateurs = creerOperateurs();
-  const zonesInitiales = zones.filter((zone) => ['F', 'S', 'B'].includes(zone.code));
+  const zonesInitiales = zones.filter((zone) =>
+    ['F', 'S', 'B'].includes(zone.code),
+  );
   const zonesNonReservees = zones.filter(
     (zone) => !codesZonesUniques.includes(zone.code),
-  );
-  const tauxParType = new Map(
-    types.map((type) => [
-      type,
-      tauxAluminium.filter((taux) => taux.type === type),
-    ]),
   );
 
   if (sources.length < codesZonesUniques.length) {
@@ -250,21 +248,18 @@ async function seedGestionLingots(): Promise<void> {
 
   const codesQR = new Set<string>();
   const lingots: Lingot[] = sources.map((source, index) => {
-    const type = source.D_LGT_STK_TYP_APA.trim();
-    const zone = index < codesZonesUniques.length
-      ? zones.find((candidate) => candidate.code === codesZonesUniques[index])
-      : choisirAleatoirement(zonesNonReservees);
+    const zone =
+      index < codesZonesUniques.length
+        ? zones.find((candidate) => candidate.code === codesZonesUniques[index])
+        : choisirAleatoirement(zonesNonReservees);
     if (!zone) throw new Error('Zone requise introuvable.');
 
-    const lingot = convertirLingotStock(
-      source,
-      {
-        fournisseurs,
-        tauxAluminium: tauxParType.get(type),
-        zones: [zone],
-        choisir: choisirAleatoirement,
-      },
-    );
+    const lingot = convertirLingotStock(source, {
+      fournisseurs,
+      tauxAluminium,
+      zones: [zone],
+      choisir: choisirAleatoirement,
+    });
     if (codesQR.has(lingot.codeQR)) {
       throw new Error(`Code QR dupliqué dans le CSV : ${lingot.codeQR}.`);
     }
@@ -295,7 +290,60 @@ async function seedGestionLingots(): Promise<void> {
     }
   }
 
-  const minDate = Math.min(...lingots.map((lingot) => lingot.dateReception.getTime()));
+  if (lingots.length < 90) {
+    throw new Error('Le CSV doit contenir au moins 90 lingots.');
+  }
+  const lingotsMelanges = [...lingots];
+  for (let index = lingotsMelanges.length - 1; index > 0; index--) {
+    const autreIndex = Math.floor(Math.random() * (index + 1));
+    [lingotsMelanges[index], lingotsMelanges[autreIndex]] = [
+      lingotsMelanges[autreIndex]!,
+      lingotsMelanges[index]!,
+    ];
+  }
+  const mouvementsParLingot = new Map<string, MouvementRecord[]>();
+  for (const mouvement of mouvements) {
+    const cle = mouvement.lingot._id.toString();
+    const existants = mouvementsParLingot.get(cle) ?? [];
+    existants.push(mouvement);
+    mouvementsParLingot.set(cle, existants);
+  }
+
+  for (const lingot of lingotsMelanges.slice(0, 90)) {
+    const existants = (
+      mouvementsParLingot.get(lingot._id.toString()) ?? []
+    ).sort((a, b) => a.date.getTime() - b.date.getTime());
+    const nombreCible = 3 + Math.floor(Math.random() * 5);
+    let dernierMouvement = existants.at(-1);
+    if (!dernierMouvement) {
+      throw new Error(`Aucun mouvement initial pour ${lingot.codeQR}.`);
+    }
+
+    while (existants.length < nombreCible) {
+      const depart = dernierMouvement.arrivee;
+      const arrivee = choisirAleatoirement(
+        zones.filter((zone) => zone.code !== depart.code),
+      );
+      const date = new Date(
+        dernierMouvement.date.getTime() +
+          (1 + Math.floor(Math.random() * 24)) * 60 * 60 * 1000,
+      );
+      dernierMouvement = {
+        _id: new Types.ObjectId(),
+        depart,
+        arrivee,
+        date,
+        operateur: choisirAleatoirement(operateurs),
+        lingot,
+      } as MouvementRecord;
+      existants.push(dernierMouvement);
+      mouvements.push(dernierMouvement);
+    }
+  }
+
+  const minDate = Math.min(
+    ...lingots.map((lingot) => lingot.dateReception.getTime()),
+  );
   const maxDate = Date.now();
   const historiques = Array.from({ length: 100 }, (_, index) => {
     const date = new Date(minDate + ((maxDate - minDate) * index) / 99);
@@ -305,10 +353,13 @@ async function seedGestionLingots(): Promise<void> {
         lingot.dateReception <= date &&
         lingot.fournisseur._id.equals(fournisseur._id),
     );
-    const poidsParTaux = new Map<string, { taux: TauxAluminium; poids: number }>();
+    const poidsParTaux = new Map<
+      string,
+      { taux: TauxAluminium; poids: number }
+    >();
 
     for (const lingot of lingotsDuFournisseur) {
-      const cle = `${lingot.tauxAluminium.nom}-${lingot.tauxAluminium.type}`;
+      const cle = lingot.tauxAluminium._id.toString();
       const ligne = poidsParTaux.get(cle) ?? {
         taux: lingot.tauxAluminium,
         poids: 0,
@@ -334,11 +385,20 @@ async function seedGestionLingots(): Promise<void> {
       FournisseurRecord.name,
       FournisseurSchema,
     );
-    const TauxModel = mongoose.model(TauxAluminiumRecord.name, TauxAluminiumSchema);
+    const TauxModel = mongoose.model(
+      TauxAluminiumRecord.name,
+      TauxAluminiumSchema,
+    );
     const ZoneModel = mongoose.model(ZoneRecord.name, ZoneSchema);
-    const OperateurModel = mongoose.model(OperateurRecord.name, OperateurSchema);
+    const OperateurModel = mongoose.model(
+      OperateurRecord.name,
+      OperateurSchema,
+    );
     const LingotModel = mongoose.model(LingotRecord.name, LingotSchema);
-    const MouvementModel = mongoose.model(MouvementRecord.name, MouvementSchema);
+    const MouvementModel = mongoose.model(
+      MouvementRecord.name,
+      MouvementSchema,
+    );
     const HistoriqueModel = mongoose.model(
       HistoriqueStockRecord.name,
       HistoriqueStockSchema,

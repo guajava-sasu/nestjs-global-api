@@ -1,7 +1,8 @@
 import { ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
-import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import { SwaggerModule } from '@nestjs/swagger';
 import { AppModule, ObserveInstrument } from './app.module.js';
+import { createOpenApiDocument } from './openapi.js';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
@@ -19,19 +20,7 @@ async function bootstrap() {
     }),
   );
 
-  const swaggerConfig = new DocumentBuilder()
-    .setTitle('NestJS Global API')
-    .setDescription('BFF custom API documentation')
-    .setVersion('0.0.1')
-    .addTag('app', 'Endpoints généraux')
-    .addTag('fiche-bobine-mere', 'Gestion des fiches bobine mère')
-    .addTag('fiche-bobine-fille', 'Gestion des fiches bobine fille')
-    .addTag('parc-a-bobines', 'Gestion du parc à bobines')
-    .addTag('chutage', 'Gestion du chutage')
-    .addTag('lingots', 'Gestion des stocks et mouvements de lingots')
-    .build();
-  const swaggerDocument = SwaggerModule.createDocument(app, swaggerConfig);
-  SwaggerModule.setup('api', app, swaggerDocument);
+  SwaggerModule.setup('api', app, createOpenApiDocument(app));
 
   await app.listen(process.env.PORT ?? 3000);
 }

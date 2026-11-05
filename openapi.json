@@ -1,0 +1,3731 @@
+{
+  "openapi": "3.0.0",
+  "paths": {
+    "/": {
+      "get": {
+        "operationId": "App_getHello",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Message de bienvenue",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Vérifier que l'API répond",
+        "tags": [
+          "app"
+        ]
+      }
+    },
+    "/fiche-bobine-mere": {
+      "post": {
+        "operationId": "FicheBobineMere_create",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateFicheBobineMereDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Fiche créée avec succès"
+          }
+        },
+        "summary": "Créer une fiche bobine mère",
+        "tags": [
+          "fiche-bobine-mere"
+        ]
+      },
+      "get": {
+        "operationId": "FicheBobineMere_findAll",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Liste des fiches bobine mère"
+          }
+        },
+        "summary": "Lister toutes les fiches bobine mère",
+        "tags": [
+          "fiche-bobine-mere"
+        ]
+      }
+    },
+    "/fiche-bobine-mere/{id}": {
+      "get": {
+        "operationId": "FicheBobineMere_findOne",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Identifiant de la fiche bobine mère",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Fiche trouvée"
+          },
+          "404": {
+            "description": "Fiche introuvable"
+          }
+        },
+        "summary": "Récupérer une fiche bobine mère par id",
+        "tags": [
+          "fiche-bobine-mere"
+        ]
+      },
+      "patch": {
+        "operationId": "FicheBobineMere_update",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Identifiant de la fiche bobine mère",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateFicheBobineMereDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Fiche mise à jour"
+          },
+          "404": {
+            "description": "Fiche introuvable"
+          }
+        },
+        "summary": "Mettre à jour une fiche bobine mère",
+        "tags": [
+          "fiche-bobine-mere"
+        ]
+      },
+      "delete": {
+        "operationId": "FicheBobineMere_remove",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Identifiant de la fiche bobine mère",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Fiche supprimée"
+          },
+          "404": {
+            "description": "Fiche introuvable"
+          }
+        },
+        "summary": "Supprimer une fiche bobine mère",
+        "tags": [
+          "fiche-bobine-mere"
+        ]
+      }
+    },
+    "/fiche-bobine-fille": {
+      "post": {
+        "operationId": "FicheBobineFille_create",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateFicheBobineFilleDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Fiche créée avec succès"
+          }
+        },
+        "summary": "Créer une fiche bobine fille",
+        "tags": [
+          "fiche-bobine-fille"
+        ]
+      },
+      "get": {
+        "operationId": "FicheBobineFille_findAll",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Liste des fiches bobine fille"
+          }
+        },
+        "summary": "Lister toutes les fiches bobine fille",
+        "tags": [
+          "fiche-bobine-fille"
+        ]
+      }
+    },
+    "/fiche-bobine-fille/bobine-mere/{identiteBobineMere}": {
+      "get": {
+        "operationId": "FicheBobineFille_findByBobineMere",
+        "parameters": [
+          {
+            "name": "identiteBobineMere",
+            "required": true,
+            "in": "path",
+            "description": "Numéro de la bobine mère",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Liste des fiches filles de la bobine mère"
+          }
+        },
+        "summary": "Lister les fiches filles d'une bobine mère",
+        "tags": [
+          "fiche-bobine-fille"
+        ]
+      }
+    },
+    "/fiche-bobine-fille/{id}": {
+      "get": {
+        "operationId": "FicheBobineFille_findOne",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Identifiant de la fiche bobine fille",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Fiche trouvée"
+          },
+          "404": {
+            "description": "Fiche introuvable"
+          }
+        },
+        "summary": "Récupérer une fiche bobine fille par id",
+        "tags": [
+          "fiche-bobine-fille"
+        ]
+      },
+      "patch": {
+        "operationId": "FicheBobineFille_update",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Identifiant de la fiche bobine fille",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateFicheBobineFilleDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Fiche mise à jour"
+          },
+          "404": {
+            "description": "Fiche introuvable"
+          }
+        },
+        "summary": "Mettre à jour une fiche bobine fille",
+        "tags": [
+          "fiche-bobine-fille"
+        ]
+      },
+      "delete": {
+        "operationId": "FicheBobineFille_remove",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Identifiant de la fiche bobine fille",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Fiche supprimée"
+          },
+          "404": {
+            "description": "Fiche introuvable"
+          }
+        },
+        "summary": "Supprimer une fiche bobine fille",
+        "tags": [
+          "fiche-bobine-fille"
+        ]
+      }
+    },
+    "/parc-a-bobines": {
+      "post": {
+        "operationId": "ParcABobines_create",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateParcABobineDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Entrée créée avec succès"
+          }
+        },
+        "summary": "Créer une entrée du parc à bobines",
+        "tags": [
+          "parc-a-bobines"
+        ]
+      },
+      "get": {
+        "operationId": "ParcABobines_findAll",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Liste du parc à bobines"
+          }
+        },
+        "summary": "Lister le parc à bobines",
+        "tags": [
+          "parc-a-bobines"
+        ]
+      }
+    },
+    "/parc-a-bobines/{id}": {
+      "get": {
+        "operationId": "ParcABobines_findOne",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Identifiant de la bobine",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Entrée trouvée"
+          },
+          "404": {
+            "description": "Entrée introuvable"
+          }
+        },
+        "summary": "Récupérer une entrée du parc à bobines par id",
+        "tags": [
+          "parc-a-bobines"
+        ]
+      },
+      "patch": {
+        "operationId": "ParcABobines_update",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Identifiant de la bobine",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateParcABobineDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Entrée mise à jour"
+          },
+          "404": {
+            "description": "Entrée introuvable"
+          }
+        },
+        "summary": "Mettre à jour une entrée du parc à bobines",
+        "tags": [
+          "parc-a-bobines"
+        ]
+      },
+      "delete": {
+        "operationId": "ParcABobines_remove",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Identifiant de la bobine",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Entrée supprimée"
+          },
+          "404": {
+            "description": "Entrée introuvable"
+          }
+        },
+        "summary": "Supprimer une entrée du parc à bobines",
+        "tags": [
+          "parc-a-bobines"
+        ]
+      }
+    },
+    "/chutage/chariots": {
+      "get": {
+        "operationId": "Chutage_findChariots",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Liste des chariots"
+          }
+        },
+        "summary": "Lister les chariots",
+        "tags": [
+          "chutage"
+        ]
+      }
+    },
+    "/chutage/demandes-pontier": {
+      "get": {
+        "operationId": "Chutage_findDemandesPontier",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Liste des demandes pontier"
+          }
+        },
+        "summary": "Lister les demandes pontier",
+        "tags": [
+          "chutage"
+        ]
+      }
+    },
+    "/chutage/preparations-chargement": {
+      "get": {
+        "operationId": "Chutage_findPreparationsChargement",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Liste des préparations de chargement"
+          }
+        },
+        "summary": "Lister les préparations de chargement",
+        "tags": [
+          "chutage"
+        ]
+      }
+    },
+    "/chutage/bobines-stockage": {
+      "get": {
+        "operationId": "Chutage_findBobinesStockage",
+        "parameters": [
+          {
+            "name": "type",
+            "required": false,
+            "in": "query",
+            "description": "Type de bobine ('N' ou 'S')",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Liste des bobines en stockage"
+          }
+        },
+        "summary": "Lister les bobines en stockage",
+        "tags": [
+          "chutage"
+        ]
+      }
+    },
+    "/chutage/bobines-a-chuter": {
+      "get": {
+        "operationId": "Chutage_findBobinesAChuter",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Liste des bobines à chuter"
+          }
+        },
+        "summary": "Lister les bobines à chuter",
+        "tags": [
+          "chutage"
+        ]
+      }
+    },
+    "/chutage/chutes-bobines/{bobine}": {
+      "get": {
+        "operationId": "Chutage_findChutesBobines",
+        "parameters": [
+          {
+            "name": "bobine",
+            "required": true,
+            "in": "path",
+            "description": "Identifiant de la bobine",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Liste des chutes de la bobine"
+          }
+        },
+        "summary": "Lister les chutes d'une bobine",
+        "tags": [
+          "chutage"
+        ]
+      }
+    },
+    "/chutage/chutes": {
+      "get": {
+        "operationId": "Chutage_findChutes",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Liste des chutes de la bobine"
+          }
+        },
+        "summary": "Lister toutes les chutes",
+        "tags": [
+          "chutage"
+        ]
+      }
+    },
+    "/chutage/chutes-rives/{bobine}": {
+      "get": {
+        "operationId": "Chutage_findChutesRives",
+        "parameters": [
+          {
+            "name": "bobine",
+            "required": true,
+            "in": "path",
+            "description": "Identifiant de la bobine",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Liste des chutes de rives de la bobine"
+          }
+        },
+        "summary": "Lister les chutes de rives d'une bobine",
+        "tags": [
+          "chutage"
+        ]
+      }
+    },
+    "/chutage/chutes-rives": {
+      "get": {
+        "operationId": "Chutage_findAllChutesRives",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Liste de toutes les chutes de rives"
+          }
+        },
+        "summary": "Lister toutes les chutes de rives",
+        "tags": [
+          "chutage"
+        ]
+      }
+    },
+    "/chutage/ponts-etat-pince": {
+      "get": {
+        "operationId": "Chutage_findPontsEtatPince",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Liste des états ponts/pinces"
+          }
+        },
+        "summary": "Lister l'état des ponts et pinces",
+        "tags": [
+          "chutage"
+        ]
+      }
+    },
+    "/operateurs-lingots": {
+      "post": {
+        "operationId": "Lingots_createOperateur",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateOperateurDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OperateurResponseDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Corps de requête invalide"
+          }
+        },
+        "tags": [
+          "lingots"
+        ]
+      },
+      "get": {
+        "operationId": "Lingots_findOperateurs",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/OperateurResponseDto"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "lingots"
+        ]
+      }
+    },
+    "/operateurs-lingots/{id}": {
+      "get": {
+        "operationId": "Lingots_findOperateur",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OperateurResponseDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Ressource introuvable ou _id invalide"
+          }
+        },
+        "tags": [
+          "lingots"
+        ]
+      },
+      "patch": {
+        "operationId": "Lingots_updateOperateur",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateOperateurDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OperateurResponseDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Ressource introuvable ou _id invalide"
+          }
+        },
+        "tags": [
+          "lingots"
+        ]
+      },
+      "delete": {
+        "operationId": "Lingots_removeOperateur",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OperateurResponseDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Ressource introuvable ou _id invalide"
+          }
+        },
+        "tags": [
+          "lingots"
+        ]
+      }
+    },
+    "/fournisseurs-lingots": {
+      "post": {
+        "operationId": "Lingots_createFournisseur",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateFournisseurDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FournisseurResponseDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Corps de requête invalide"
+          }
+        },
+        "tags": [
+          "lingots"
+        ]
+      },
+      "get": {
+        "operationId": "Lingots_findFournisseurs",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/FournisseurResponseDto"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "lingots"
+        ]
+      }
+    },
+    "/fournisseurs-lingots/{id}": {
+      "get": {
+        "operationId": "Lingots_findFournisseur",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FournisseurResponseDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Ressource introuvable ou _id invalide"
+          }
+        },
+        "tags": [
+          "lingots"
+        ]
+      },
+      "patch": {
+        "operationId": "Lingots_updateFournisseur",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateFournisseurDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FournisseurResponseDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Ressource introuvable ou _id invalide"
+          }
+        },
+        "tags": [
+          "lingots"
+        ]
+      },
+      "delete": {
+        "operationId": "Lingots_removeFournisseur",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FournisseurResponseDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Ressource introuvable ou _id invalide"
+          }
+        },
+        "tags": [
+          "lingots"
+        ]
+      }
+    },
+    "/taux-aluminium-lingots": {
+      "post": {
+        "operationId": "Lingots_createTauxAluminium",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateTauxAluminiumDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TauxAluminiumResponseDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Corps de requête invalide"
+          }
+        },
+        "tags": [
+          "lingots"
+        ]
+      },
+      "get": {
+        "operationId": "Lingots_findTauxAluminium",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TauxAluminiumResponseDto"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "lingots"
+        ]
+      }
+    },
+    "/taux-aluminium-lingots/{id}": {
+      "get": {
+        "operationId": "Lingots_findTauxAluminiumById",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TauxAluminiumResponseDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Ressource introuvable ou _id invalide"
+          }
+        },
+        "tags": [
+          "lingots"
+        ]
+      },
+      "patch": {
+        "operationId": "Lingots_updateTauxAluminium",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateTauxAluminiumDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TauxAluminiumResponseDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Ressource introuvable ou _id invalide"
+          }
+        },
+        "tags": [
+          "lingots"
+        ]
+      },
+      "delete": {
+        "operationId": "Lingots_removeTauxAluminium",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TauxAluminiumResponseDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Ressource introuvable ou _id invalide"
+          }
+        },
+        "tags": [
+          "lingots"
+        ]
+      }
+    },
+    "/zones-lingots": {
+      "post": {
+        "operationId": "Lingots_createZone",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateZoneDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ZoneResponseDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Corps de requête invalide"
+          }
+        },
+        "tags": [
+          "lingots"
+        ]
+      },
+      "get": {
+        "operationId": "Lingots_findZones",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ZoneResponseDto"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "lingots"
+        ]
+      }
+    },
+    "/zones-lingots/{id}": {
+      "get": {
+        "operationId": "Lingots_findZone",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ZoneResponseDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Ressource introuvable ou _id invalide"
+          }
+        },
+        "tags": [
+          "lingots"
+        ]
+      },
+      "patch": {
+        "operationId": "Lingots_updateZone",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateZoneDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ZoneResponseDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Ressource introuvable ou _id invalide"
+          }
+        },
+        "tags": [
+          "lingots"
+        ]
+      },
+      "delete": {
+        "operationId": "Lingots_removeZone",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ZoneResponseDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Ressource introuvable ou _id invalide"
+          }
+        },
+        "tags": [
+          "lingots"
+        ]
+      }
+    },
+    "/lingots": {
+      "post": {
+        "operationId": "Lingots_createLingot",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateLingotDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LingotResponseDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Corps de requête invalide"
+          }
+        },
+        "tags": [
+          "lingots"
+        ]
+      },
+      "get": {
+        "operationId": "Lingots_findLingots",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/LingotResponseDto"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "lingots"
+        ]
+      }
+    },
+    "/lingots/{id}": {
+      "get": {
+        "operationId": "Lingots_findLingot",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LingotResponseDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Ressource introuvable ou _id invalide"
+          }
+        },
+        "tags": [
+          "lingots"
+        ]
+      },
+      "patch": {
+        "operationId": "Lingots_updateLingot",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateLingotDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LingotResponseDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Ressource introuvable ou _id invalide"
+          }
+        },
+        "tags": [
+          "lingots"
+        ]
+      },
+      "delete": {
+        "operationId": "Lingots_removeLingot",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LingotResponseDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Ressource introuvable ou _id invalide"
+          }
+        },
+        "tags": [
+          "lingots"
+        ]
+      }
+    },
+    "/mouvements-lingots": {
+      "post": {
+        "operationId": "Lingots_createMouvementCollection",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateMouvementCollectionDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MouvementResponseDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Corps de requête invalide"
+          }
+        },
+        "summary": "Créer un mouvement de lingot",
+        "tags": [
+          "lingots",
+          "mouvements-lingots"
+        ]
+      },
+      "get": {
+        "operationId": "Lingots_findAllMouvements",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/MouvementResponseDto"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary": "Lister les mouvements de lingots",
+        "tags": [
+          "lingots",
+          "mouvements-lingots"
+        ]
+      }
+    },
+    "/mouvements-lingots/{id}": {
+      "get": {
+        "operationId": "Lingots_findMouvementById",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "_id MongoDB du mouvement",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MouvementResponseDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Ressource introuvable ou _id invalide"
+          }
+        },
+        "summary": "Obtenir un mouvement par son _id MongoDB",
+        "tags": [
+          "lingots",
+          "mouvements-lingots"
+        ]
+      },
+      "patch": {
+        "operationId": "Lingots_updateMouvementById",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "_id MongoDB du mouvement",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateMouvementDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MouvementResponseDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Ressource introuvable ou _id invalide"
+          }
+        },
+        "summary": "Modifier un mouvement de lingot",
+        "tags": [
+          "lingots",
+          "mouvements-lingots"
+        ]
+      },
+      "delete": {
+        "operationId": "Lingots_removeMouvementById",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "_id MongoDB du mouvement",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MouvementResponseDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Ressource introuvable ou _id invalide"
+          }
+        },
+        "summary": "Supprimer un mouvement de lingot",
+        "tags": [
+          "lingots",
+          "mouvements-lingots"
+        ]
+      }
+    },
+    "/lingots/{lingotId}/mouvements": {
+      "post": {
+        "operationId": "Lingots_createMouvement",
+        "parameters": [
+          {
+            "name": "lingotId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateMouvementDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MouvementResponseDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Corps de requête invalide"
+          }
+        },
+        "tags": [
+          "lingots"
+        ]
+      },
+      "get": {
+        "operationId": "Lingots_findMouvements",
+        "parameters": [
+          {
+            "name": "lingotId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/MouvementResponseDto"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "lingots"
+        ]
+      }
+    },
+    "/lingots/{lingotId}/mouvements/{mouvementId}": {
+      "get": {
+        "operationId": "Lingots_findMouvement",
+        "parameters": [
+          {
+            "name": "lingotId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "mouvementId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MouvementResponseDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Ressource introuvable ou _id invalide"
+          }
+        },
+        "tags": [
+          "lingots"
+        ]
+      },
+      "patch": {
+        "operationId": "Lingots_updateMouvement",
+        "parameters": [
+          {
+            "name": "lingotId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "mouvementId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateMouvementDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MouvementResponseDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Ressource introuvable ou _id invalide"
+          }
+        },
+        "tags": [
+          "lingots"
+        ]
+      },
+      "delete": {
+        "operationId": "Lingots_removeMouvement",
+        "parameters": [
+          {
+            "name": "lingotId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "mouvementId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MouvementResponseDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Ressource introuvable ou _id invalide"
+          }
+        },
+        "tags": [
+          "lingots"
+        ]
+      }
+    },
+    "/inventaires-lingots": {
+      "post": {
+        "operationId": "Lingots_createInventaire",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateInventaireDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InventaireResponseDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Corps de requête invalide"
+          }
+        },
+        "tags": [
+          "lingots"
+        ]
+      },
+      "get": {
+        "operationId": "Lingots_findInventaires",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/InventaireResponseDto"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "lingots"
+        ]
+      }
+    },
+    "/inventaires-lingots/{id}": {
+      "get": {
+        "operationId": "Lingots_findInventaire",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InventaireResponseDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Ressource introuvable ou _id invalide"
+          }
+        },
+        "tags": [
+          "lingots"
+        ]
+      },
+      "patch": {
+        "operationId": "Lingots_updateInventaire",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateInventaireDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InventaireResponseDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Ressource introuvable ou _id invalide"
+          }
+        },
+        "tags": [
+          "lingots"
+        ]
+      },
+      "delete": {
+        "operationId": "Lingots_removeInventaire",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InventaireResponseDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Ressource introuvable ou _id invalide"
+          }
+        },
+        "tags": [
+          "lingots"
+        ]
+      }
+    },
+    "/matte-lingots": {
+      "post": {
+        "operationId": "Lingots_createMatte",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateMatteDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MatteResponseDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Corps de requête invalide"
+          }
+        },
+        "tags": [
+          "lingots"
+        ]
+      },
+      "get": {
+        "operationId": "Lingots_findMattes",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/MatteResponseDto"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "lingots"
+        ]
+      }
+    },
+    "/matte-lingots/{id}": {
+      "get": {
+        "operationId": "Lingots_findMatte",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MatteResponseDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Ressource introuvable ou _id invalide"
+          }
+        },
+        "tags": [
+          "lingots"
+        ]
+      },
+      "patch": {
+        "operationId": "Lingots_updateMatte",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateMatteDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MatteResponseDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Ressource introuvable ou _id invalide"
+          }
+        },
+        "tags": [
+          "lingots"
+        ]
+      },
+      "delete": {
+        "operationId": "Lingots_removeMatte",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MatteResponseDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Ressource introuvable ou _id invalide"
+          }
+        },
+        "tags": [
+          "lingots"
+        ]
+      }
+    },
+    "/historique-stock-lingots": {
+      "post": {
+        "operationId": "Lingots_createHistoriqueStock",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateHistoriqueStockDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HistoriqueStockResponseDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Corps de requête invalide"
+          }
+        },
+        "tags": [
+          "lingots"
+        ]
+      },
+      "get": {
+        "operationId": "Lingots_findHistoriquesStock",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/HistoriqueStockResponseDto"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "lingots"
+        ]
+      }
+    },
+    "/historique-stock-lingots/{id}": {
+      "get": {
+        "operationId": "Lingots_findHistoriqueStock",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HistoriqueStockResponseDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Ressource introuvable ou _id invalide"
+          }
+        },
+        "tags": [
+          "lingots"
+        ]
+      },
+      "patch": {
+        "operationId": "Lingots_updateHistoriqueStock",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateHistoriqueStockDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HistoriqueStockResponseDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Ressource introuvable ou _id invalide"
+          }
+        },
+        "tags": [
+          "lingots"
+        ]
+      },
+      "delete": {
+        "operationId": "Lingots_removeHistoriqueStock",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HistoriqueStockResponseDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Ressource introuvable ou _id invalide"
+          }
+        },
+        "tags": [
+          "lingots"
+        ]
+      }
+    }
+  },
+  "info": {
+    "title": "NestJS Global API",
+    "description": "BFF custom API documentation",
+    "version": "0.0.1",
+    "contact": {}
+  },
+  "tags": [
+    {
+      "name": "app",
+      "description": "Endpoints généraux"
+    },
+    {
+      "name": "fiche-bobine-mere",
+      "description": "Gestion des fiches bobine mère"
+    },
+    {
+      "name": "fiche-bobine-fille",
+      "description": "Gestion des fiches bobine fille"
+    },
+    {
+      "name": "parc-a-bobines",
+      "description": "Gestion du parc à bobines"
+    },
+    {
+      "name": "chutage",
+      "description": "Gestion du chutage"
+    },
+    {
+      "name": "lingots",
+      "description": "Gestion des stocks et mouvements de lingots"
+    },
+    {
+      "name": "mouvements-lingots",
+      "description": "CRUD des mouvements de lingots"
+    }
+  ],
+  "servers": [],
+  "components": {
+    "schemas": {
+      "GeneralitesDto": {
+        "type": "object",
+        "properties": {
+          "bobine": {
+            "type": "string"
+          },
+          "lot": {
+            "type": "number"
+          },
+          "montage": {
+            "type": "number"
+          },
+          "commande": {
+            "type": "string"
+          },
+          "client": {
+            "type": "string"
+          },
+          "delai": {
+            "type": "number"
+          },
+          "halle": {
+            "type": "string"
+          },
+          "emplacement": {
+            "type": "string"
+          },
+          "aspect": {
+            "type": "number"
+          },
+          "planeite": {
+            "type": "number"
+          },
+          "outilAmont": {
+            "type": "string"
+          },
+          "codeRecuit": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "bobine",
+          "lot",
+          "montage",
+          "commande",
+          "client",
+          "delai",
+          "halle",
+          "emplacement",
+          "aspect",
+          "planeite",
+          "outilAmont",
+          "codeRecuit",
+          "type"
+        ]
+      },
+      "DimensionsDto": {
+        "type": "object",
+        "properties": {
+          "longueur": {
+            "type": "number"
+          },
+          "larg": {
+            "type": "number"
+          },
+          "epais": {
+            "type": "number"
+          },
+          "poids": {
+            "type": "number"
+          },
+          "diaExt": {
+            "type": "number"
+          },
+          "diaArr": {
+            "type": "number"
+          },
+          "diaHte": {
+            "type": "number"
+          },
+          "outilAmont": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "longueur",
+          "larg",
+          "epais",
+          "poids",
+          "diaExt",
+          "diaArr",
+          "diaHte",
+          "outilAmont"
+        ]
+      },
+      "LimitesDto": {
+        "type": "object",
+        "properties": {
+          "mini": {
+            "type": "number"
+          },
+          "vise": {
+            "type": "number"
+          },
+          "maxi": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "mini",
+          "vise",
+          "maxi"
+        ]
+      },
+      "RevetementsDto": {
+        "type": "object",
+        "properties": {
+          "refAuto": {
+            "type": "boolean"
+          },
+          "avant": {
+            "$ref": "#/components/schemas/LimitesDto"
+          },
+          "arriere": {
+            "$ref": "#/components/schemas/LimitesDto"
+          }
+        },
+        "required": [
+          "refAuto",
+          "avant",
+          "arriere"
+        ]
+      },
+      "VitesseCentreDto": {
+        "type": "object",
+        "properties": {
+          "n2": {
+            "type": "number"
+          },
+          "rg": {
+            "type": "number"
+          },
+          "rgRef": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "n2",
+          "rg",
+          "rgRef"
+        ]
+      },
+      "ChutageDto": {
+        "type": "object",
+        "properties": {
+          "debut": {
+            "type": "number"
+          },
+          "fin": {
+            "type": "number"
+          },
+          "causeDebut": {
+            "type": "string"
+          },
+          "causeFin": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "debut",
+          "fin",
+          "causeDebut",
+          "causeFin"
+        ]
+      },
+      "FormatSortieLimitesDto": {
+        "type": "object",
+        "properties": {
+          "larg": {
+            "type": "number"
+          },
+          "epai": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "larg",
+          "epai"
+        ]
+      },
+      "FormatSortieDto": {
+        "type": "object",
+        "properties": {
+          "mini": {
+            "$ref": "#/components/schemas/FormatSortieLimitesDto"
+          },
+          "vise": {
+            "$ref": "#/components/schemas/FormatSortieLimitesDto"
+          },
+          "maxi": {
+            "$ref": "#/components/schemas/FormatSortieLimitesDto"
+          }
+        },
+        "required": [
+          "mini",
+          "vise",
+          "maxi"
+        ]
+      },
+      "SuggestionDto": {
+        "type": "object",
+        "properties": {
+          "ordre": {
+            "type": "number"
+          },
+          "libelle": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "ordre",
+          "libelle"
+        ]
+      },
+      "DefautDto": {
+        "type": "object",
+        "properties": {
+          "bobine": {
+            "type": "string"
+          },
+          "numero": {
+            "type": "number"
+          },
+          "type": {
+            "type": "string"
+          },
+          "debut": {
+            "type": "number"
+          },
+          "fin": {
+            "type": "number"
+          },
+          "long": {
+            "type": "string"
+          },
+          "face": {
+            "type": "string"
+          },
+          "imputation": {
+            "type": "number"
+          },
+          "renseignementComplementaires": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "bobine",
+          "numero",
+          "type",
+          "debut",
+          "fin",
+          "long",
+          "face",
+          "imputation",
+          "renseignementComplementaires"
+        ]
+      },
+      "CreateFicheBobineMereDto": {
+        "type": "object",
+        "properties": {
+          "bobine": {
+            "type": "string"
+          },
+          "generalites": {
+            "$ref": "#/components/schemas/GeneralitesDto"
+          },
+          "dimensions": {
+            "$ref": "#/components/schemas/DimensionsDto"
+          },
+          "revetements": {
+            "$ref": "#/components/schemas/RevetementsDto"
+          },
+          "vitesseCentre": {
+            "$ref": "#/components/schemas/VitesseCentreDto"
+          },
+          "chutage": {
+            "$ref": "#/components/schemas/ChutageDto"
+          },
+          "formatSortie": {
+            "$ref": "#/components/schemas/FormatSortieDto"
+          },
+          "suggestions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SuggestionDto"
+            }
+          },
+          "defauts": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DefautDto"
+            }
+          }
+        },
+        "required": [
+          "bobine",
+          "generalites",
+          "dimensions",
+          "revetements",
+          "vitesseCentre",
+          "chutage",
+          "formatSortie",
+          "suggestions",
+          "defauts"
+        ]
+      },
+      "UpdateFicheBobineMereDto": {
+        "type": "object",
+        "properties": {
+          "bobine": {
+            "type": "string"
+          },
+          "generalites": {
+            "$ref": "#/components/schemas/GeneralitesDto"
+          },
+          "dimensions": {
+            "$ref": "#/components/schemas/DimensionsDto"
+          },
+          "revetements": {
+            "$ref": "#/components/schemas/RevetementsDto"
+          },
+          "vitesseCentre": {
+            "$ref": "#/components/schemas/VitesseCentreDto"
+          },
+          "chutage": {
+            "$ref": "#/components/schemas/ChutageDto"
+          },
+          "formatSortie": {
+            "$ref": "#/components/schemas/FormatSortieDto"
+          },
+          "suggestions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SuggestionDto"
+            }
+          },
+          "defauts": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DefautDto"
+            }
+          }
+        }
+      },
+      "FilleGeneralitesDto": {
+        "type": "object",
+        "properties": {
+          "bobine": {
+            "type": "string"
+          },
+          "lot": {
+            "type": "number"
+          },
+          "montage": {
+            "type": "number"
+          },
+          "commande": {
+            "type": "string"
+          },
+          "client": {
+            "type": "string"
+          },
+          "delai": {
+            "type": "number"
+          },
+          "aspect": {
+            "type": "number"
+          },
+          "planeite": {
+            "type": "number"
+          },
+          "type": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "bobine",
+          "lot",
+          "montage",
+          "commande",
+          "client",
+          "delai",
+          "aspect",
+          "planeite",
+          "type"
+        ]
+      },
+      "FilleRevetementsDto": {
+        "type": "object",
+        "properties": {
+          "consigne": {
+            "$ref": "#/components/schemas/RevetementsDto"
+          },
+          "reel": {
+            "$ref": "#/components/schemas/RevetementsDto"
+          }
+        },
+        "required": [
+          "consigne",
+          "reel"
+        ]
+      },
+      "FilleFormatSortieDto": {
+        "type": "object",
+        "properties": {
+          "consigne": {
+            "$ref": "#/components/schemas/FormatSortieDto"
+          },
+          "reel": {
+            "$ref": "#/components/schemas/FormatSortieDto"
+          }
+        },
+        "required": [
+          "consigne",
+          "reel"
+        ]
+      },
+      "DecisionFilleDto": {
+        "type": "object",
+        "properties": {
+          "codeDecision": {
+            "type": "string"
+          },
+          "signatureInspecteur": {
+            "type": "string"
+          },
+          "defautImputation1": {
+            "type": "string"
+          },
+          "defautImputation2": {
+            "type": "string"
+          },
+          "defautImputation3": {
+            "type": "string"
+          },
+          "texteLibre": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "codeDecision",
+          "signatureInspecteur",
+          "defautImputation1",
+          "defautImputation2",
+          "defautImputation3",
+          "texteLibre"
+        ]
+      },
+      "CreateFicheBobineFilleDto": {
+        "type": "object",
+        "properties": {
+          "bobine": {
+            "type": "string"
+          },
+          "identiteBobineMere": {
+            "type": "string",
+            "description": "Numéro de la bobine mère associée"
+          },
+          "generalites": {
+            "$ref": "#/components/schemas/FilleGeneralitesDto"
+          },
+          "dimensions": {
+            "$ref": "#/components/schemas/DimensionsDto"
+          },
+          "revetements": {
+            "$ref": "#/components/schemas/FilleRevetementsDto"
+          },
+          "formatSortie": {
+            "$ref": "#/components/schemas/FilleFormatSortieDto"
+          },
+          "vitesseCentre": {
+            "$ref": "#/components/schemas/VitesseCentreDto"
+          },
+          "defauts": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DefautDto"
+            }
+          },
+          "decision": {
+            "$ref": "#/components/schemas/DecisionFilleDto"
+          }
+        },
+        "required": [
+          "bobine",
+          "identiteBobineMere",
+          "generalites",
+          "dimensions",
+          "revetements",
+          "formatSortie",
+          "vitesseCentre",
+          "defauts",
+          "decision"
+        ]
+      },
+      "UpdateFicheBobineFilleDto": {
+        "type": "object",
+        "properties": {
+          "bobine": {
+            "type": "string"
+          },
+          "identiteBobineMere": {
+            "type": "string",
+            "description": "Numéro de la bobine mère associée"
+          },
+          "generalites": {
+            "$ref": "#/components/schemas/FilleGeneralitesDto"
+          },
+          "dimensions": {
+            "$ref": "#/components/schemas/DimensionsDto"
+          },
+          "revetements": {
+            "$ref": "#/components/schemas/FilleRevetementsDto"
+          },
+          "formatSortie": {
+            "$ref": "#/components/schemas/FilleFormatSortieDto"
+          },
+          "vitesseCentre": {
+            "$ref": "#/components/schemas/VitesseCentreDto"
+          },
+          "defauts": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DefautDto"
+            }
+          },
+          "decision": {
+            "$ref": "#/components/schemas/DecisionFilleDto"
+          }
+        }
+      },
+      "AlerteTransitionDto": {
+        "type": "object",
+        "properties": {
+          "BackgroundColor": {
+            "type": "string"
+          },
+          "ForegroundColor": {
+            "type": "string"
+          },
+          "Message": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "BackgroundColor",
+          "ForegroundColor",
+          "Message"
+        ]
+      },
+      "CreateParcABobineDto": {
+        "type": "object",
+        "properties": {
+          "bobine": {
+            "type": "string"
+          },
+          "identite": {
+            "type": "string"
+          },
+          "lot": {
+            "type": "number"
+          },
+          "montage": {
+            "type": "number"
+          },
+          "largeur": {
+            "type": "string"
+          },
+          "diametre": {
+            "type": "number"
+          },
+          "epaisseur": {
+            "type": "number"
+          },
+          "poids": {
+            "type": "number"
+          },
+          "cycle": {
+            "type": "string"
+          },
+          "prod": {
+            "type": "string"
+          },
+          "zav": {
+            "type": "number"
+          },
+          "zar": {
+            "type": "number"
+          },
+          "def": {
+            "type": "string"
+          },
+          "client": {
+            "type": "string"
+          },
+          "texteLibre": {
+            "type": "string"
+          },
+          "commandes": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string"
+          },
+          "Transition": {
+            "type": "boolean"
+          },
+          "AlerteTransition": {
+            "$ref": "#/components/schemas/AlerteTransitionDto"
+          }
+        },
+        "required": [
+          "bobine",
+          "identite",
+          "lot",
+          "montage",
+          "largeur",
+          "diametre",
+          "epaisseur",
+          "poids",
+          "cycle",
+          "prod",
+          "zav",
+          "zar",
+          "def",
+          "client",
+          "texteLibre",
+          "commandes",
+          "type"
+        ]
+      },
+      "UpdateParcABobineDto": {
+        "type": "object",
+        "properties": {
+          "bobine": {
+            "type": "string"
+          },
+          "identite": {
+            "type": "string"
+          },
+          "lot": {
+            "type": "number"
+          },
+          "montage": {
+            "type": "number"
+          },
+          "largeur": {
+            "type": "string"
+          },
+          "diametre": {
+            "type": "number"
+          },
+          "epaisseur": {
+            "type": "number"
+          },
+          "poids": {
+            "type": "number"
+          },
+          "cycle": {
+            "type": "string"
+          },
+          "prod": {
+            "type": "string"
+          },
+          "zav": {
+            "type": "number"
+          },
+          "zar": {
+            "type": "number"
+          },
+          "def": {
+            "type": "string"
+          },
+          "client": {
+            "type": "string"
+          },
+          "texteLibre": {
+            "type": "string"
+          },
+          "commandes": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string"
+          },
+          "Transition": {
+            "type": "boolean"
+          },
+          "AlerteTransition": {
+            "$ref": "#/components/schemas/AlerteTransitionDto"
+          }
+        }
+      },
+      "CreateOperateurDto": {
+        "type": "object",
+        "properties": {
+          "username": {
+            "type": "string"
+          },
+          "entreprise": {
+            "type": "string"
+          },
+          "nom": {
+            "type": "string"
+          },
+          "prenom": {
+            "type": "string"
+          },
+          "codeQR": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "username",
+          "entreprise",
+          "nom",
+          "prenom",
+          "codeQR"
+        ]
+      },
+      "OperateurResponseDto": {
+        "type": "object",
+        "properties": {
+          "_id": {
+            "type": "string",
+            "description": "_id MongoDB",
+            "example": "6aec5826d7c5208303dc51d8"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "username": {
+            "type": "string"
+          },
+          "entreprise": {
+            "type": "string"
+          },
+          "nom": {
+            "type": "string"
+          },
+          "prenom": {
+            "type": "string"
+          },
+          "codeQR": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "_id",
+          "username",
+          "entreprise",
+          "nom",
+          "prenom",
+          "codeQR"
+        ]
+      },
+      "UpdateOperateurDto": {
+        "type": "object",
+        "properties": {}
+      },
+      "CreateFournisseurDto": {
+        "type": "object",
+        "properties": {
+          "nom": {
+            "type": "string"
+          },
+          "code": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "nom",
+          "code"
+        ]
+      },
+      "FournisseurResponseDto": {
+        "type": "object",
+        "properties": {
+          "_id": {
+            "type": "string",
+            "description": "_id MongoDB",
+            "example": "6aec5826d7c5208303dc51d8"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "nom": {
+            "type": "string"
+          },
+          "code": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "_id",
+          "nom",
+          "code"
+        ]
+      },
+      "UpdateFournisseurDto": {
+        "type": "object",
+        "properties": {}
+      },
+      "CreateTauxAluminiumDto": {
+        "type": "object",
+        "properties": {
+          "nom": {
+            "type": "string"
+          },
+          "couleur": {
+            "type": "string",
+            "pattern": "^#[0-9a-f]{6}$",
+            "description": "Couleur hexadécimale issue du design system @n3ga2/design-system",
+            "example": "#0072ce"
+          }
+        },
+        "required": [
+          "nom",
+          "couleur"
+        ]
+      },
+      "TauxAluminiumResponseDto": {
+        "type": "object",
+        "properties": {
+          "_id": {
+            "type": "string",
+            "description": "_id MongoDB",
+            "example": "6aec5826d7c5208303dc51d8"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "nom": {
+            "type": "string"
+          },
+          "couleur": {
+            "type": "string",
+            "description": "Couleur hexadécimale issue du design system",
+            "example": "#0072ce"
+          }
+        },
+        "required": [
+          "_id",
+          "nom",
+          "couleur"
+        ]
+      },
+      "UpdateTauxAluminiumDto": {
+        "type": "object",
+        "properties": {}
+      },
+      "CreateZoneDto": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string"
+          },
+          "nom": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "code",
+          "nom"
+        ]
+      },
+      "ZoneResponseDto": {
+        "type": "object",
+        "properties": {
+          "_id": {
+            "type": "string",
+            "description": "_id MongoDB",
+            "example": "6aec5826d7c5208303dc51d8"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "code": {
+            "type": "string"
+          },
+          "nom": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "_id",
+          "code",
+          "nom"
+        ]
+      },
+      "UpdateZoneDto": {
+        "type": "object",
+        "properties": {}
+      },
+      "CreateLingotDto": {
+        "type": "object",
+        "properties": {
+          "codeQR": {
+            "type": "string"
+          },
+          "fournisseur": {
+            "$ref": "#/components/schemas/CreateFournisseurDto"
+          },
+          "numeroCoulee": {
+            "type": "string"
+          },
+          "numeroLingot": {
+            "type": "number"
+          },
+          "poids": {
+            "type": "number"
+          },
+          "tauxAluminium": {
+            "$ref": "#/components/schemas/CreateTauxAluminiumDto"
+          },
+          "dateReception": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "zone": {
+            "$ref": "#/components/schemas/CreateZoneDto"
+          },
+          "dateFusion": {
+            "format": "date-time",
+            "type": "string"
+          }
+        },
+        "required": [
+          "codeQR",
+          "fournisseur",
+          "numeroCoulee",
+          "numeroLingot",
+          "poids",
+          "tauxAluminium",
+          "dateReception",
+          "zone"
+        ]
+      },
+      "LingotResponseDto": {
+        "type": "object",
+        "properties": {
+          "_id": {
+            "type": "string",
+            "description": "_id MongoDB",
+            "example": "6aec5826d7c5208303dc51d8"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "codeQR": {
+            "type": "string"
+          },
+          "fournisseur": {
+            "$ref": "#/components/schemas/FournisseurResponseDto"
+          },
+          "numeroCoulee": {
+            "type": "string"
+          },
+          "numeroLingot": {
+            "type": "number"
+          },
+          "poids": {
+            "type": "number"
+          },
+          "tauxAluminium": {
+            "$ref": "#/components/schemas/TauxAluminiumResponseDto"
+          },
+          "dateReception": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "zone": {
+            "$ref": "#/components/schemas/ZoneResponseDto"
+          },
+          "dateFusion": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "_id",
+          "codeQR",
+          "fournisseur",
+          "numeroCoulee",
+          "numeroLingot",
+          "poids",
+          "tauxAluminium",
+          "dateReception",
+          "zone"
+        ]
+      },
+      "UpdateLingotDto": {
+        "type": "object",
+        "properties": {}
+      },
+      "CreateMouvementCollectionDto": {
+        "type": "object",
+        "properties": {
+          "date": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "depart": {
+            "nullable": true,
+            "type": "object",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/CreateZoneDto"
+              }
+            ]
+          },
+          "arrivee": {
+            "$ref": "#/components/schemas/CreateZoneDto"
+          },
+          "operateur": {
+            "$ref": "#/components/schemas/CreateOperateurDto"
+          },
+          "lingotId": {
+            "type": "string",
+            "description": "_id MongoDB du lingot associé"
+          }
+        },
+        "required": [
+          "date",
+          "arrivee",
+          "operateur",
+          "lingotId"
+        ]
+      },
+      "MouvementResponseDto": {
+        "type": "object",
+        "properties": {
+          "_id": {
+            "type": "string",
+            "description": "_id MongoDB",
+            "example": "6aec5826d7c5208303dc51d8"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "depart": {
+            "nullable": true,
+            "description": "null pour le mouvement initial (arrivée en stock)",
+            "type": "object",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ZoneResponseDto"
+              }
+            ]
+          },
+          "arrivee": {
+            "$ref": "#/components/schemas/ZoneResponseDto"
+          },
+          "date": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "operateur": {
+            "$ref": "#/components/schemas/OperateurResponseDto"
+          },
+          "lingot": {
+            "$ref": "#/components/schemas/LingotResponseDto"
+          }
+        },
+        "required": [
+          "_id",
+          "depart",
+          "arrivee",
+          "date",
+          "operateur",
+          "lingot"
+        ]
+      },
+      "UpdateMouvementDto": {
+        "type": "object",
+        "properties": {}
+      },
+      "CreateMouvementDto": {
+        "type": "object",
+        "properties": {
+          "date": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "depart": {
+            "nullable": true,
+            "type": "object",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/CreateZoneDto"
+              }
+            ]
+          },
+          "arrivee": {
+            "$ref": "#/components/schemas/CreateZoneDto"
+          },
+          "operateur": {
+            "$ref": "#/components/schemas/CreateOperateurDto"
+          }
+        },
+        "required": [
+          "date",
+          "arrivee",
+          "operateur"
+        ]
+      },
+      "CreateInventaireDto": {
+        "type": "object",
+        "properties": {
+          "date": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "operateur": {
+            "$ref": "#/components/schemas/CreateOperateurDto"
+          },
+          "lingots": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CreateLingotDto"
+            }
+          }
+        },
+        "required": [
+          "date",
+          "operateur",
+          "lingots"
+        ]
+      },
+      "InventaireResponseDto": {
+        "type": "object",
+        "properties": {
+          "_id": {
+            "type": "string",
+            "description": "_id MongoDB",
+            "example": "6aec5826d7c5208303dc51d8"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "date": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "operateur": {
+            "$ref": "#/components/schemas/OperateurResponseDto"
+          },
+          "lingots": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/LingotResponseDto"
+            }
+          }
+        },
+        "required": [
+          "_id",
+          "date",
+          "operateur",
+          "lingots"
+        ]
+      },
+      "UpdateInventaireDto": {
+        "type": "object",
+        "properties": {}
+      },
+      "CreateMatteDto": {
+        "type": "object",
+        "properties": {
+          "date": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "quantite": {
+            "type": "number"
+          },
+          "action": {
+            "type": "string",
+            "enum": [
+              "ajout",
+              "suppression"
+            ]
+          },
+          "nouveauTotal": {
+            "type": "number"
+          },
+          "operateur": {
+            "$ref": "#/components/schemas/CreateOperateurDto"
+          }
+        },
+        "required": [
+          "date",
+          "quantite",
+          "action",
+          "nouveauTotal",
+          "operateur"
+        ]
+      },
+      "MatteResponseDto": {
+        "type": "object",
+        "properties": {
+          "_id": {
+            "type": "string",
+            "description": "_id MongoDB",
+            "example": "6aec5826d7c5208303dc51d8"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "date": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "quantite": {
+            "type": "number"
+          },
+          "action": {
+            "enum": [
+              "ajout",
+              "suppression"
+            ],
+            "type": "string"
+          },
+          "nouveauTotal": {
+            "type": "number"
+          },
+          "operateur": {
+            "$ref": "#/components/schemas/OperateurResponseDto"
+          }
+        },
+        "required": [
+          "_id",
+          "date",
+          "quantite",
+          "action",
+          "nouveauTotal",
+          "operateur"
+        ]
+      },
+      "UpdateMatteDto": {
+        "type": "object",
+        "properties": {}
+      },
+      "CreatePoidsParTauxDto": {
+        "type": "object",
+        "properties": {
+          "taux": {
+            "$ref": "#/components/schemas/CreateTauxAluminiumDto"
+          },
+          "poids": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "taux",
+          "poids"
+        ]
+      },
+      "CreateHistoriqueStockDto": {
+        "type": "object",
+        "properties": {
+          "date": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "quantiteMatte": {
+            "type": "number",
+            "nullable": true
+          },
+          "fournisseur": {
+            "nullable": true,
+            "type": "object",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/CreateFournisseurDto"
+              }
+            ]
+          },
+          "quantiteParTaux": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CreatePoidsParTauxDto"
+            }
+          }
+        },
+        "required": [
+          "date",
+          "quantiteParTaux"
+        ]
+      },
+      "PoidsParTauxResponseDto": {
+        "type": "object",
+        "properties": {
+          "taux": {
+            "$ref": "#/components/schemas/TauxAluminiumResponseDto"
+          },
+          "poids": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "taux",
+          "poids"
+        ]
+      },
+      "HistoriqueStockResponseDto": {
+        "type": "object",
+        "properties": {
+          "_id": {
+            "type": "string",
+            "description": "_id MongoDB",
+            "example": "6aec5826d7c5208303dc51d8"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "date": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "quantiteMatte": {
+            "type": "number",
+            "nullable": true
+          },
+          "fournisseur": {
+            "nullable": true,
+            "type": "object",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/FournisseurResponseDto"
+              }
+            ]
+          },
+          "quantiteParTaux": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PoidsParTauxResponseDto"
+            }
+          }
+        },
+        "required": [
+          "_id",
+          "date",
+          "quantiteMatte",
+          "fournisseur",
+          "quantiteParTaux"
+        ]
+      },
+      "UpdateHistoriqueStockDto": {
+        "type": "object",
+        "properties": {}
+      }
+    }
+  }
+}

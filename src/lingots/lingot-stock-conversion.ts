@@ -91,20 +91,18 @@ export function convertirLingotStock(
   options: OptionsConversionLingotStock = {},
   dateImport: Date = new Date(),
 ): LingotStockImporte {
-  const type = source.D_LGT_STK_TYP_APA.trim();
-
   const choisir = options.choisir ?? choisirAleatoirement;
   const fournisseurs = options.fournisseurs ?? [];
-  const tauxAluminium = (options.tauxAluminium ?? []).filter(
-    (taux) => taux.type === type,
-  );
+  const tauxAluminium = options.tauxAluminium ?? [];
   const zones = options.zones ?? [];
 
   if (!fournisseurs?.length) {
     throw new Error('Aucun fournisseur disponible dans la base de données.');
   }
   if (!tauxAluminium.length) {
-    throw new Error(`Aucun taux d'aluminium pour le type ${type}.`);
+    throw new Error(
+      "Aucun taux d'aluminium disponible dans la base de données.",
+    );
   }
   if (!zones.length) {
     throw new Error('Aucune zone disponible dans la base de données.');

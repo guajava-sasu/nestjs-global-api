@@ -1,5 +1,5 @@
-import { describe, expect, it } from 'vitest';
 import { Types } from 'mongoose';
+import { describe, expect, it } from 'vitest';
 import {
   convertirLingotStock,
   parserDateParis,
@@ -25,12 +25,7 @@ const fixe = {
     { _id: new Types.ObjectId(), nom: 'Boleslaw', code: 'BOLESLAW' },
   ],
   tauxAluminium: [
-    {
-      _id: new Types.ObjectId(),
-      nom: 'AL069',
-      couleur: 'orange',
-      type: 'B' as const,
-    },
+    { _id: new Types.ObjectId(), nom: 'AL069', couleur: 'orange' },
   ],
   zones: [{ _id: new Types.ObjectId(), code: 'S', nom: 'Stock' }],
 };
@@ -66,12 +61,7 @@ describe('convertirLingotStock', () => {
     ];
     const tauxAluminium = [
       ...fixe.tauxAluminium,
-      {
-        _id: new Types.ObjectId(),
-        nom: 'AL00',
-        couleur: 'blanc',
-        type: 'B' as const,
-      },
+      { _id: new Types.ObjectId(), nom: 'AL00', couleur: 'blanc' },
     ];
     const lingot = convertirLingotStock(source, {
       ...fixe,
@@ -111,9 +101,9 @@ describe('convertirLingotStock', () => {
     );
   });
 
-  it('rejette un type de lingot inconnu', () => {
+  it('refuse la conversion si aucun taux n’est fourni', () => {
     expect(() =>
-      convertirLingotStock({ ...source, D_LGT_STK_TYP_APA: 'XX' }, fixe),
-    ).toThrow("Aucun taux d'aluminium pour le type XX.");
+      convertirLingotStock(source, { ...fixe, tauxAluminium: [] }),
+    ).toThrow("Aucun taux d'aluminium disponible dans la base de données.");
   });
 });

@@ -190,3 +190,217 @@ Nest is an MIT-licensed open source project. It can grow thanks to the sponsors 
 ## License
 
 Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+
+# Contrat
+Updated todo list
+
+Read
+
+Read
+
+Je vais mettre en place la partie backend dans ton projet (configuration Swagger partagée + export d’un `openapi.json`), puis je te donne la partie Angular, qui n’est pas dans ce workspace.
+
+Created
+
+
+
+Created
+
+Replacing 21 lines with 17 lines in , ,
+
+
+```
+
+```
+
+```
+
+```
+
+```
+
+```
+
+
+Ran terminal command: rtk npm run openapi:export
+
+Ran terminal command: rtk node -e "const d=require('./openapi.json'); const ids=[]; let sansSchema=0, total=0; for (const [p,ops] of Object.entries(d.paths)) for (const [m,o] of Object.entries(ops)) { total++; ids.push(o.operationId); const r=Object.values(o.responses||{})[0]; if(!r||!r.content) sansSchema++; } console.log('operations:', total, '| operationId dupliques:', ids.length-new Set(ids).size, '| sans schema de reponse:', sansSchema); console.log('schemas:', Object.keys(d.components.schemas).length); console.log(JSON.stringify(d.paths['/mouvements-lingots'].get, null, 1).slice(0,400));"
+
+Replacing 3 lines with 5 lines in
+
+
+```
+
+```
+
+
+Created 4 todos
+
+Ran terminal command: rtk npm run openapi:export; rtk node -e "const d=require('./openapi.json'); const ids=Object.values(d.paths).flatMap(o=>Object.values(o).map(x=>x.operationId)); console.log('operationId dupliques:', ids.length-new Set(ids).size, '| exemple:', d.paths['/mouvements-lingots'].get.operationId)"; rtk npm test; rtk npm run lint
+
+Le backend produit maintenant un fichier de contrat versionnable, `openapi.json`. Il compte 38 routes (77 opérations HTTP), et chaque `operationId` est unique, ce qui est nécessaire pour générer un client propre. Le build, les tests et le lint passent.
+
+## 1. Approche recommandée : partir du code backend
+
+Avec NestJS, le plus simple est de générer le contrat depuis le code (*code-first*). Tes DTO et tes décorateurs `@ApiProperty` / `@ApiOperation` décrivent déjà l’API, donc le contrat reste aligné sur ce qui tourne réellement.
+
+Le flux complet :
+
+```
+NestJS (DTO + décorateurs) → openapi.json (versionné dans Git) → génération dans Angular → services et types
+```
+
+Écrire le contrat à la main d’abord (*contract-first*) n’est utile que si plusieurs équipes doivent se mettre d’accord avant d’écrire le code. Dans ton cas, cela ajouterait une double maintenance.
+
+## 2. Ce qui est en place dans ton backend
+
+- `openapi.ts` : la configuration Swagger est centralisée et sert à la fois à `/api` et à l’export du fichier. Les `operationId` sont de la forme `Lingots_findAllMouvements` et deviennent les noms de méthodes côté Angular.
+- `export-openapi.ts` : écrit `openapi.json` sans démarrer le serveur ni se connecter à MongoDB, donc il peut tourner en intégration continue.
+- `nest-cli.json` : le plugin `@nestjs/swagger` est activé. Il déduit une partie de la documentation directement des types TypeScript et des commentaires.
+- `package.json` : nouveau script `npm run openapi:export`.
+
+**Point à corriger pour avoir des types utiles côté Angular :** 26 opérations n’ont aucun schéma de réponse, et les autres sont décrites seulement comme `object`. Les contrôleurs renvoient des documents Mongoose, que Swagger ne sait pas décrire. Sans correction, le client généré renverra des types `any` ou `object`. Il faut déclarer une classe de réponse par ressource, par exemple pour les mouvements :
+
+```typescript
+// dto/mouvement-response.dto.ts
+export class MouvementResponseDto {
+  @ApiProperty() _id: string;
+  @ApiProperty({ type: ZoneResponseDto, nullable: true }) depart: ZoneResponseDto | null;
+  @ApiProperty({ type: ZoneResponseDto }) arrivee: ZoneResponseDto;
+  @ApiProperty() date: Date;
+  @ApiProperty({ type: OperateurResponseDto }) operateur: OperateurResponseDto;
+  @ApiProperty({ type: LingotResponseDto }) lingot: LingotResponseDto;
+}
+
+// lingots.controller.ts
+@ApiOkResponse({ type: [MouvementResponseDto] })
+@Get('mouvements-lingots')
+findAllMouvements() { ... }
+```
+
+Je peux ajouter ces classes de réponse pour tout le module lingots si tu veux.
+
+## 3. Consommer le contrat dans Angular
+
+Je te recommande **`ng-openapi-gen`**. Il est fait pour Angular, génère des services `@Injectable` basés sur `HttpClient` et des interfaces TypeScript, et ne nécessite pas Java.
+
+Fichier `ng-openapi-gen.json` à la racine du projet Angular :
+
+```json
+{
+  "$schema": "node_modules/ng-openapi-gen/ng-openapi-gen-schema.json",
+  "input": "../nestjs-global-api/openapi.json",
+  "output": "src/app/api",
+  "ignoreUnusedModels": false
+}
+```
+
+Dans `app.config.ts` :
+
+```typescript
+import { provideHttpClient } from '@angular/common/http';
+import { ApiConfiguration } from './api/api-configuration';
+
+export const appConfig: ApplicationConfig = {
+  providers: [
+    provideHttpClient(),
+    { provide: ApiConfiguration, useValue: { rootUrl: 'http://localhost:3000' } },
+  ],
+};
+```
+
+Utilisation dans un composant :
+
+```typescript
+import { LingotsService } from '../api/services';
+
+export class MouvementsComponent {
+  private readonly api = inject(LingotsService);
+  mouvements$ = this.api.lingotsFindAllMouvements(); // nom dérivé de l'operationId
+}
+```
+
+Vérifie le nom exact des services et des méthodes dans `src/app/api/services` après la première génération. Ne modifie jamais ce dossier à la main : il est régénéré à chaque fois.
+
+Alternatives possibles :
+- `@openapitools/openapi-generator-cli` (générateur `typescript-angular`) : plus complet, mais nécessite Java.
+- `orval` : intéressant si tu veux aussi générer des mocks.
+
+## 4. Commandes
+
+**Backend** (`@nestjs/swagger` est déjà installé) :
+
+```powershell
+npm run openapi:export   # régénère openapi.json après chaque changement d'API
+```
+
+**Frontend Angular** :
+
+```powershell
+npm install -D ng-openapi-gen
+npx ng-openapi-gen --config ng-openapi-gen.json
+```
+
+Script conseillé dans le `package.json` Angular :
+
+```json
+"scripts": {
+  "api:generate": "ng-openapi-gen --config ng-openapi-gen.json"
+}
+```
+
+Tu peux aussi lire le contrat directement depuis l’API lancée, via `"input": "http://localhost:3000/api-json"`. Le fichier versionné reste préférable : chaque changement d’API apparaît dans les revues de code, et l’intégration continue peut échouer si `openapi.json` n’a pas été régénéré.
+
+Updated todo list
+
+
+J’ai ajouté les classes de réponse au module lingots : ses 50 opérations décrivent maintenant précisément ce qu’elles renvoient, au lieu de `object`. Un client Angular généré aura donc de vrais types, par exemple `Observable<MouvementResponseDto[]>` au lieu de `any`.
+
+Le contrat `openapi.json` a été régénéré, et les tests et le lint passent. J’ai aussi comparé les DTO à des documents réellement stockés dans la base (mouvement, lingot, historique, opérateur) : aucun champ ne manque d’un côté ni de l’autre.
+
+## Comment ça marche
+
+**1. Une classe par forme de réponse :** `lingot-response.dto.ts`
+
+Chaque classe décrit le JSON réellement envoyé, pas le modèle Mongoose. Par exemple, `_id` est déclaré comme `string`, parce qu’un `ObjectId` est transformé en texte lors de l’envoi.
+
+```typescript
+export class MouvementResponseDto extends MongoDocumentResponseDto {
+  @ApiProperty({ type: () => ZoneResponseDto, nullable: true })
+  depart: ZoneResponseDto | null;
+  @ApiProperty({ type: () => ZoneResponseDto })
+  arrivee: ZoneResponseDto;
+  @ApiProperty({ type: () => LingotResponseDto })
+  lingot: LingotResponseDto;
+  // ...
+}
+```
+
+`MongoDocumentResponseDto` regroupe `_id`, `createdAt` et `updatedAt`, communs à toutes les ressources. La syntaxe `type: () => …` permet d’imbriquer les classes sans dépendre de leur ordre dans le fichier.
+
+**2. Trois décorateurs regroupés :** `api-reponses.decorators.ts`
+
+Ils évitent de répéter les mêmes déclarations sur chaque route :
+
+| Décorateur | Réponses déclarées |
+|---|---|
+| `@ApiCreation(Dto)` | 201 avec le DTO, 400 si le corps est invalide |
+| `@ApiListe(Dto)` | 200 avec un tableau de DTO |
+| `@ApiElement(Dto)` | 200 avec le DTO, 404 si introuvable ou `_id` invalide |
+
+**3. Utilisation dans le contrôleur :** `lingots.controller.ts`
+
+```typescript
+@ApiListe(MouvementResponseDto)
+@Get('mouvements-lingots')
+findAllMouvements() { ... }
+```
+
+## Ce qui reste à faire
+
+- **Garder les DTO à jour :** ces classes ne servent qu’à la documentation. Si tu ajoutes un champ dans `lingot.entity.ts`, ajoute-le aussi dans le DTO de réponse, puis relance `npm run openapi:export`.
+- **Autres modules :** les 26 opérations encore sans schéma sont dans `fiche-bobine-mere`, `fiche-bobine-fille`, `parc-a-bobines` et `chutage`. On peut leur appliquer le même procédé.
+
+Completed: *Implement response DTOs for lingots module* (1/3)
+
+Made changes.

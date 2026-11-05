@@ -7,8 +7,8 @@ import {
   CreateInventaireDto,
   CreateLingotDto,
   CreateMatteDto,
-  CreateMouvementDto,
   CreateMouvementCollectionDto,
+  CreateMouvementDto,
   CreateOperateurDto,
   CreateTauxAluminiumDto,
   CreateZoneDto,
@@ -324,9 +324,7 @@ export class LingotsService {
   }
 
   private async findRecord<T>(model: Model<T>, id: string, message: string) {
-    const record = await model
-      .findOne(idFilter(id))
-      .exec();
+    const record = await model.findOne(idFilter(id)).exec();
     if (!record) throw new NotFoundException(message);
     return record;
   }
@@ -352,9 +350,7 @@ export class LingotsService {
   }
 
   private async removeRecord<T>(model: Model<T>, id: string, message: string) {
-    const record = await model
-      .findOneAndDelete(idFilter(id))
-      .exec();
+    const record = await model.findOneAndDelete(idFilter(id)).exec();
     if (!record) throw new NotFoundException(message);
     return record;
   }
