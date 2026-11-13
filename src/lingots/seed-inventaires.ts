@@ -30,7 +30,9 @@ async function seedInventaires(): Promise<void> {
     const restant = Math.max(0, nombreInventaires - dejaCrees);
 
     if (restant === 0) {
-      console.info(`${nombreInventaires} inventaires de démonstration existent déjà.`);
+      console.info(
+        `${nombreInventaires} inventaires de démonstration existent déjà.`,
+      );
       return;
     }
 
