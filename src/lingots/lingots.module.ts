@@ -1,6 +1,8 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import {
+  ConfigurationRecord,
+  ConfigurationSchema,
   FournisseurRecord,
   FournisseurSchema,
   HistoriqueStockRecord,
@@ -38,6 +40,7 @@ const mongoUri =
     }),
     MongooseModule.forFeature(
       [
+        { name: ConfigurationRecord.name, schema: ConfigurationSchema },
         { name: LingotRecord.name, schema: LingotSchema },
         { name: OperateurRecord.name, schema: OperateurSchema },
         { name: FournisseurRecord.name, schema: FournisseurSchema },

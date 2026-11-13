@@ -14,6 +14,7 @@ import {
   ApiListe,
 } from './api-reponses.decorators.js';
 import {
+  ConfigurationResponseDto,
   FournisseurResponseDto,
   HistoriqueStockResponseDto,
   InventaireResponseDto,
@@ -25,6 +26,7 @@ import {
   ZoneResponseDto,
 } from './dto/lingot-response.dto.js';
 import {
+  CreateConfigurationDto,
   CreateFournisseurDto,
   CreateHistoriqueStockDto,
   CreateInventaireDto,
@@ -35,6 +37,7 @@ import {
   CreateOperateurDto,
   CreateTauxAluminiumDto,
   CreateZoneDto,
+  UpdateConfigurationDto,
   UpdateFournisseurDto,
   UpdateHistoriqueStockDto,
   UpdateInventaireDto,
@@ -51,6 +54,35 @@ import { LingotsService } from './lingots.service.js';
 @Controller()
 export class LingotsController {
   constructor(private readonly lingotsService: LingotsService) {}
+
+  @ApiCreation(ConfigurationResponseDto)
+  @Post('configuration')
+  createConfiguration(@Body() body: CreateConfigurationDto) {
+    return this.lingotsService.createConfiguration(body);
+  }
+  @ApiListe(ConfigurationResponseDto)
+  @Get('configuration')
+  findConfigurations() {
+    return this.lingotsService.findConfigurations();
+  }
+  @ApiElement(ConfigurationResponseDto)
+  @Get('configuration/:id')
+  findConfiguration(@Param('id') id: string) {
+    return this.lingotsService.findConfiguration(id);
+  }
+  @ApiElement(ConfigurationResponseDto)
+  @Patch('configuration/:id')
+  updateConfiguration(
+    @Param('id') id: string,
+    @Body() body: UpdateConfigurationDto,
+  ) {
+    return this.lingotsService.updateConfiguration(id, body);
+  }
+  @ApiElement(ConfigurationResponseDto)
+  @Delete('configuration/:id')
+  removeConfiguration(@Param('id') id: string) {
+    return this.lingotsService.removeConfiguration(id);
+  }
 
   @ApiCreation(OperateurResponseDto)
   @Post('operateurs-lingots')

@@ -1,5 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { HydratedDocument, Types } from 'mongoose';
+import { HydratedDocument, Schema as MongooseSchema, Types } from 'mongoose';
 
 export type LingotDocument = HydratedDocument<LingotRecord>;
 export type InventaireDocument = HydratedDocument<InventaireRecord>;
@@ -86,6 +86,22 @@ export interface Fournisseur {
   nom: string;
   code: string;
 }
+
+@Schema({ collection: 'configuration', timestamps: true, versionKey: false })
+export class ConfigurationRecord {
+  declare _id: Types.ObjectId;
+
+  @Prop({ required: true, unique: true, trim: true, match: /\S/ })
+  cle: string;
+
+  @Prop({ type: MongooseSchema.Types.Mixed, required: true })
+  valeur: unknown;
+
+  @Prop()
+  description?: string;
+}
+export const ConfigurationSchema =
+  SchemaFactory.createForClass(ConfigurationRecord);
 
 @Schema({
   collection: 'operateurs-lingots',

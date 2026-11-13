@@ -15,6 +15,22 @@ export class MongoDocumentResponseDto {
   updatedAt?: Date;
 }
 
+export class ConfigurationResponseDto extends MongoDocumentResponseDto {
+  @ApiProperty({ example: 'nombreLingotsMaximum' }) cle: string;
+  @ApiProperty({
+    example: 100,
+    oneOf: [
+      { type: 'number' },
+      { type: 'string' },
+      { type: 'boolean' },
+      { type: 'object', additionalProperties: true },
+      { type: 'array', items: {} },
+    ],
+  })
+  valeur: unknown;
+  @ApiPropertyOptional() description?: string;
+}
+
 export class OperateurResponseDto extends MongoDocumentResponseDto {
   @ApiProperty() username: string;
   @ApiProperty() entreprise: string;

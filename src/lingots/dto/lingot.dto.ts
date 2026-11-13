@@ -3,6 +3,7 @@ import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
 import {
   IsDate,
+  IsDefined,
   IsIn,
   IsNumber,
   IsOptional,
@@ -10,6 +11,32 @@ import {
   Matches,
   ValidateNested,
 } from 'class-validator';
+
+export class CreateConfigurationDto {
+  @ApiProperty({ example: 'nombreLingotsMaximum' })
+  @IsString()
+  @Matches(/\S/)
+  cle: string;
+
+  @ApiProperty({
+    example: 100,
+    oneOf: [
+      { type: 'number' },
+      { type: 'string' },
+      { type: 'boolean' },
+      { type: 'object', additionalProperties: true },
+      { type: 'array', items: {} },
+    ],
+  })
+  @IsDefined()
+  valeur: unknown;
+
+  @ApiPropertyOptional()
+  @IsOptional()
+  @IsString()
+  description?: string;
+}
+export class UpdateConfigurationDto extends PartialType(CreateConfigurationDto) {}
 
 export class CreateOperateurDto {
   @ApiProperty() @IsString() username: string;

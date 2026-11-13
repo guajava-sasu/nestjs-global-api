@@ -612,6 +612,167 @@
         ]
       }
     },
+    "/configuration": {
+      "post": {
+        "operationId": "Lingots_createConfiguration",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateConfigurationDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ConfigurationResponseDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Corps de requête invalide"
+          }
+        },
+        "tags": [
+          "lingots"
+        ]
+      },
+      "get": {
+        "operationId": "Lingots_findConfigurations",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ConfigurationResponseDto"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "lingots"
+        ]
+      }
+    },
+    "/configuration/{id}": {
+      "get": {
+        "operationId": "Lingots_findConfiguration",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ConfigurationResponseDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Ressource introuvable ou _id invalide"
+          }
+        },
+        "tags": [
+          "lingots"
+        ]
+      },
+      "patch": {
+        "operationId": "Lingots_updateConfiguration",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateConfigurationDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ConfigurationResponseDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Ressource introuvable ou _id invalide"
+          }
+        },
+        "tags": [
+          "lingots"
+        ]
+      },
+      "delete": {
+        "operationId": "Lingots_removeConfiguration",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ConfigurationResponseDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Ressource introuvable ou _id invalide"
+          }
+        },
+        "tags": [
+          "lingots"
+        ]
+      }
+    },
     "/operateurs-lingots": {
       "post": {
         "operationId": "Lingots_createOperateur",
@@ -3022,6 +3183,101 @@
             "$ref": "#/components/schemas/AlerteTransitionDto"
           }
         }
+      },
+      "CreateConfigurationDto": {
+        "type": "object",
+        "properties": {
+          "cle": {
+            "type": "string",
+            "pattern": "\\S",
+            "example": "nombreLingotsMaximum"
+          },
+          "valeur": {
+            "example": 100,
+            "oneOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "string"
+              },
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "object",
+                "additionalProperties": true
+              },
+              {
+                "type": "array",
+                "items": {}
+              }
+            ]
+          },
+          "description": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "cle",
+          "valeur"
+        ]
+      },
+      "ConfigurationResponseDto": {
+        "type": "object",
+        "properties": {
+          "_id": {
+            "type": "string",
+            "description": "_id MongoDB",
+            "example": "6aec5826d7c5208303dc51d8"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "cle": {
+            "type": "string",
+            "example": "nombreLingotsMaximum"
+          },
+          "valeur": {
+            "example": 100,
+            "oneOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "string"
+              },
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "object",
+                "additionalProperties": true
+              },
+              {
+                "type": "array",
+                "items": {}
+              }
+            ]
+          },
+          "description": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "_id",
+          "cle",
+          "valeur"
+        ]
+      },
+      "UpdateConfigurationDto": {
+        "type": "object",
+        "properties": {}
       },
       "CreateOperateurDto": {
         "type": "object",

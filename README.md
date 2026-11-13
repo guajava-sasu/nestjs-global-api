@@ -67,6 +67,28 @@ Les ressources CRUD acceptent `GET` (liste), `POST` (création), `GET /:id` (dé
 
 Toutes les routes lingots ci-dessus acceptent les cinq méthodes CRUD. Les IDs métier provenant des exemples JSON sont acceptés dans les routes détail; les anciens ObjectId MongoDB restent compatibles.
 
+### Configuration des lingots
+
+La collection `configuration` de la base `gestion_lingots` contient un document
+par parametre, avec une `cle` unique, une `valeur` JSON non nulle et une
+`description` facultative. Elle est creee au demarrage de l'API avec MongoDB
+accessible. Aucun parametre n'est ajoute automatiquement.
+
+Les routes CRUD sont `/configuration` et `/configuration/:id` (ObjectId MongoDB).
+Exemple de corps pour `POST /configuration` :
+
+```json
+{
+  "cle": "nombreLingotsMaximum",
+  "valeur": 100,
+  "description": "Nombre maximal de lingots"
+}
+```
+
+La valeur `100` est un exemple, a remplacer par la limite souhaitee. Ce parametre
+est stocke uniquement : il ne limite pas encore la creation de lingots.
+De nouvelles cles peuvent etre ajoutees sans modifier le schema.
+
 ### Bobines et chutage
 
 | Ressource                    | Routes                                                                                                           |

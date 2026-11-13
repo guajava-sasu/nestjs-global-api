@@ -2,6 +2,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
 import {
+  CreateConfigurationDto,
   CreateFournisseurDto,
   CreateHistoriqueStockDto,
   CreateInventaireDto,
@@ -12,6 +13,7 @@ import {
   CreateOperateurDto,
   CreateTauxAluminiumDto,
   CreateZoneDto,
+  UpdateConfigurationDto,
   UpdateFournisseurDto,
   UpdateHistoriqueStockDto,
   UpdateInventaireDto,
@@ -23,6 +25,7 @@ import {
   UpdateZoneDto,
 } from './dto/lingot.dto.js';
 import {
+  ConfigurationRecord,
   FournisseurRecord,
   HistoriqueStockRecord,
   InventaireRecord,
@@ -64,7 +67,30 @@ export class LingotsService {
     private readonly mouvements: Model<MouvementRecord>,
     @InjectModel(HistoriqueStockRecord.name, LINGOTS_CONNECTION_NAME)
     private readonly historiques: Model<HistoriqueStockRecord>,
+    @InjectModel(ConfigurationRecord.name, LINGOTS_CONNECTION_NAME)
+    private readonly configuration: Model<ConfigurationRecord>,
   ) {}
+
+  createConfiguration(data: CreateConfigurationDto) {
+    return this.configuration.create(data);
+  }
+  findConfigurations() {
+    return this.configuration.find().sort({ cle: 1 }).exec();
+  }
+  findConfiguration(id: string) {
+    return this.findRecord(this.configuration, id, 'Configuration introuvable');
+  }
+  updateConfiguration(id: string, data: UpdateConfigurationDto) {
+    return this.updateRecord(
+      this.configuration,
+      id,
+      data,
+      'Configuration introuvable',
+    );
+  }
+  removeConfiguration(id: string) {
+    return this.removeRecord(this.configuration, id, 'Configuration introuvable');
+  }
 
   createOperateur(data: CreateOperateurDto) {
     return this.operateurs.create(data);
