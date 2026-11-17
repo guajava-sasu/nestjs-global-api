@@ -205,6 +205,8 @@ export class LingotRecord {
   dateFusion?: Date;
 }
 export const LingotSchema = SchemaFactory.createForClass(LingotRecord);
+export const OrphelingotSchema = LingotSchema.clone();
+OrphelingotSchema.set('collection', 'orphelingots');
 export const LingotSnapshotSchema = LingotSchema.clone();
 LingotSnapshotSchema.clearIndexes();
 // Un même lingot apparaît dans plusieurs mouvements : pas d'index unique sur ses copies.

@@ -51,6 +51,8 @@ export class LingotsService {
   constructor(
     @InjectModel(LingotRecord.name, LINGOTS_CONNECTION_NAME)
     private readonly lingots: Model<LingotRecord>,
+    @InjectModel('Orphelingot', LINGOTS_CONNECTION_NAME)
+    private readonly orphelingots: Model<LingotRecord>,
     @InjectModel(OperateurRecord.name, LINGOTS_CONNECTION_NAME)
     private readonly operateurs: Model<OperateurRecord>,
     @InjectModel(FournisseurRecord.name, LINGOTS_CONNECTION_NAME)
@@ -184,6 +186,12 @@ export class LingotsService {
   }
   findLingots() {
     return this.lingots.find().sort({ id: 1 }).exec();
+  }
+  findOrphelingots() {
+    return this.orphelingots
+      .find({ 'tauxAluminium.nom': 'AL00' })
+      .sort({ numeroCoulee: 1, numeroLingot: 1 })
+      .exec();
   }
   async findLingot(id: string) {
     return this.findRecord(this.lingots, id, `Lingot "${id}" introuvable`);

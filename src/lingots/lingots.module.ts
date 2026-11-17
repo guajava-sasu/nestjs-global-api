@@ -17,6 +17,7 @@ import {
   MouvementSchema,
   OperateurRecord,
   OperateurSchema,
+  OrphelingotSchema,
   TauxAluminiumRecord,
   TauxAluminiumSchema,
   ZoneRecord,
@@ -42,6 +43,7 @@ const mongoUri =
       [
         { name: ConfigurationRecord.name, schema: ConfigurationSchema },
         { name: LingotRecord.name, schema: LingotSchema },
+        { name: 'Orphelingot', schema: OrphelingotSchema },
         { name: OperateurRecord.name, schema: OperateurSchema },
         { name: FournisseurRecord.name, schema: FournisseurSchema },
         { name: TauxAluminiumRecord.name, schema: TauxAluminiumSchema },

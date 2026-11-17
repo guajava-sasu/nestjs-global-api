@@ -1473,6 +1473,31 @@
         ]
       }
     },
+    "/orphelingots": {
+      "get": {
+        "operationId": "Lingots_findOrphelingots",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/LingotResponseDto"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary": "Lister les lingots purs de démonstration (AL00)",
+        "tags": [
+          "lingots"
+        ]
+      }
+    },
     "/lingots/{id}": {
       "get": {
         "operationId": "Lingots_findLingot",

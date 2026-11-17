@@ -18,6 +18,7 @@
     "db:update:all": "npm run build && node dist/database/update-all.js",
     "db:update:chutage": "npm run build && node dist/chutage/update-database.js",
     "db:seed:gestion-lingots": "npm run build && node dist/lingots/seed-gestion-lingots.js",
+    "db:seed:orphelingots": "npm run build && node dist/lingots/seed-orphelingots.js",
     "db:seed:inventaires": "npm run build && node dist/lingots/seed-inventaires.js",
     "db:sync:taux-aluminium": "npm run build && node dist/lingots/sync-taux-aluminium.js",
     "db:convert:lingots-stock": "npm run build && node dist/lingots/convert-lingots-stock.js",

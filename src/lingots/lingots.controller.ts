@@ -204,6 +204,12 @@ export class LingotsController {
   findLingots() {
     return this.lingotsService.findLingots();
   }
+  @ApiListe(LingotResponseDto)
+  @ApiOperation({ summary: 'Lister les lingots purs de démonstration (AL00)' })
+  @Get('orphelingots')
+  findOrphelingots() {
+    return this.lingotsService.findOrphelingots();
+  }
   @ApiElement(LingotResponseDto)
   @Get('lingots/:id')
   findLingot(@Param('id') id: string) {
