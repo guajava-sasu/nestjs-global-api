@@ -137,7 +137,7 @@ export class FournisseurRecord {
   @Prop({ required: true })
   nom: string;
 
-  @Prop({ required: true })
+  @Prop({ required: true, match: /^AC\d{6}$/ })
   code: string;
 }
 export const FournisseurSchema =

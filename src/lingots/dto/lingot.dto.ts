@@ -49,7 +49,12 @@ export class UpdateOperateurDto extends PartialType(CreateOperateurDto) {}
 
 export class CreateFournisseurDto {
   @ApiProperty() @IsString() nom: string;
-  @ApiProperty() @IsString() code: string;
+  @ApiProperty({ example: 'AC123456' })
+  @IsString()
+  @Matches(/^AC\d{6}$/, {
+    message: 'code doit respecter le format AC suivi de 6 chiffres',
+  })
+  code: string;
 }
 export class UpdateFournisseurDto extends PartialType(CreateFournisseurDto) {}
 
@@ -99,7 +104,6 @@ export class CreateMouvementCollectionDto extends CreateMouvementDto {
 export class UpdateMouvementDto extends PartialType(CreateMouvementDto) {}
 
 export class CreateLingotDto {
-  @ApiProperty() @IsString() codeQR: string;
   @ApiProperty({ type: CreateFournisseurDto })
   @ValidateNested()
   @Type(() => CreateFournisseurDto)

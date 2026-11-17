@@ -22,7 +22,7 @@ const source: LegacyLingotStockReel = {
 const fixe = {
   choisir: <T>(valeurs: readonly T[]): T => valeurs[0] as T,
   fournisseurs: [
-    { _id: new Types.ObjectId(), nom: 'Boleslaw', code: 'BOLESLAW' },
+    { _id: new Types.ObjectId(), nom: 'Boleslaw', code: 'AC123456' },
   ],
   tauxAluminium: [
     { _id: new Types.ObjectId(), nom: 'AL069', couleur: 'orange' },
@@ -40,7 +40,7 @@ describe('convertirLingotStock', () => {
       numeroCoulee: '21544',
       numeroLingot: 5,
       poids: 1975,
-      codeQR: '3031-21544-005',
+      codeQR: 'ZN-AC123456-021544-005-1975-AL069-MG300-09042026',
       fournisseur: fixe.fournisseurs[0],
       tauxAluminium: fixe.tauxAluminium[0],
       dateReception: parserDateParis('09/04/2026 14:04'),
@@ -57,7 +57,7 @@ describe('convertirLingotStock', () => {
       valeurs[valeurs.length - 1] as T;
     const fournisseurs = [
       ...fixe.fournisseurs,
-      { _id: new Types.ObjectId(), nom: 'Fournisseur 2', code: 'F2' },
+      { _id: new Types.ObjectId(), nom: 'Fournisseur 2', code: 'AC654321' },
     ];
     const tauxAluminium = [
       ...fixe.tauxAluminium,

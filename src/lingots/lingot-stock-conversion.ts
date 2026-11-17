@@ -6,6 +6,7 @@ import type {
   TauxAluminium,
   Zone,
 } from './entities/lingot.entity.js';
+import { genererCodeQrLingot } from './lingot-qr-code.js';
 
 export interface LegacyLingotStockReel {
   I_LGT_FOU_DATE: string;
@@ -110,17 +111,30 @@ export function convertirLingotStock(
 
   const numeroCoulee = String(source.I_LGT_STK_COUL);
   const numeroLingot = source.I_LGT_STK_NUM;
-  const codeQR = `3031-${numeroCoulee}-${String(numeroLingot).padStart(3, '0')}`;
+  const fournisseur = choisir(fournisseurs);
+  const taux = choisir(tauxAluminium);
+  const dateReception = parserDateParis(
+    retirerCentiemes(source.I_LGT_FOU_DATE),
+  );
+  const poids = source.D_LGT_STK_PDS;
+  const codeQR = genererCodeQrLingot({
+    fournisseur,
+    numeroCoulee,
+    numeroLingot,
+    poids,
+    tauxAluminium: taux,
+    dateReception,
+  });
 
   return {
     _id: new Types.ObjectId(),
     codeQR,
-    fournisseur: choisir(fournisseurs),
+    fournisseur,
     numeroCoulee,
     numeroLingot,
-    poids: source.D_LGT_STK_PDS,
-    tauxAluminium: choisir(tauxAluminium),
-    dateReception: parserDateParis(retirerCentiemes(source.I_LGT_FOU_DATE)),
+    poids,
+    tauxAluminium: taux,
+    dateReception,
     zone: choisir(zones),
     ...(source.D_LGT_STK_DAT_MK?.trim()
       ? {

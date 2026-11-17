@@ -38,6 +38,7 @@ import {
   ZoneRecord,
 } from './entities/lingot.entity.js';
 import { LINGOTS_CONNECTION_NAME } from './lingots.constants.js';
+import { genererCodeQrLingot } from './lingot-qr-code.js';
 
 function idFilter(id: string) {
   if (!Types.ObjectId.isValid(id)) {
@@ -182,7 +183,10 @@ export class LingotsService {
   }
 
   createLingot(data: CreateLingotDto) {
-    return this.lingots.create(data);
+    return this.lingots.create({
+      ...data,
+      codeQR: genererCodeQrLingot(data),
+    });
   }
   findLingots() {
     return this.lingots.find().sort({ id: 1 }).exec();
@@ -209,7 +213,13 @@ export class LingotsService {
   }
 
   createInventaire(data: CreateInventaireDto) {
-    return this.inventaires.create(data);
+    return this.inventaires.create({
+      ...data,
+      lingots: data.lingots.map((lingot) => ({
+        ...lingot,
+        codeQR: genererCodeQrLingot(lingot),
+      })),
+    });
   }
   findInventaires() {
     return this.inventaires.find().sort({ date: -1 }).exec();

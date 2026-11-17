@@ -1,3 +1,4 @@
+import { randomInt } from 'node:crypto';
 import mongoose, { Types } from 'mongoose';
 import { readFile } from 'node:fs/promises';
 import {
@@ -30,6 +31,15 @@ import { LINGOTS_DATABASE_NAME } from './lingots.constants.js';
 const uri =
   process.env.MONGODB_URI ?? 'mongodb://localhost:27017/nestjs-global-api';
 const codesZonesUniques = ['PO1', 'PO2', 'PM1', 'PM2', 'CO', 'CM'];
+
+function genererCodeFournisseur(codesUtilises: Set<string>): string {
+  let code: string;
+  do {
+    code = `AC${String(randomInt(1_000_000)).padStart(6, '0')}`;
+  } while (codesUtilises.has(code));
+  codesUtilises.add(code);
+  return code;
+}
 
 const zonesDefinies: Omit<Zone, '_id'>[] = [
   { nom: 'Four', code: 'F' },
@@ -218,13 +228,14 @@ async function seedGestionLingots(): Promise<void> {
     lireCsv(),
   ]);
 
+  const codesFournisseurs = new Set<string>();
   const fournisseurs: Fournisseur[] = fournisseursExemples.map((exemple) => ({
     _id:
       exemple._id instanceof Types.ObjectId
         ? exemple._id
         : new Types.ObjectId(),
     nom: String(exemple.nom),
-    code: String(exemple.code),
+    code: genererCodeFournisseur(codesFournisseurs),
   }));
   const tauxAluminium = creerTauxAluminium(tauxExemples);
   const zones: Zone[] = zonesDefinies.map((zone) => ({

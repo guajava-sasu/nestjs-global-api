@@ -3,7 +3,7 @@
     "$oid": "6aec4718d73e05c4be86ac46"
   },
   "id": "BOLIDEN",
-  "code": "BOLIDEN",
+  "code": "AC123456",
   "createdAt": {
     "$date": "2026-11-05T09:06:32.521Z"
   },
@@ -17,7 +17,7 @@
     "$oid": "6aec4718d73e05c4be86ac47"
   },
   "id": "NYRSTAR",
-  "code": "NYRSTAR",
+  "code": "AC654321",
   "createdAt": {
     "$date": "2026-11-05T09:06:32.521Z"
   },
@@ -31,7 +31,7 @@
     "$oid": "6aec4718d73e05c4be86ac49"
   },
   "id": "GLENCORE",
-  "code": "GLENCORE",
+  "code": "AC246809",
   "createdAt": {
     "$date": "2026-11-05T09:06:32.521Z"
   },
@@ -45,7 +45,7 @@
     "$oid": "6aec4718d73e05c4be86ac4a"
   },
   "id": "LUNDIN-MINING",
-  "code": "LUNDIN",
+  "code": "AC246868",
   "createdAt": {
     "$date": "2026-11-05T09:06:32.522Z"
   },
@@ -59,7 +59,7 @@
     "$oid": "6aec4718d73e05c4be86ac4b"
   },
   "id": "TECK-RESOURCES",
-  "code": "TECK",
+  "code": "AC764809",
   "createdAt": {
     "$date": "2026-11-05T09:06:32.522Z"
   },
