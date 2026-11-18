@@ -92,7 +92,7 @@ jobs:
         ((github.event_name == 'workflow_dispatch' && inputs.deploy == true) ||
          (github.event_name == 'push' && vars.GLOBAL_AUTO_DEPLOY_ENABLED == 'true'))
       }}
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     environment: production
     steps:
       - name: Download CI artifact
@@ -110,16 +110,18 @@ jobs:
           VPS_KNOWN_HOSTS: ${{ secrets.GLOBAL_VPS_KNOWN_HOSTS }}
           VPS_SSH_PORT: ${{ vars.GLOBAL_VPS_SSH_PORT }}
           VPS_CONTRACT_CONFIRMED: ${{ vars.GLOBAL_VPS_CONTRACT_CONFIRMED }}
+          ROLLBACK_CONFIRMED: ${{ vars.GLOBAL_ROLLBACK_CONFIRMED }}
           MONGODB_VALIDATED: ${{ vars.GLOBAL_MONGODB_VALIDATED }}
           VPS_AUTO_DEPLOY_ENABLED: ${{ vars.GLOBAL_AUTO_DEPLOY_ENABLED }}
           EVENT_NAME: ${{ github.event_name }}
           MANUAL_DEPLOY: ${{ inputs.deploy }}
         run: |
           set -euo pipefail
-          for name in VPS_HOST VPS_USER VPS_SSH_KEY VPS_KNOWN_HOSTS VPS_SSH_PORT VPS_CONTRACT_CONFIRMED MONGODB_VALIDATED; do
+          for name in VPS_HOST VPS_USER VPS_SSH_KEY VPS_KNOWN_HOSTS VPS_SSH_PORT VPS_CONTRACT_CONFIRMED ROLLBACK_CONFIRMED MONGODB_VALIDATED; do
             if [[ -z "${!name}" ]]; then echo "::error::Missing GitHub secret/variable: $name"; exit 1; fi
           done
           [[ "$VPS_CONTRACT_CONFIRMED" == "true" ]] || { echo '::error::VPS execution and artifact contract is not confirmed.'; exit 1; }
+          [[ "$ROLLBACK_CONFIRMED" == "true" ]] || { echo '::error::VPS rollback behavior is not confirmed.'; exit 1; }
           [[ "$MONGODB_VALIDATED" == "true" ]] || { echo '::error::MongoDB databases, credentials, and empty initial state are not confirmed.'; exit 1; }
           [[ "$VPS_HOST" == "global.orfevrus-api.com" ]] || { echo '::error::GLOBAL_VPS_HOST must match the confirmed production host.'; exit 1; }
           [[ "$VPS_USER" == "deploy-nestjs-global-api" ]] || { echo '::error::GLOBAL_VPS_USER does not match the deployment account.'; exit 1; }
@@ -139,6 +141,7 @@ jobs:
           VPS_SSH_KEY: ${{ secrets.GLOBAL_VPS_SSH_KEY }}
           VPS_KNOWN_HOSTS: ${{ secrets.GLOBAL_VPS_KNOWN_HOSTS }}
           VPS_SSH_PORT: ${{ vars.GLOBAL_VPS_SSH_PORT }}
+          VPS_HOST_KEY_FINGERPRINT: SHA256:8kNm9acB4FPL9C7YxG0zyM5DouzK/va0QthWmm5yqsY
         run: |
           set -euo pipefail
           install -m 700 -d "$HOME/.ssh"
@@ -147,10 +150,13 @@ jobs:
           printf '%s\n' "$VPS_KNOWN_HOSTS" > "$HOME/.ssh/known_hosts"
           chmod 600 "$HOME/.ssh/global_deploy_key" "$HOME/.ssh/known_hosts"
           if [[ "$VPS_SSH_PORT" == "22" ]]; then
-            ssh-keygen -F "$VPS_HOST" -f "$HOME/.ssh/known_hosts" >/dev/null
+            matched_host="$(ssh-keygen -F "$VPS_HOST" -f "$HOME/.ssh/known_hosts" 2>/dev/null)"
           else
-            ssh-keygen -F "[$VPS_HOST]:$VPS_SSH_PORT" -f "$HOME/.ssh/known_hosts" >/dev/null
+            matched_host="$(ssh-keygen -F "[$VPS_HOST]:$VPS_SSH_PORT" -f "$HOME/.ssh/known_hosts" 2>/dev/null)"
           fi
+          printf '%s\n' "$matched_host" | awk 'NF >= 3 && $2 ~ /^ssh-ed25519$/ { print $2, $3; found=1; exit } END { if (!found) exit 1 }' > "$HOME/.ssh/verified_host_key.pub"
+          actual_fingerprint="$(ssh-keygen -lf "$HOME/.ssh/verified_host_key.pub" -E sha256 | awk '{print $2}')"
+          [[ "$actual_fingerprint" == "$VPS_HOST_KEY_FINGERPRINT" ]] || { echo '::error::GLOBAL_VPS_KNOWN_HOSTS host key fingerprint does not match the independently confirmed VPS fingerprint.'; exit 1; }
 
       - name: Verify restricted SSH command
         shell: bash
@@ -179,7 +185,7 @@ jobs:
           [[ "$checksum" =~ ^[a-f0-9]{64}$ ]] || { echo '::error::Invalid artifact checksum.'; exit 1; }
           cat "$archive" | ssh -i "$HOME/.ssh/global_deploy_key" -o IdentitiesOnly=yes -o BatchMode=yes -o StrictHostKeyChecking=yes -o UserKnownHostsFile="$HOME/.ssh/known_hosts" -p "$VPS_SSH_PORT" "$VPS_USER@$VPS_HOST" upload "$RELEASE_VERSION" "$checksum"
           ssh -i "$HOME/.ssh/global_deploy_key" -o IdentitiesOnly=yes -o BatchMode=yes -o StrictHostKeyChecking=yes -o UserKnownHostsFile="$HOME/.ssh/known_hosts" -p "$VPS_SSH_PORT" "$VPS_USER@$VPS_HOST" verify "$RELEASE_VERSION" "$checksum"
-          printf '%s\n' "$checksum" >> "$GITHUB_ENV"
+          printf 'RELEASE_SHA256=%s\n' "$checksum" >> "$GITHUB_ENV"
 
       - name: Deploy through VPS release and rollback mechanism
         shell: bash
@@ -192,6 +198,9 @@ jobs:
         run: |
           set -euo pipefail
           [[ "$RELEASE_VERSION" =~ ^[A-Fa-f0-9-]+$ ]] || { echo '::error::Invalid release version.'; exit 1; }
+          [[ "$RELEASE_SHA256" =~ ^[a-f0-9]{64}$ ]] || { echo '::error::Missing or invalid release checksum.'; exit 1; }
+          artifact_checksum="$(sha256sum "release-artifact/nestjs-global-api-${RELEASE_VERSION}.tar.gz" | awk '{print $1}')"
+          [[ "$RELEASE_SHA256" == "$artifact_checksum" ]] || { echo '::error::Release checksum changed between verify and deploy steps.'; exit 1; }
           ssh -i "$HOME/.ssh/global_deploy_key" -o IdentitiesOnly=yes -o BatchMode=yes -o StrictHostKeyChecking=yes -o UserKnownHostsFile="$HOME/.ssh/known_hosts" -p "$VPS_SSH_PORT" \
             "$VPS_USER@$VPS_HOST" deploy "$RELEASE_VERSION" "$RELEASE_SHA256"
 

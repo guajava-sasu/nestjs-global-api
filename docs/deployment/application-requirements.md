@@ -49,6 +49,6 @@ L'audit des contrôleurs trouve des routes GET et des routes POST/PATCH/DELETE s
 
 ## État du contrat VPS
 
-Chemins confirmés : `/var/www/nestjs-global-api`, releases `/var/www/nestjs-global-api/releases`, lien actif `releases/current`, staging `/var/lib/deploy-nestjs-global-api/incoming`, environnement `/etc/nestjs-global-api/production.env`. Outil VPS annoncé : `/usr/local/sbin/nestjs-global-api-release deploy <version>` et `... rollback <version>`.
+Chemins confirmés : `/var/www/nestjs-global-api`, releases `/var/www/nestjs-global-api/releases`, lien actif `releases/current`, staging `/var/lib/deploy-nestjs-global-api/incoming`, environnement `/etc/nestjs-global-api/production.env`. Protocole SSH restreint communiqué : `ping`, `upload <version> <sha256>` (archive gzip via stdin), `verify <version> <sha256>`, `deploy <version> <sha256>` et `rollback <version-existante>`.
 
-À confirmer avant activation : port SSH, empreinte hôte validée et entrée known_hosts, autorisation SCP/SFTP du compte limité, nom/format d'archive attendu dans `incoming`, forme autorisée d'invocation du script, sémantique de `rollback <version>`, contrôles de santé effectués par le script et résultat de rollback. Le premier déploiement reste bloqué jusqu'à ces confirmations, à la validation des deux bases MongoDB vides et à la configuration des secrets GitHub.
+À confirmer avant activation : la sémantique précise du rollback automatique pendant `deploy`, une méthode autorisée pour restaurer la release précédente si la vérification HTTPS GitHub échoue après activation, et le comportement lors du premier déploiement sans release précédente. Le workflow n'infère aucune version et exige `GLOBAL_ROLLBACK_CONFIRMED=true` avant un déploiement.

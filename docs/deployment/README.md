@@ -29,11 +29,13 @@ Le workflow utilise les secrets GitHub Actions suivants (dans **Settings → Env
 - `GLOBAL_VPS_HOST` : `global.orfevrus-api.com`.
 - `GLOBAL_VPS_USER` : `deploy-nestjs-global-api`.
 - `GLOBAL_VPS_SSH_KEY` : contenu complet de la clé privée dédiée, jamais la clé `.pub`.
-- `GLOBAL_VPS_KNOWN_HOSTS` : entrée(s) OpenSSH vérifiée(s) remises ou confirmées par Codex VPS pour le domaine et le port SSH exacts. Ne pas utiliser une sortie de `ssh-keyscan` non vérifiée.
+- `GLOBAL_VPS_KNOWN_HOSTS` : entrée OpenSSH vérifiée pour `global.orfevrus-api.com` (ou `[global.orfevrus-api.com]:<port>` si le port n'est pas 22). Le workflow exige le fingerprint hôte ED25519 confirmé `SHA256:8kNm9acB4FPL9C7YxG0zyM5DouzK/va0QthWmm5yqsY` et conserve `StrictHostKeyChecking=yes`.
 
-Variables Actions requises : `GLOBAL_VPS_SSH_PORT` (port confirmé par Codex VPS), `GLOBAL_VPS_CONTRACT_CONFIRMED` (laisser absent/faux jusque-là), `GLOBAL_MONGODB_VALIDATED` (passer à `true` seulement après vérification des deux URI, des permissions et de l'état vide initial), puis `GLOBAL_AUTO_DEPLOY_ENABLED` (laisser absent/faux avant le premier déploiement contrôlé). Le workflow impose `StrictHostKeyChecking=yes` et ne désactive pas la vérification d'hôte.
+Variables Actions requises : `GLOBAL_VPS_SSH_PORT` (22), `GLOBAL_VPS_CONTRACT_CONFIRMED`, `GLOBAL_ROLLBACK_CONFIRMED`, `GLOBAL_MONGODB_VALIDATED` et `GLOBAL_AUTO_DEPLOY_ENABLED`. Garder les confirmations et l'auto-déploiement à `false` tant que les vérifications correspondantes ne sont pas faites. Le premier push avec `GLOBAL_AUTO_DEPLOY_ENABLED=false` ne lance que la CI; une demande manuelle de déploiement reste distincte et soumise aux confirmations.
 
-Le compte SSH doit accepter l'envoi SFTP/SCP vers le répertoire `incoming` et l'exécution autorisée de la commande de release sans présumer de `sudo`. Le script VPS doit vérifier le checksum, créer une release immuable, installer les dépendances, basculer `current` atomiquement, redémarrer le service, contrôler la readiness et gérer le rollback. Le job vérifie ensuite `https://global.orfevrus-api.com/health` et `/health/ready`; en cas d'échec, il demande le rollback au même outil VPS, puis fait échouer le job.
+Le protocole restreint confirmé est `ping`, `upload <version> <sha256>` (archive tar.gz via stdin SSH), `verify <version> <sha256>`, `deploy <version> <sha256>` et `rollback <version-existante>`. L'artefact embarque `package.json`, `package-lock.json`, `dist/` et les dépendances de production installées sur Ubuntu 24.04 avec Node 22.23.5. Le workflow vérifie le checksum avant d'appeler `deploy`, puis contrôle `/health` et `/health/ready` en HTTPS sur `global.orfevrus-api.com`.
+
+La sémantique transactionnelle du rollback après activation n'est pas encore confirmée par un résultat direct de Codex VPS. En particulier, les contrôles HTTPS GitHub ont lieu après la commande `deploy`; si l'un échoue, le workflow échoue sans deviner un numéro de release ni appeler `rollback` avec une cible supposée. Avant tout déploiement, Codex VPS doit confirmer que `deploy` vérifie la readiness avant de rendre la release active et restaure automatiquement l'ancienne release si ses propres contrôles échouent, et fournir une méthode autorisée permettant à GitHub de restaurer sans ambiguïté la release précédente après un échec HTTPS externe (y compris le cas sans release précédente). Le job de déploiement reste bloqué tant que `GLOBAL_ROLLBACK_CONFIRMED` n'est pas `true`.
 
 ## Clé SSH dédiée
 
@@ -44,7 +46,7 @@ Clé Ed25519 dédiée créée hors du dépôt :
 
 La clé privée, générée sans passphrase pour l'usage non interactif de GitHub Actions, a une ACL Windows limitée au compte local (ainsi qu'à SYSTEM et aux administrateurs). Transmettre uniquement le fichier `.pub` à Codex VPS pour installer la clé dans `authorized_keys` du compte de déploiement. Pour renseigner le secret sans afficher la clé dans le chat, ouvrir le fichier privé dans un éditeur local et coller son contenu directement dans le champ `GLOBAL_VPS_SSH_KEY` de GitHub; vider le presse-papiers après l'enregistrement. Ne jamais joindre ni committer le fichier privé.
 
-Le fichier `C:\Users\ranon\.ssh\known_hosts` actuel ne contient pas d'entrée pour le domaine ni l'IP. Ajouter son empreinte uniquement après réception de la valeur validée par Codex VPS, puis copier l'entrée connue dans `GLOBAL_VPS_KNOWN_HOSTS`. Le port SSH et le fingerprint restent à confirmer.
+La clé d'hôte ED25519 annoncée par Codex VPS a le fingerprint ci-dessus. L'entrée du secret GitHub doit correspondre au domaine utilisé par SSH; le job compare cette entrée au fingerprint attendu avant toute connexion. Une sortie `ssh-keyscan` non validée ne suffit pas.
 
 ## Diagnostics
 
@@ -58,4 +60,4 @@ Le fichier `C:\Users\ranon\.ssh\known_hosts` actuel ne contient pas d'entrée po
 
 ## Éléments VPS encore requis
 
-Codex VPS doit confirmer : port SSH, fingerprint/ligne `known_hosts`, protocole SCP/SFTP permis au compte limité, forme exacte du fichier attendu dans `incoming`, exécution exacte de la commande `deploy`, sens de l'argument de `rollback`, et garantie que la commande gère elle-même les échecs du redémarrage/health check. Le workflow reste volontairement bloqué tant que ces confirmations ne sont pas enregistrées.
+À confirmer directement par Codex VPS avant d'activer un déploiement : garantie de rollback automatique lors d'un échec interne à `deploy`; méthode restreinte pour restaurer la version précédente si les vérifications HTTPS externes échouent après activation; et résultat attendu lors du premier déploiement sans release précédente. Aucun appel distant de rollback n'est effectué par le workflow avec une version supposée.
