@@ -36,7 +36,9 @@ export class CreateConfigurationDto {
   @IsString()
   description?: string;
 }
-export class UpdateConfigurationDto extends PartialType(CreateConfigurationDto) {}
+export class UpdateConfigurationDto extends PartialType(
+  CreateConfigurationDto,
+) {}
 
 export class CreateOperateurDto {
   @ApiProperty() @IsString() username: string;

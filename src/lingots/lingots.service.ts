@@ -37,8 +37,8 @@ import {
   TauxAluminiumRecord,
   ZoneRecord,
 } from './entities/lingot.entity.js';
-import { LINGOTS_CONNECTION_NAME } from './lingots.constants.js';
 import { genererCodeQrLingot } from './lingot-qr-code.js';
+import { LINGOTS_CONNECTION_NAME } from './lingots.constants.js';
 
 function idFilter(id: string) {
   if (!Types.ObjectId.isValid(id)) {
@@ -92,7 +92,11 @@ export class LingotsService {
     );
   }
   removeConfiguration(id: string) {
-    return this.removeRecord(this.configuration, id, 'Configuration introuvable');
+    return this.removeRecord(
+      this.configuration,
+      id,
+      'Configuration introuvable',
+    );
   }
 
   createOperateur(data: CreateOperateurDto) {

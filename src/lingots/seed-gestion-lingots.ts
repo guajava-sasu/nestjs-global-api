@@ -1,5 +1,5 @@
-import { randomInt } from 'node:crypto';
 import mongoose, { Types } from 'mongoose';
+import { randomInt } from 'node:crypto';
 import { readFile } from 'node:fs/promises';
 import {
   Fournisseur,
