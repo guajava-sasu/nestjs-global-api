@@ -49,7 +49,7 @@ try {
   ]);
   if (!fournisseurs.length || !tauxAluminium.length || !zones.length) {
     throw new Error(
-      'Les référentiels de gestion_lingots doivent être chargés.',
+      `Les référentiels de ${LINGOTS_DATABASE_NAME} doivent être chargés.`,
     );
   }
 

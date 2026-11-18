@@ -19,7 +19,7 @@ L'artefact doit inclure `dist/`, `package.json`, `package-lock.json` et les fich
 - `PORT` : entier `1..65535`; valeur VPS proposée `3002` (à confirmer au contrat); valeur locale par défaut 3000.
 - `NODE_ENV=production` : active la politique CORS de production.
 - `MONGODB_URI` : URI de la base principale, requise en production. Base par défaut locale : `nestjs-global-api`.
-- `MONGODB_GESTION_LINGOTS_URI` : facultative; si absente, l'URI principale est réutilisée, mais la base `gestion_lingots` est forcée par `dbName`.
+- `MONGODB_GESTION_LINGOTS_URI` : URI de la base dédiée `nestjs-global-api-lingots`; si absente, l'URI principale est réutilisée avec ce `dbName` forcé.
 - `CORS_ORIGINS` : origines frontend exactes, séparées par des virgules. Vide par défaut; production n'autorise pas localhost automatiquement.
 - `CONFIRM_DB_RESET` : réservé aux scripts de maintenance destructifs; ne pas définir dans l'environnement du service.
 - `ALLOW_DESTRUCTIVE_HTTP` : doit rester `false`/absent par défaut. À `true`, réactive les routes HTTP DELETE sans authentification intégrée; n'activer qu'après validation d'une politique d'accès.
@@ -28,11 +28,11 @@ Les identifiants doivent être conservés dans un fichier d'environnement VPS no
 
 ## MongoDB et données
 
-Deux connexions locales sont prévues : `MONGODB_URI` vers `nestjs-global-api`, et `MONGODB_GESTION_LINGOTS_URI` vers `gestion_lingots`. Si la seconde URI est absente, l'URI principale est réutilisée et Mongoose force `dbName=gestion_lingots`. Les bases doivent être neuves/vides au premier démarrage.
+Deux connexions séparées sont utilisées : `MONGODB_URI` vers `nestjs-global-api`, et `MONGODB_GESTION_LINGOTS_URI` vers `nestjs-global-api-lingots`. La connexion nommée et le `dbName` sont tous deux fixés à `nestjs-global-api-lingots`. Ne jamais utiliser la base existante `gestion_lingots`. Les deux bases dédiées doivent être neuves/vides au premier démarrage.
 
-Collections de `gestion_lingots` : `configuration`, `operateurs-lingots`, `fournisseurs-lingots`, `taux-aluminium-lingots`, `zones-lingots`, `lingots`, `orphelingots`, `mouvements-lingots`, `inventaires-lingots`, `matte-lingots`, `historique-stock-lingots`. La base principale utilise `fiches-bobines`, `fiches-bobines-filles`, `parc-a-bobines`, ainsi que les collections Chutage `chariots`, `demandes-pontier`, `preparations-chargement`, `bobines-stockage`, `bobines-chutage`, `chutes-bobines`, `chutes-rives`, `ponts-etat-pince`.
+Collections de `nestjs-global-api-lingots` : `configuration`, `operateurs-lingots`, `fournisseurs-lingots`, `taux-aluminium-lingots`, `zones-lingots`, `lingots`, `orphelingots`, `mouvements-lingots`, `inventaires-lingots`, `matte-lingots`, `historique-stock-lingots`. La base principale utilise `fiches-bobines`, `fiches-bobines-filles`, `parc-a-bobines`, ainsi que les collections Chutage `chariots`, `demandes-pontier`, `preparations-chargement`, `bobines-stockage`, `bobines-chutage`, `chutes-bobines`, `chutes-rives`, `ponts-etat-pince`.
 
-Aucune migration ni seed n'est nécessaire au démarrage. Chutage n'insère plus de données d'exemple automatiquement. L'initialisation des exemples reste disponible via la fonction de maintenance `initializeSampleData`, et `db:update:chutage` n'efface puis ne repeuple les collections qu'après `CONFIRM_DB_RESET=true`. `db:seed:gestion-lingots` fait `dropDatabase()` sur `gestion_lingots`; `db:update:all` réinitialise les collections Chutage; `db:sync:taux-aluminium` modifie des documents; `db:convert:lingots-stock` écrit dans `gestion_lingots`; `db:generate:bobines-filles` crée des fiches. Ne les lancer jamais dans le déploiement automatisé. Aucune transformation de production n'a été exécutée.
+Aucune migration ni seed n'est nécessaire au démarrage. Chutage n'insère plus de données d'exemple automatiquement. L'initialisation des exemples reste disponible via la fonction de maintenance `initializeSampleData`, et `db:update:chutage` n'efface puis ne repeuple les collections qu'après `CONFIRM_DB_RESET=true`. `db:seed:gestion-lingots` fait `dropDatabase()` sur la seule base `nestjs-global-api-lingots` et exige la confirmation; `db:update:all` réinitialise les collections Chutage; `db:sync:taux-aluminium` modifie des documents; `db:convert:lingots-stock` écrit dans `nestjs-global-api-lingots`; `db:generate:bobines-filles` crée des fiches. Ne les lancer jamais dans le déploiement automatisé. Aucune transformation de production n'a été exécutée.
 
 ## HTTP, sécurité et ressources
 

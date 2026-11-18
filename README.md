@@ -69,7 +69,7 @@ Toutes les routes lingots ci-dessus acceptent les cinq méthodes CRUD. Les IDs m
 
 ### Configuration des lingots
 
-La collection `configuration` de la base `gestion_lingots` contient un document
+La collection `configuration` de la base `nestjs-global-api-lingots` contient un document
 par parametre, avec une `cle` unique, une `valeur` JSON non nulle et une
 `description` facultative. Elle est creee au demarrage de l'API avec MongoDB
 accessible. Aucun parametre n'est ajoute automatiquement.
@@ -109,7 +109,7 @@ De nouvelles cles peuvent etre ajoutees sans modifier le schema.
 
 ## Exemples et données lingots
 
-Les contrats et exemples sont dans [`docs/api-examples/lingots`](docs/api-examples/lingots). Ils ne sont pas chargés au démarrage. Le seed `npm run db:seed:gestion-lingots` remplace toute la base `gestion_lingots` et exige `CONFIRM_DB_RESET=true`; ne l'exécutez pas sur une base contenant des données à conserver.
+Les contrats et exemples sont dans [`docs/api-examples/lingots`](docs/api-examples/lingots). Ils ne sont pas chargés au démarrage. Le seed `npm run db:seed:gestion-lingots` remplace toute la base dédiée `nestjs-global-api-lingots` et exige `CONFIRM_DB_RESET=true`; ne l'exécutez pas sur une base contenant des données à conserver.
 
 ## Vérification
 

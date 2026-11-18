@@ -70,7 +70,7 @@ const operateursNoms = [
 function verifierAutorisationReset(): void {
   if (process.env.CONFIRM_DB_RESET !== 'true') {
     throw new Error(
-      'Ce seed supprime entièrement gestion_lingots. Définissez CONFIRM_DB_RESET=true pour confirmer explicitement.',
+      `Ce seed supprime entièrement ${LINGOTS_DATABASE_NAME}. Définissez CONFIRM_DB_RESET=true pour confirmer explicitement.`,
     );
   }
 }
@@ -436,7 +436,7 @@ async function seedGestionLingots(): Promise<void> {
 try {
   await seedGestionLingots();
 } catch (error) {
-  console.error('Échec du seed gestion_lingots :', error);
+  console.error(`Échec du seed ${LINGOTS_DATABASE_NAME} :`, error);
   process.exitCode = 1;
   await mongoose.disconnect();
 }

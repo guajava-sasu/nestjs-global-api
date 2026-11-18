@@ -12,7 +12,10 @@ describe('AppController', () => {
       providers: [
         AppService,
         { provide: 'DatabaseConnection', useValue: { readyState: 1 } },
-        { provide: 'gestion_lingotsConnection', useValue: { readyState: 1 } },
+        {
+          provide: 'nestjs-global-api-lingotsConnection',
+          useValue: { readyState: 1 },
+        },
       ],
     }).compile();
 
@@ -39,7 +42,10 @@ describe('AppController', () => {
       providers: [
         AppService,
         { provide: 'DatabaseConnection', useValue: { readyState: 0 } },
-        { provide: 'gestion_lingotsConnection', useValue: { readyState: 1 } },
+        {
+          provide: 'nestjs-global-api-lingotsConnection',
+          useValue: { readyState: 1 },
+        },
       ],
     }).compile();
     const controller = moduleRef.get(AppController);

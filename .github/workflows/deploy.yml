@@ -22,7 +22,7 @@ concurrency:
 jobs:
   ci:
     name: Verify and package
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - name: Checkout exact event commit
         uses: actions/checkout@v4
@@ -62,9 +62,11 @@ jobs:
           RELEASE_VERSION: ${{ github.sha }}-${{ github.run_id }}-${{ github.run_attempt }}
         run: |
           set -euo pipefail
-          mkdir -p artifact/docs/api-examples
+          mkdir -p artifact
           cp -R dist package.json package-lock.json artifact/
-          cp -R docs/api-examples/lingots artifact/docs/api-examples/
+          if [[ -d public ]]; then cp -R public artifact/; fi
+          npm ci --omit=dev --prefix artifact
+          test -s artifact/node_modules/.package-lock.json
           archive="nestjs-global-api-${RELEASE_VERSION}.tar.gz"
           tar -czf "$archive" -C artifact .
           sha256sum "$archive" > "${archive}.sha256"
@@ -150,7 +152,7 @@ jobs:
             ssh-keygen -F "[$VPS_HOST]:$VPS_SSH_PORT" -f "$HOME/.ssh/known_hosts" >/dev/null
           fi
 
-      - name: Transfer versioned artifact to incoming
+      - name: Verify restricted SSH command
         shell: bash
         env:
           VPS_HOST: ${{ secrets.GLOBAL_VPS_HOST }}
@@ -159,24 +161,39 @@ jobs:
           RELEASE_VERSION: ${{ github.sha }}-${{ github.run_id }}-${{ github.run_attempt }}
         run: |
           set -euo pipefail
-          archive="nestjs-global-api-${RELEASE_VERSION}.tar.gz"
-          scp -i "$HOME/.ssh/global_deploy_key" -o IdentitiesOnly=yes -o BatchMode=yes -o StrictHostKeyChecking=yes -o UserKnownHostsFile="$HOME/.ssh/known_hosts" -P "$VPS_SSH_PORT" \
-            "release-artifact/$archive" "release-artifact/${archive}.sha256" \
-            "$VPS_USER@$VPS_HOST:/var/lib/deploy-nestjs-global-api/incoming/"
-          printf '%s\n' "$RELEASE_VERSION" >> "$GITHUB_ENV"
+          result="$(ssh -i "$HOME/.ssh/global_deploy_key" -o IdentitiesOnly=yes -o BatchMode=yes -o StrictHostKeyChecking=yes -o UserKnownHostsFile="$HOME/.ssh/known_hosts" -p "$VPS_SSH_PORT" "$VPS_USER@$VPS_HOST" ping)"
+          [[ "$result" == *"nestjs-global-api deployment SSH OK."* ]] || { echo '::error::VPS ping response did not match the deployment contract.'; exit 1; }
 
-      - name: Invoke VPS release and rollback mechanism
+      - name: Upload and verify versioned release through SSH stdin
         shell: bash
         env:
           VPS_HOST: ${{ secrets.GLOBAL_VPS_HOST }}
           VPS_USER: ${{ secrets.GLOBAL_VPS_USER }}
           VPS_SSH_PORT: ${{ vars.GLOBAL_VPS_SSH_PORT }}
           RELEASE_VERSION: ${{ github.sha }}-${{ github.run_id }}-${{ github.run_attempt }}
+        run: |
+          set -euo pipefail
+          archive="release-artifact/nestjs-global-api-${RELEASE_VERSION}.tar.gz"
+          checksum="$(sha256sum "$archive" | awk '{print $1}')"
+          [[ "$RELEASE_VERSION" =~ ^[A-Fa-f0-9-]+$ ]] || { echo '::error::Invalid release version.'; exit 1; }
+          [[ "$checksum" =~ ^[a-f0-9]{64}$ ]] || { echo '::error::Invalid artifact checksum.'; exit 1; }
+          cat "$archive" | ssh -i "$HOME/.ssh/global_deploy_key" -o IdentitiesOnly=yes -o BatchMode=yes -o StrictHostKeyChecking=yes -o UserKnownHostsFile="$HOME/.ssh/known_hosts" -p "$VPS_SSH_PORT" "$VPS_USER@$VPS_HOST" upload "$RELEASE_VERSION" "$checksum"
+          ssh -i "$HOME/.ssh/global_deploy_key" -o IdentitiesOnly=yes -o BatchMode=yes -o StrictHostKeyChecking=yes -o UserKnownHostsFile="$HOME/.ssh/known_hosts" -p "$VPS_SSH_PORT" "$VPS_USER@$VPS_HOST" verify "$RELEASE_VERSION" "$checksum"
+          printf '%s\n' "$checksum" >> "$GITHUB_ENV"
+
+      - name: Deploy through VPS release and rollback mechanism
+        shell: bash
+        env:
+          VPS_HOST: ${{ secrets.GLOBAL_VPS_HOST }}
+          VPS_USER: ${{ secrets.GLOBAL_VPS_USER }}
+          VPS_SSH_PORT: ${{ vars.GLOBAL_VPS_SSH_PORT }}
+          RELEASE_VERSION: ${{ github.sha }}-${{ github.run_id }}-${{ github.run_attempt }}
+          RELEASE_SHA256: ${{ env.RELEASE_SHA256 }}
         run: |
           set -euo pipefail
           [[ "$RELEASE_VERSION" =~ ^[A-Fa-f0-9-]+$ ]] || { echo '::error::Invalid release version.'; exit 1; }
           ssh -i "$HOME/.ssh/global_deploy_key" -o IdentitiesOnly=yes -o BatchMode=yes -o StrictHostKeyChecking=yes -o UserKnownHostsFile="$HOME/.ssh/known_hosts" -p "$VPS_SSH_PORT" \
-            "$VPS_USER@$VPS_HOST" "/usr/local/sbin/nestjs-global-api-release deploy $RELEASE_VERSION"
+            "$VPS_USER@$VPS_HOST" deploy "$RELEASE_VERSION" "$RELEASE_SHA256"
 
       - name: Verify public HTTPS health and readiness
         shell: bash
@@ -192,14 +209,7 @@ jobs:
             curl --fail --silent --show-error --connect-timeout 10 --max-time 30 --retry 6 --retry-all-errors --retry-delay 5 "https://${VPS_HOST}/health/ready" || return 1
           }
           if ! verify_endpoints; then
-            echo '::error::Public health check failed; requesting rollback through the VPS release mechanism.'
-            if ! ssh -i "$HOME/.ssh/global_deploy_key" -o IdentitiesOnly=yes -o BatchMode=yes -o StrictHostKeyChecking=yes -o UserKnownHostsFile="$HOME/.ssh/known_hosts" -p "$VPS_SSH_PORT" \
-              "$VPS_USER@$VPS_HOST" "/usr/local/sbin/nestjs-global-api-release rollback $RELEASE_VERSION"; then
-              echo '::error::VPS release mechanism failed to execute rollback.'
-              exit 1
-            fi
-            verify_endpoints || { echo '::error::VPS rollback command returned, but HTTPS health/readiness did not recover.'; exit 1; }
-            echo '::error::Deployment was rolled back after failed public verification.'
+            echo '::error::Public health/readiness failed after deploy. No rollback target can be safely inferred from the confirmed command contract; verify VPS deploy rollback behavior and restore the previous release using its exact version.'
             exit 1
           fi
           echo 'Deployment and public HTTPS health/readiness checks succeeded.'

@@ -10,7 +10,7 @@ Le transfert utilise une archive versionnée et son checksum dans `/var/lib/depl
 
 ## Configuration et build
 
-Copier `.env.example` dans un emplacement privé VPS et remplacer les valeurs d'exemple. `HOST=127.0.0.1`, `PORT=3002` (proposé), `NODE_ENV=production`, deux URI vers `nestjs-global-api` et `gestion_lingots`, puis `CORS_ORIGINS` avec les seules origines frontend approuvées. Les bases seront démarrées vides; l'application ne les peuple plus automatiquement.
+Copier `.env.example` dans un emplacement privé VPS et remplacer les valeurs d'exemple. `HOST=127.0.0.1`, `PORT=3002` (proposé), `NODE_ENV=production`, deux URI distinctes vers `nestjs-global-api` et `nestjs-global-api-lingots`, puis `CORS_ORIGINS` avec les seules origines frontend approuvées. La base existante `gestion_lingots` est exclue. Les bases dédiées démarreront vides; l'application ne les peuple pas automatiquement.
 
 ```sh
 npm ci

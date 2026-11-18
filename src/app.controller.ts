@@ -3,6 +3,7 @@ import { InjectConnection } from '@nestjs/mongoose';
 import { ApiOperation, ApiOkResponse, ApiTags } from '@nestjs/swagger';
 import { Connection } from 'mongoose';
 import { AppService } from './app.service.js';
+import { LINGOTS_CONNECTION_NAME } from './lingots/lingots.constants.js';
 
 @ApiTags('app')
 @Controller()
@@ -10,7 +11,7 @@ export class AppController {
   constructor(
     private readonly appService: AppService,
     @InjectConnection() private readonly mainConnection: Connection,
-    @InjectConnection('gestion_lingots')
+    @InjectConnection(LINGOTS_CONNECTION_NAME)
     private readonly lingotsConnection: Connection,
   ) {}
 
