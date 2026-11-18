@@ -29,7 +29,9 @@ import {
 import { LINGOTS_DATABASE_NAME } from './lingots.constants.js';
 
 const uri =
-  process.env.MONGODB_URI ?? 'mongodb://localhost:27017/nestjs-global-api';
+  process.env.MONGODB_GESTION_LINGOTS_URI ??
+  process.env.MONGODB_URI ??
+  'mongodb://localhost:27017/nestjs-global-api';
 const codesZonesUniques = ['PO1', 'PO2', 'PM1', 'PM2', 'CO', 'CM'];
 
 function genererCodeFournisseur(codesUtilises: Set<string>): string {
@@ -66,11 +68,9 @@ const operateursNoms = [
 ];
 
 function verifierAutorisationReset(): void {
-  const hostname = new URL(uri).hostname;
-  const hotesLocaux = new Set(['localhost', '127.0.0.1', '::1', '[::1]']);
-  if (!hotesLocaux.has(hostname) && process.env.CONFIRM_DB_RESET !== 'true') {
+  if (process.env.CONFIRM_DB_RESET !== 'true') {
     throw new Error(
-      'Le seed remplace toute la base gestion_lingots. Pour une base distante, définissez CONFIRM_DB_RESET=true.',
+      'Ce seed supprime entièrement gestion_lingots. Définissez CONFIRM_DB_RESET=true pour confirmer explicitement.',
     );
   }
 }

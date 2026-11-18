@@ -4,6 +4,9 @@
   "description": "API qui me permet de faire un BFF custom ",
   "author": "Nicolas RANO",
   "private": true,
+  "engines": {
+    "node": ">=22.12.0"
+  },
   "license": "UNLICENSED",
   "type": "module",
   "scripts": {

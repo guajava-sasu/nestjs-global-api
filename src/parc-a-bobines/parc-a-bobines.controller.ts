@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards } from '@nestjs/common';
 import {
   ApiTags,
   ApiOperation,
@@ -8,6 +8,7 @@ import {
   ApiNotFoundResponse,
 } from '@nestjs/swagger';
 import { ParcABobinesService } from './parc-a-bobines.service.js';
+import { DestructiveOperationsGuard } from '../common/guards/destructive-operations.guard.js';
 import { CreateParcABobineDto } from './dto/create-parc-a-bobine.dto.js';
 import { UpdateParcABobineDto } from './dto/update-parc-a-bobine.dto.js';
 
@@ -48,6 +49,7 @@ export class ParcABobinesController {
     return this.parcABobinesService.update(id, updateParcABobineDto);
   }
 
+  @UseGuards(DestructiveOperationsGuard)
   @Delete(':id')
   @ApiOperation({ summary: 'Supprimer une entrée du parc à bobines' })
   @ApiParam({ name: 'id', description: 'Identifiant de la bobine' })

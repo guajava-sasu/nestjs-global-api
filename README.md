@@ -109,13 +109,7 @@ De nouvelles cles peuvent etre ajoutees sans modifier le schema.
 
 ## Exemples et données lingots
 
-Les contrats et exemples sont dans [`docs/api-examples/lingots`](docs/api-examples/lingots). Pour les charger dans MongoDB :
-
-```bash
-npm run db:seed:lingots
-```
-
-Le seed lit les six fichiers JSON, convertit leurs dates Mongo Extended JSON et synchronise les collections associées. Il génère 100 lingots depuis `lingots-preparation.json`; les livraisons, réceptions, états de stock, mouvements et bilans proviennent des autres fichiers. Les réceptions complètes et leurs lignes sont consultables séparément. Le seed insère ou met à jour les IDs présents, sans supprimer les autres documents.
+Les contrats et exemples sont dans [`docs/api-examples/lingots`](docs/api-examples/lingots). Ils ne sont pas chargés au démarrage. Le seed `npm run db:seed:gestion-lingots` remplace toute la base `gestion_lingots` et exige `CONFIRM_DB_RESET=true`; ne l'exécutez pas sur une base contenant des données à conserver.
 
 ## Vérification
 

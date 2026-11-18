@@ -1,4 +1,4 @@
-import { Injectable, OnModuleInit } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import {
@@ -13,7 +13,7 @@ import {
 } from './entities/chutage.entity.js';
 
 @Injectable()
-export class ChutageService implements OnModuleInit {
+export class ChutageService {
   constructor(
     @InjectModel(Chariot.name) private readonly chariotModel: Model<Chariot>,
     @InjectModel(DemandePontier.name)
@@ -31,43 +31,6 @@ export class ChutageService implements OnModuleInit {
     @InjectModel(PontEtatPince.name)
     private readonly pontEtatPinceModel: Model<PontEtatPince>,
   ) {}
-
-  async onModuleInit() {
-    await Promise.all([
-      this.seed(this.chariotModel, [
-        { numero: 4, bobine: '' },
-        { numero: 3, bobine: '' },
-        { numero: 2, bobine: '' },
-        { numero: 1, bobine: '55964300' },
-      ]),
-      this.seed(this.demandePontierModel, [
-        { sens: 'Chargement', bobine: '55906300', halle: 'H11', chariot: '3' },
-        { sens: 'Dechargement', bobine: '', halle: '', chariot: '' },
-      ]),
-      this.seed(this.preparationModel, [
-        { bobine: '54907900', halle: 'H11', chariot: 2 },
-        { bobine: '55989200', halle: 'H11', chariot: 4 },
-        { bobine: '', halle: 'N/A', chariot: null },
-        { bobine: ' ', halle: 'N/A', chariot: null },
-      ]),
-      this.seed(this.stockageModel, stockageInitial),
-      this.seed(this.bobineAChuterModel, bobinesAChuterInitiales),
-      this.seed(this.chuteBobineModel, chutesBobinesInitiales),
-      this.seed(this.chuteRiveModel, chutesRivesInitiales),
-      this.seed(this.pontEtatPinceModel, [
-        {
-          pont: { id: 1, name: 'P11', color: 'transparent' },
-          etat: { id: 0, name: 'AUTO', color: 'transparent' },
-          pince: '',
-        },
-        {
-          pont: { id: 0, name: 'H3', color: 'transparent' },
-          etat: { id: 1, name: 'MANUEL', color: 'red' },
-          pince: '012345678',
-        },
-      ]),
-    ]);
-  }
 
   findChariots() {
     return this.chariotModel.find().sort({ numero: -1 }).exec();
@@ -106,7 +69,49 @@ export class ChutageService implements OnModuleInit {
     return this.pontEtatPinceModel.find().exec();
   }
 
-  async updateDatabase() {
+  async initializeSampleData() {
+    await Promise.all([
+      this.seed(this.chariotModel, [
+        { numero: 4, bobine: '' },
+        { numero: 3, bobine: '' },
+        { numero: 2, bobine: '' },
+        { numero: 1, bobine: '55964300' },
+      ]),
+      this.seed(this.demandePontierModel, [
+        { sens: 'Chargement', bobine: '55906300', halle: 'H11', chariot: '3' },
+        { sens: 'Dechargement', bobine: '', halle: '', chariot: '' },
+      ]),
+      this.seed(this.preparationModel, [
+        { bobine: '54907900', halle: 'H11', chariot: 2 },
+        { bobine: '55989200', halle: 'H11', chariot: 4 },
+        { bobine: '', halle: 'N/A', chariot: null },
+        { bobine: ' ', halle: 'N/A', chariot: null },
+      ]),
+      this.seed(this.stockageModel, stockageInitial),
+      this.seed(this.bobineAChuterModel, bobinesAChuterInitiales),
+      this.seed(this.chuteBobineModel, chutesBobinesInitiales),
+      this.seed(this.chuteRiveModel, chutesRivesInitiales),
+      this.seed(this.pontEtatPinceModel, [
+        {
+          pont: { id: 1, name: 'P11', color: 'transparent' },
+          etat: { id: 0, name: 'AUTO', color: 'transparent' },
+          pince: '',
+        },
+        {
+          pont: { id: 0, name: 'H3', color: 'transparent' },
+          etat: { id: 1, name: 'MANUEL', color: 'red' },
+          pince: '012345678',
+        },
+      ]),
+    ]);
+  }
+
+  async updateDatabase(confirmation: string) {
+    if (confirmation !== 'CONFIRM_CHUTAGE_RESET') {
+      throw new Error(
+        'Effacement Chutage refusé : confirmation explicite requise.',
+      );
+    }
     await Promise.all([
       this.chariotModel.deleteMany({}),
       this.demandePontierModel.deleteMany({}),
@@ -117,7 +122,7 @@ export class ChutageService implements OnModuleInit {
       this.chuteRiveModel.deleteMany({}),
       this.pontEtatPinceModel.deleteMany({}),
     ]);
-    await this.onModuleInit();
+    await this.initializeSampleData();
   }
 
   private async seed<T>(model: Model<T>, documents: object[]) {

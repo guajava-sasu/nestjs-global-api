@@ -7,7 +7,9 @@ import {
 import { LINGOTS_DATABASE_NAME } from './lingots.constants.js';
 
 const uri =
-  process.env.MONGODB_URI ?? 'mongodb://localhost:27017/nestjs-global-api';
+  process.env.MONGODB_GESTION_LINGOTS_URI ??
+  process.env.MONGODB_URI ??
+  'mongodb://localhost:27017/nestjs-global-api';
 const nombreLingots = 20;
 
 async function seedOrphelingots(): Promise<void> {

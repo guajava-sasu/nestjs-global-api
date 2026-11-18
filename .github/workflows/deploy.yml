@@ -1,0 +1,205 @@
+name: CI and production deploy
+
+on:
+  push:
+    branches:
+      - master
+  workflow_dispatch:
+    inputs:
+      deploy:
+        description: Deploy to production after CI passes
+        type: boolean
+        required: true
+        default: false
+
+permissions:
+  contents: read
+
+concurrency:
+  group: nestjs-global-api-production
+  cancel-in-progress: false
+
+jobs:
+  ci:
+    name: Verify and package
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout exact event commit
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22.23.5
+          cache: npm
+
+      - name: Install locked dependencies
+        run: npm ci
+
+      - name: Check manifest and lockfile consistency
+        run: node scripts/verify-lockfile.mjs
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Run tests
+        run: npm test
+
+      - name: Build
+        run: npm run build
+
+      - name: Verify compiled ESM entry point
+        run: |
+          test -s dist/main.js
+          node --check dist/main.js
+          node -e "if (require('./package.json').type !== 'module') process.exit(1)"
+
+      - name: Prepare versioned production artifact
+        shell: bash
+        env:
+          RELEASE_VERSION: ${{ github.sha }}-${{ github.run_id }}-${{ github.run_attempt }}
+        run: |
+          set -euo pipefail
+          mkdir -p artifact/docs/api-examples
+          cp -R dist package.json package-lock.json artifact/
+          cp -R docs/api-examples/lingots artifact/docs/api-examples/
+          archive="nestjs-global-api-${RELEASE_VERSION}.tar.gz"
+          tar -czf "$archive" -C artifact .
+          sha256sum "$archive" > "${archive}.sha256"
+          printf 'RELEASE_VERSION=%s\n' "$RELEASE_VERSION" >> "$GITHUB_ENV"
+          printf 'RELEASE_ARCHIVE=%s\n' "$archive" >> "$GITHUB_ENV"
+
+      - name: Upload release artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: nestjs-global-api-${{ github.sha }}-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            nestjs-global-api-${{ github.sha }}-${{ github.run_id }}-${{ github.run_attempt }}.tar.gz
+            nestjs-global-api-${{ github.sha }}-${{ github.run_id }}-${{ github.run_attempt }}.tar.gz.sha256
+          if-no-files-found: error
+          retention-days: 14
+
+  deploy:
+    name: Deploy versioned release
+    needs: ci
+    if: >-
+      ${{
+        needs.ci.result == 'success' &&
+        ((github.event_name == 'workflow_dispatch' && inputs.deploy == true) ||
+         (github.event_name == 'push' && vars.GLOBAL_AUTO_DEPLOY_ENABLED == 'true'))
+      }}
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - name: Download CI artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: nestjs-global-api-${{ github.sha }}-${{ github.run_id }}-${{ github.run_attempt }}
+          path: release-artifact
+
+      - name: Validate VPS contract and credentials
+        shell: bash
+        env:
+          VPS_HOST: ${{ secrets.GLOBAL_VPS_HOST }}
+          VPS_USER: ${{ secrets.GLOBAL_VPS_USER }}
+          VPS_SSH_KEY: ${{ secrets.GLOBAL_VPS_SSH_KEY }}
+          VPS_KNOWN_HOSTS: ${{ secrets.GLOBAL_VPS_KNOWN_HOSTS }}
+          VPS_SSH_PORT: ${{ vars.GLOBAL_VPS_SSH_PORT }}
+          VPS_CONTRACT_CONFIRMED: ${{ vars.GLOBAL_VPS_CONTRACT_CONFIRMED }}
+          MONGODB_VALIDATED: ${{ vars.GLOBAL_MONGODB_VALIDATED }}
+          VPS_AUTO_DEPLOY_ENABLED: ${{ vars.GLOBAL_AUTO_DEPLOY_ENABLED }}
+          EVENT_NAME: ${{ github.event_name }}
+          MANUAL_DEPLOY: ${{ inputs.deploy }}
+        run: |
+          set -euo pipefail
+          for name in VPS_HOST VPS_USER VPS_SSH_KEY VPS_KNOWN_HOSTS VPS_SSH_PORT VPS_CONTRACT_CONFIRMED MONGODB_VALIDATED; do
+            if [[ -z "${!name}" ]]; then echo "::error::Missing GitHub secret/variable: $name"; exit 1; fi
+          done
+          [[ "$VPS_CONTRACT_CONFIRMED" == "true" ]] || { echo '::error::VPS execution and artifact contract is not confirmed.'; exit 1; }
+          [[ "$MONGODB_VALIDATED" == "true" ]] || { echo '::error::MongoDB databases, credentials, and empty initial state are not confirmed.'; exit 1; }
+          [[ "$VPS_HOST" == "global.orfevrus-api.com" ]] || { echo '::error::GLOBAL_VPS_HOST must match the confirmed production host.'; exit 1; }
+          [[ "$VPS_USER" == "deploy-nestjs-global-api" ]] || { echo '::error::GLOBAL_VPS_USER does not match the deployment account.'; exit 1; }
+          [[ "$VPS_SSH_PORT" =~ ^[0-9]{1,5}$ ]] || { echo '::error::GLOBAL_VPS_SSH_PORT is invalid.'; exit 1; }
+          ssh_port=$((10#$VPS_SSH_PORT))
+          (( ssh_port >= 1 && ssh_port <= 65535 )) || { echo '::error::GLOBAL_VPS_SSH_PORT is invalid.'; exit 1; }
+          if [[ "$EVENT_NAME" == "push" ]]; then
+            [[ "$VPS_AUTO_DEPLOY_ENABLED" == "true" ]] || { echo '::error::Automatic deployment is not enabled.'; exit 1; }
+          elif [[ "$MANUAL_DEPLOY" != "true" ]]; then
+            echo '::error::Manual deployment was not requested.'; exit 1
+          fi
+
+      - name: Install SSH credentials and verify pinned host entry
+        shell: bash
+        env:
+          VPS_HOST: ${{ secrets.GLOBAL_VPS_HOST }}
+          VPS_SSH_KEY: ${{ secrets.GLOBAL_VPS_SSH_KEY }}
+          VPS_KNOWN_HOSTS: ${{ secrets.GLOBAL_VPS_KNOWN_HOSTS }}
+          VPS_SSH_PORT: ${{ vars.GLOBAL_VPS_SSH_PORT }}
+        run: |
+          set -euo pipefail
+          install -m 700 -d "$HOME/.ssh"
+          umask 077
+          printf '%s\n' "$VPS_SSH_KEY" > "$HOME/.ssh/global_deploy_key"
+          printf '%s\n' "$VPS_KNOWN_HOSTS" > "$HOME/.ssh/known_hosts"
+          chmod 600 "$HOME/.ssh/global_deploy_key" "$HOME/.ssh/known_hosts"
+          if [[ "$VPS_SSH_PORT" == "22" ]]; then
+            ssh-keygen -F "$VPS_HOST" -f "$HOME/.ssh/known_hosts" >/dev/null
+          else
+            ssh-keygen -F "[$VPS_HOST]:$VPS_SSH_PORT" -f "$HOME/.ssh/known_hosts" >/dev/null
+          fi
+
+      - name: Transfer versioned artifact to incoming
+        shell: bash
+        env:
+          VPS_HOST: ${{ secrets.GLOBAL_VPS_HOST }}
+          VPS_USER: ${{ secrets.GLOBAL_VPS_USER }}
+          VPS_SSH_PORT: ${{ vars.GLOBAL_VPS_SSH_PORT }}
+          RELEASE_VERSION: ${{ github.sha }}-${{ github.run_id }}-${{ github.run_attempt }}
+        run: |
+          set -euo pipefail
+          archive="nestjs-global-api-${RELEASE_VERSION}.tar.gz"
+          scp -i "$HOME/.ssh/global_deploy_key" -o IdentitiesOnly=yes -o BatchMode=yes -o StrictHostKeyChecking=yes -o UserKnownHostsFile="$HOME/.ssh/known_hosts" -P "$VPS_SSH_PORT" \
+            "release-artifact/$archive" "release-artifact/${archive}.sha256" \
+            "$VPS_USER@$VPS_HOST:/var/lib/deploy-nestjs-global-api/incoming/"
+          printf '%s\n' "$RELEASE_VERSION" >> "$GITHUB_ENV"
+
+      - name: Invoke VPS release and rollback mechanism
+        shell: bash
+        env:
+          VPS_HOST: ${{ secrets.GLOBAL_VPS_HOST }}
+          VPS_USER: ${{ secrets.GLOBAL_VPS_USER }}
+          VPS_SSH_PORT: ${{ vars.GLOBAL_VPS_SSH_PORT }}
+          RELEASE_VERSION: ${{ github.sha }}-${{ github.run_id }}-${{ github.run_attempt }}
+        run: |
+          set -euo pipefail
+          [[ "$RELEASE_VERSION" =~ ^[A-Fa-f0-9-]+$ ]] || { echo '::error::Invalid release version.'; exit 1; }
+          ssh -i "$HOME/.ssh/global_deploy_key" -o IdentitiesOnly=yes -o BatchMode=yes -o StrictHostKeyChecking=yes -o UserKnownHostsFile="$HOME/.ssh/known_hosts" -p "$VPS_SSH_PORT" \
+            "$VPS_USER@$VPS_HOST" "/usr/local/sbin/nestjs-global-api-release deploy $RELEASE_VERSION"
+
+      - name: Verify public HTTPS health and readiness
+        shell: bash
+        env:
+          VPS_HOST: ${{ secrets.GLOBAL_VPS_HOST }}
+          VPS_USER: ${{ secrets.GLOBAL_VPS_USER }}
+          VPS_SSH_PORT: ${{ vars.GLOBAL_VPS_SSH_PORT }}
+          RELEASE_VERSION: ${{ github.sha }}-${{ github.run_id }}-${{ github.run_attempt }}
+        run: |
+          set -euo pipefail
+          verify_endpoints() {
+            curl --fail --silent --show-error --connect-timeout 10 --max-time 30 --retry 6 --retry-all-errors --retry-delay 5 "https://${VPS_HOST}/health" || return 1
+            curl --fail --silent --show-error --connect-timeout 10 --max-time 30 --retry 6 --retry-all-errors --retry-delay 5 "https://${VPS_HOST}/health/ready" || return 1
+          }
+          if ! verify_endpoints; then
+            echo '::error::Public health check failed; requesting rollback through the VPS release mechanism.'
+            if ! ssh -i "$HOME/.ssh/global_deploy_key" -o IdentitiesOnly=yes -o BatchMode=yes -o StrictHostKeyChecking=yes -o UserKnownHostsFile="$HOME/.ssh/known_hosts" -p "$VPS_SSH_PORT" \
+              "$VPS_USER@$VPS_HOST" "/usr/local/sbin/nestjs-global-api-release rollback $RELEASE_VERSION"; then
+              echo '::error::VPS release mechanism failed to execute rollback.'
+              exit 1
+            fi
+            verify_endpoints || { echo '::error::VPS rollback command returned, but HTTPS health/readiness did not recover.'; exit 1; }
+            echo '::error::Deployment was rolled back after failed public verification.'
+            exit 1
+          fi
+          echo 'Deployment and public HTTPS health/readiness checks succeeded.'

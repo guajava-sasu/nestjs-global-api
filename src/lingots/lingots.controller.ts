@@ -2,12 +2,14 @@ import {
   Body,
   Controller,
   Delete,
+  UseGuards,
   Get,
   Param,
   Patch,
   Post,
 } from '@nestjs/common';
 import { ApiOperation, ApiParam, ApiTags } from '@nestjs/swagger';
+import { DestructiveOperationsGuard } from '../common/guards/destructive-operations.guard.js';
 import {
   ApiCreation,
   ApiElement,
@@ -79,6 +81,7 @@ export class LingotsController {
     return this.lingotsService.updateConfiguration(id, body);
   }
   @ApiElement(ConfigurationResponseDto)
+  @UseGuards(DestructiveOperationsGuard)
   @Delete('configuration/:id')
   removeConfiguration(@Param('id') id: string) {
     return this.lingotsService.removeConfiguration(id);
@@ -105,6 +108,7 @@ export class LingotsController {
     return this.lingotsService.updateOperateur(id, body);
   }
   @ApiElement(OperateurResponseDto)
+  @UseGuards(DestructiveOperationsGuard)
   @Delete('operateurs-lingots/:id')
   removeOperateur(@Param('id') id: string) {
     return this.lingotsService.removeOperateur(id);
@@ -134,6 +138,7 @@ export class LingotsController {
     return this.lingotsService.updateFournisseur(id, body);
   }
   @ApiElement(FournisseurResponseDto)
+  @UseGuards(DestructiveOperationsGuard)
   @Delete('fournisseurs-lingots/:id')
   removeFournisseur(@Param('id') id: string) {
     return this.lingotsService.removeFournisseur(id);
@@ -163,6 +168,7 @@ export class LingotsController {
     return this.lingotsService.updateTauxAluminium(id, body);
   }
   @ApiElement(TauxAluminiumResponseDto)
+  @UseGuards(DestructiveOperationsGuard)
   @Delete('taux-aluminium-lingots/:id')
   removeTauxAluminium(@Param('id') id: string) {
     return this.lingotsService.removeTauxAluminium(id);
@@ -189,6 +195,7 @@ export class LingotsController {
     return this.lingotsService.updateZone(id, body);
   }
   @ApiElement(ZoneResponseDto)
+  @UseGuards(DestructiveOperationsGuard)
   @Delete('zones-lingots/:id')
   removeZone(@Param('id') id: string) {
     return this.lingotsService.removeZone(id);
@@ -221,6 +228,7 @@ export class LingotsController {
     return this.lingotsService.updateLingot(id, body);
   }
   @ApiElement(LingotResponseDto)
+  @UseGuards(DestructiveOperationsGuard)
   @Delete('lingots/:id')
   removeLingot(@Param('id') id: string) {
     return this.lingotsService.removeLingot(id);
@@ -263,6 +271,7 @@ export class LingotsController {
   @ApiOperation({ summary: 'Supprimer un mouvement de lingot' })
   @ApiParam({ name: 'id', description: '_id MongoDB du mouvement' })
   @ApiElement(MouvementResponseDto)
+  @UseGuards(DestructiveOperationsGuard)
   @Delete('mouvements-lingots/:id')
   removeMouvementById(@Param('id') id: string) {
     return this.lingotsService.removeMouvementById(id);
@@ -299,6 +308,7 @@ export class LingotsController {
     return this.lingotsService.updateMouvement(lingotId, mouvementId, body);
   }
   @ApiElement(MouvementResponseDto)
+  @UseGuards(DestructiveOperationsGuard)
   @Delete('lingots/:lingotId/mouvements/:mouvementId')
   removeMouvement(
     @Param('lingotId') lingotId: string,
@@ -328,6 +338,7 @@ export class LingotsController {
     return this.lingotsService.updateInventaire(id, body);
   }
   @ApiElement(InventaireResponseDto)
+  @UseGuards(DestructiveOperationsGuard)
   @Delete('inventaires-lingots/:id')
   removeInventaire(@Param('id') id: string) {
     return this.lingotsService.removeInventaire(id);
@@ -354,6 +365,7 @@ export class LingotsController {
     return this.lingotsService.updateMatte(id, body);
   }
   @ApiElement(MatteResponseDto)
+  @UseGuards(DestructiveOperationsGuard)
   @Delete('matte-lingots/:id')
   removeMatte(@Param('id') id: string) {
     return this.lingotsService.removeMatte(id);
@@ -383,6 +395,7 @@ export class LingotsController {
     return this.lingotsService.updateHistoriqueStock(id, body);
   }
   @ApiElement(HistoriqueStockResponseDto)
+  @UseGuards(DestructiveOperationsGuard)
   @Delete('historique-stock-lingots/:id')
   removeHistoriqueStock(@Param('id') id: string) {
     return this.lingotsService.removeHistoriqueStock(id);

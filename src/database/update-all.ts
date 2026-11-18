@@ -14,6 +14,11 @@ const totalBobinesFillesCible = 50;
 const hotesLocaux = new Set(['localhost', '127.0.0.1', '::1']);
 
 function autoriserReinitialisation() {
+  if (process.env.CONFIRM_DB_RESET !== 'true') {
+    throw new Error(
+      'Mise à jour destructive refusée : définissez CONFIRM_DB_RESET=true pour confirmer explicitement.',
+    );
+  }
   let hote = '';
   try {
     hote = new URL(uri).hostname;
@@ -67,7 +72,9 @@ async function mettreAJourBase() {
     await NestFactory.createApplicationContext(MiseAJourBaseModule);
 
   try {
-    await application.get(ChutageService).updateDatabase();
+    await application
+      .get(ChutageService)
+      .updateDatabase('CONFIRM_CHUTAGE_RESET');
 
     const fichesFilles = application.get(FicheBobineFilleService);
     const existantes = (await fichesFilles.findAll()).length;

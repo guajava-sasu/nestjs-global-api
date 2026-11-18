@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards } from '@nestjs/common';
 import {
   ApiTags,
   ApiOperation,
@@ -8,6 +8,7 @@ import {
   ApiNotFoundResponse,
 } from '@nestjs/swagger';
 import { FicheBobineMereService } from './fiche-bobine-mere.service.js';
+import { DestructiveOperationsGuard } from '../common/guards/destructive-operations.guard.js';
 import { CreateFicheBobineMereDto } from './dto/create-fiche-bobine-mere.dto.js';
 import { UpdateFicheBobineMereDto } from './dto/update-fiche-bobine-mere.dto.js';
 
@@ -48,6 +49,7 @@ export class FicheBobineMereController {
     return this.ficheBobineMereService.update(id, updateFicheBobineMereDto);
   }
 
+  @UseGuards(DestructiveOperationsGuard)
   @Delete(':id')
   @ApiOperation({ summary: 'Supprimer une fiche bobine mère' })
   @ApiParam({ name: 'id', description: 'Identifiant de la fiche bobine mère' })

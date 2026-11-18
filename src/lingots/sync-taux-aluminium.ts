@@ -14,7 +14,9 @@ interface TauxReference {
 }
 
 const uri =
-  process.env.MONGODB_URI ?? 'mongodb://localhost:27017/nestjs-global-api';
+  process.env.MONGODB_GESTION_LINGOTS_URI ??
+  process.env.MONGODB_URI ??
+  'mongodb://localhost:27017/nestjs-global-api';
 
 // Chemin du taux dans chaque collection ; `tableau` = champ tableau à dérouler.
 const emplacements = [

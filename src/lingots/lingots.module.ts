@@ -31,7 +31,9 @@ import { LingotsController } from './lingots.controller.js';
 import { LingotsService } from './lingots.service.js';
 
 const mongoUri =
-  process.env.MONGODB_URI ?? 'mongodb://localhost:27017/nestjs-global-api';
+  process.env.MONGODB_GESTION_LINGOTS_URI ??
+  process.env.MONGODB_URI ??
+  'mongodb://localhost:27017/nestjs-global-api';
 
 @Module({
   imports: [

@@ -9,7 +9,9 @@ import {
 import { LINGOTS_DATABASE_NAME } from './lingots.constants.js';
 
 const uri =
-  process.env.MONGODB_URI ?? 'mongodb://localhost:27017/nestjs-global-api';
+  process.env.MONGODB_GESTION_LINGOTS_URI ??
+  process.env.MONGODB_URI ??
+  'mongodb://localhost:27017/nestjs-global-api';
 const nombreInventaires = 50;
 const codeOperateurSeed = 'SEED-INVENTAIRES-50';
 const uneJourneeMs = 24 * 60 * 60 * 1000;

@@ -17,25 +17,31 @@ import { LINGOTS_DATABASE_NAME } from './lingots.constants.js';
 
 const uri =
   process.env.MONGODB_URI ?? 'mongodb://localhost:27017/nestjs-global-api';
+const lingotsUri =
+  process.env.MONGODB_GESTION_LINGOTS_URI ??
+  process.env.MONGODB_URI ??
+  'mongodb://localhost:27017/nestjs-global-api';
 const collectionSource = 'lingot-stock-reel-source';
 const collectionCible = 'lingots';
+let lingotsConnection: mongoose.Connection | undefined;
 
 try {
   await mongoose.connect(uri);
 
-  const lingotsConnection = mongoose.connection.useDb(LINGOTS_DATABASE_NAME, {
-    useCache: true,
-  });
-  const FournisseurModel = lingotsConnection.model(
+  const targetConnection = await mongoose
+    .createConnection(lingotsUri, { dbName: LINGOTS_DATABASE_NAME })
+    .asPromise();
+  lingotsConnection = targetConnection;
+  const FournisseurModel = targetConnection.model(
     FournisseurRecord.name,
     FournisseurSchema,
   );
-  const TauxModel = lingotsConnection.model(
+  const TauxModel = targetConnection.model(
     TauxAluminiumRecord.name,
     TauxAluminiumSchema,
   );
-  const ZoneModel = lingotsConnection.model(ZoneRecord.name, ZoneSchema);
-  const LingotModel = lingotsConnection.model(LingotRecord.name, LingotSchema);
+  const ZoneModel = targetConnection.model(ZoneRecord.name, ZoneSchema);
+  const LingotModel = targetConnection.model(LingotRecord.name, LingotSchema);
   const [fournisseurs, tauxAluminium, zones] = await Promise.all([
     FournisseurModel.find().lean().exec(),
     TauxModel.find().lean().exec(),
@@ -67,5 +73,8 @@ try {
   console.error('Échec de la conversion des lingots stock :', error);
   process.exitCode = 1;
 } finally {
-  await mongoose.disconnect();
+  await Promise.all([
+    mongoose.disconnect(),
+    lingotsConnection?.close() ?? Promise.resolve(),
+  ]);
 }
