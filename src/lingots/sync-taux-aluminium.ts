@@ -1,5 +1,5 @@
 import mongoose, { Types } from 'mongoose';
-import { LINGOTS_DATABASE_NAME } from './lingots.constants.js';
+import { getLingotsMongoConfig } from '../database/mongodb.config.js';
 
 interface TauxCopie {
   _id: Types.ObjectId;
@@ -12,11 +12,6 @@ interface TauxReference {
   nom: string;
   couleur: string;
 }
-
-const uri =
-  process.env.MONGODB_GESTION_LINGOTS_URI ??
-  process.env.MONGODB_URI ??
-  'mongodb://localhost:27017/nestjs-global-api';
 
 // Chemin du taux dans chaque collection ; `tableau` = champ tableau à dérouler.
 const emplacements = [
@@ -57,7 +52,7 @@ function trouverCorrespondant(
 }
 
 async function synchroniserTaux(): Promise<void> {
-  await mongoose.connect(uri, { dbName: LINGOTS_DATABASE_NAME });
+  await mongoose.connect(getLingotsMongoConfig().uri);
   const db = mongoose.connection.db!;
   const references = await db
     .collection<TauxReference>('taux-aluminium-lingots')

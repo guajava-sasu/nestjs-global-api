@@ -1,7 +1,9 @@
 import { ServiceUnavailableException } from '@nestjs/common';
+import { getConnectionToken } from '@nestjs/mongoose';
 import { Test, TestingModule } from '@nestjs/testing';
 import { AppController } from './app.controller.js';
 import { AppService } from './app.service.js';
+import { LINGOTS_CONNECTION_NAME } from './lingots/lingots.constants.js';
 
 describe('AppController', () => {
   let appController: AppController;
@@ -13,7 +15,7 @@ describe('AppController', () => {
         AppService,
         { provide: 'DatabaseConnection', useValue: { readyState: 1 } },
         {
-          provide: 'nestjs-global-api-lingotsConnection',
+          provide: getConnectionToken(LINGOTS_CONNECTION_NAME),
           useValue: { readyState: 1 },
         },
       ],
@@ -43,7 +45,7 @@ describe('AppController', () => {
         AppService,
         { provide: 'DatabaseConnection', useValue: { readyState: 0 } },
         {
-          provide: 'nestjs-global-api-lingotsConnection',
+          provide: getConnectionToken(LINGOTS_CONNECTION_NAME),
           useValue: { readyState: 1 },
         },
       ],

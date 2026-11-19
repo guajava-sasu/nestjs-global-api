@@ -29,15 +29,24 @@ API REST NestJS pour les fiches de bobines, le chutage, le parc à bobines et le
 
 Prérequis : Node.js, npm et une instance MongoDB accessible.
 
+Créez un `.env` local à partir de [`.env.example`](./.env.example) et adaptez les
+deux URI MongoDB. Le modèle n'est pas chargé et le `.env` local est ignoré par Git.
+
 ```bash
 npm install
 npm run start:dev
 ```
 
-| Variable      | Valeur par défaut                             | Utilisation        |
-| ------------- | --------------------------------------------- | ------------------ |
-| `PORT`        | `3000`                                        | Port HTTP de l'API |
-| `MONGODB_URI` | `mongodb://localhost:27017/nestjs-global-api` | Connexion MongoDB  |
+L'API, les scripts `db:*` et les tests e2e chargent le `.env` local s'il
+existe, sans option Node à ajouter. Les variables déjà définies dans
+l'environnement priment sur celles du fichier. Sur le VPS, utilisez la
+configuration privée du service.
+
+| Variable                     | Valeur par défaut | Utilisation                           |
+| ---------------------------- | ----------------- | ------------------------------------- |
+| `PORT`                       | `3000`            | Port HTTP de l'API                    |
+| `MONGODB_URI`                | Aucune (requise)  | URI avec le nom de la base principale |
+| `MONGODB_GESTION_LINGOTS_URI` | Aucune (requise)  | URI avec le nom de la base lingots    |
 
 L'API autorise les appels CORS depuis `localhost` et `127.0.0.1` sur tous les ports.
 
@@ -109,7 +118,7 @@ De nouvelles cles peuvent etre ajoutees sans modifier le schema.
 
 ## Exemples et données lingots
 
-Les contrats et exemples sont dans [`docs/api-examples/lingots`](docs/api-examples/lingots). Ils ne sont pas chargés au démarrage. Le seed `npm run db:seed:gestion-lingots` remplace toute la base dédiée `nestjs-global-api-lingots` et exige `CONFIRM_DB_RESET=true`; ne l'exécutez pas sur une base contenant des données à conserver.
+Les contrats et exemples sont dans [`docs/api-examples/lingots`](docs/api-examples/lingots). Ils ne sont pas chargés au démarrage. Le seed `npm run db:seed:gestion-lingots` remplace toute la base dédiée configurée par `MONGODB_GESTION_LINGOTS_URI` et exige `CONFIRM_DB_RESET=true`; ne l'exécutez pas sur une base contenant des données à conserver.
 
 ## Vérification
 

@@ -7,9 +7,9 @@ import { ChutageModule } from '../chutage/chutage.module.js';
 import { ChutageService } from '../chutage/chutage.service.js';
 import { FicheBobineFilleModule } from '../fiche-bobine-fille/fiche-bobine-fille.module.js';
 import { FicheBobineFilleService } from '../fiche-bobine-fille/fiche-bobine-fille.service.js';
+import { getMainMongoConfig } from './mongodb.config.js';
 
-const uri =
-  process.env.MONGODB_URI ?? 'mongodb://localhost:27017/nestjs-global-api';
+const { uri } = getMainMongoConfig();
 const totalBobinesFillesCible = 50;
 const hotesLocaux = new Set(['localhost', '127.0.0.1', '::1']);
 

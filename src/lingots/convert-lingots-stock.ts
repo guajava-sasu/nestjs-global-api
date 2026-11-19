@@ -13,23 +13,21 @@ import {
   importerLingotsStock,
   type LegacyLingotStockReel,
 } from './lingot-stock-conversion.js';
-import { LINGOTS_DATABASE_NAME } from './lingots.constants.js';
+import {
+  getLingotsMongoConfig,
+  getMainMongoConfig,
+} from '../database/mongodb.config.js';
 
-const uri =
-  process.env.MONGODB_URI ?? 'mongodb://localhost:27017/nestjs-global-api';
-const lingotsUri =
-  process.env.MONGODB_GESTION_LINGOTS_URI ??
-  process.env.MONGODB_URI ??
-  'mongodb://localhost:27017/nestjs-global-api';
 const collectionSource = 'lingot-stock-reel-source';
 const collectionCible = 'lingots';
 let lingotsConnection: mongoose.Connection | undefined;
 
 try {
-  await mongoose.connect(uri);
+  const { uri: lingotsUri, dbName } = getLingotsMongoConfig();
+  await mongoose.connect(getMainMongoConfig().uri);
 
   const targetConnection = await mongoose
-    .createConnection(lingotsUri, { dbName: LINGOTS_DATABASE_NAME })
+    .createConnection(lingotsUri)
     .asPromise();
   lingotsConnection = targetConnection;
   const FournisseurModel = targetConnection.model(
@@ -49,7 +47,7 @@ try {
   ]);
   if (!fournisseurs.length || !tauxAluminium.length || !zones.length) {
     throw new Error(
-      `Les référentiels de ${LINGOTS_DATABASE_NAME} doivent être chargés.`,
+      `Les référentiels de ${dbName} doivent être chargés.`,
     );
   }
 

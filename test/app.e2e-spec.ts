@@ -23,6 +23,13 @@ describe('AppController (e2e)', () => {
       .expect('Hello World!');
   });
 
+  it('reports both MongoDB connections ready and serves the lingots list', async () => {
+    const server = app.getHttpServer();
+    await request(server).get('/health/ready').expect(200, { status: 'ok' });
+    const response = await request(server).get('/lingots').expect(200);
+    expect(Array.isArray(response.body)).toBe(true);
+  });
+
   afterEach(async () => {
     await app.close();
   });

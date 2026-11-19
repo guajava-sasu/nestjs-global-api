@@ -16,7 +16,7 @@
     "start": "nest start",
     "start:dev": "nest start --watch",
     "start:debug": "nest start --debug --watch",
-    "start:prod": "node dist/main",
+    "start:prod": "node dist/main.js",
     "openapi:export": "npm run build && node dist/export-openapi.js",
     "db:update:all": "npm run build && node dist/database/update-all.js",
     "db:update:chutage": "npm run build && node dist/chutage/update-database.js",

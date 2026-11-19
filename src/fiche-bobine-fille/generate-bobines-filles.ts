@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { MongooseModule } from '@nestjs/mongoose';
+import { getMainMongoConfig } from '../database/mongodb.config.js';
 import { FicheBobineFilleModule } from './fiche-bobine-fille.module.js';
 import { FicheBobineFilleService } from './fiche-bobine-fille.service.js';
 
@@ -8,7 +9,7 @@ const COUNT = 25;
 
 @Module({
   imports: [
-    MongooseModule.forRoot(process.env.MONGODB_URI ?? 'mongodb://localhost:27017/nestjs-global-api'),
+    MongooseModule.forRoot(getMainMongoConfig().uri),
     FicheBobineFilleModule,
   ],
 })

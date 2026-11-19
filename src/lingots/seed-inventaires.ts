@@ -6,18 +6,14 @@ import {
   LingotSchema,
   type Operateur,
 } from './entities/lingot.entity.js';
-import { LINGOTS_DATABASE_NAME } from './lingots.constants.js';
-
-const uri =
-  process.env.MONGODB_GESTION_LINGOTS_URI ??
-  process.env.MONGODB_URI ??
-  'mongodb://localhost:27017/nestjs-global-api';
+import { getLingotsMongoConfig } from '../database/mongodb.config.js';
 const nombreInventaires = 50;
 const codeOperateurSeed = 'SEED-INVENTAIRES-50';
 const uneJourneeMs = 24 * 60 * 60 * 1000;
 
 async function seedInventaires(): Promise<void> {
-  await mongoose.connect(uri, { dbName: LINGOTS_DATABASE_NAME });
+  const { uri, dbName } = getLingotsMongoConfig();
+  await mongoose.connect(uri);
   try {
     const InventaireModel = mongoose.model(
       InventaireRecord.name,
@@ -78,7 +74,7 @@ async function seedInventaires(): Promise<void> {
 
     await InventaireModel.insertMany(inventaires);
     console.info(
-      `${inventaires.length} inventaires ajoutés à ${LINGOTS_DATABASE_NAME}.`,
+      `${inventaires.length} inventaires ajoutés à ${dbName}.`,
     );
   } finally {
     await mongoose.disconnect();

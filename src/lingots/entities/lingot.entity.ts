@@ -18,10 +18,16 @@ export interface Operateur {
   codeQR: string;
 }
 
+export interface TypeOperation {
+  _id: Types.ObjectId;
+  nom: string;
+}
+
 export interface Zone {
   _id: Types.ObjectId;
   code: string;
   nom: string;
+  typeOperation:TypeOperation;
 }
 
 export interface Mouvement {
