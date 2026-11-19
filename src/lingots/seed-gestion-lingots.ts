@@ -18,6 +18,8 @@ import {
   TauxAluminium,
   TauxAluminiumRecord,
   TauxAluminiumSchema,
+  TypeZoneRecord,
+  TypeZoneSchema,
   Zone,
   ZoneRecord,
   ZoneSchema,
@@ -26,12 +28,8 @@ import {
   convertirLingotStock,
   type LegacyLingotStockReel,
 } from './lingot-stock-conversion.js';
-import { LINGOTS_DATABASE_NAME } from './lingots.constants.js';
-
-const uri =
-  process.env.MONGODB_GESTION_LINGOTS_URI ??
-  process.env.MONGODB_URI ??
-  'mongodb://localhost:27017/nestjs-global-api';
+import { getLingotsMongoConfig } from '../database/mongodb.config.js';
+import { CODE_TYPE_PAR_ZONE, TYPES_ZONE } from './types-zone.js';
 const codesZonesUniques = ['PO1', 'PO2', 'PM1', 'PM2', 'CO', 'CM'];
 
 function genererCodeFournisseur(codesUtilises: Set<string>): string {
@@ -43,7 +41,7 @@ function genererCodeFournisseur(codesUtilises: Set<string>): string {
   return code;
 }
 
-const zonesDefinies: Omit<Zone, '_id'>[] = [
+const zonesDefinies: Pick<Zone, 'nom' | 'code'>[] = [
   { nom: 'Four', code: 'F' },
   { nom: 'Stock', code: 'S' },
   { nom: 'Bureau', code: 'B' },
@@ -67,10 +65,10 @@ const operateursNoms = [
   ['Yanis', 'Faure'],
 ];
 
-function verifierAutorisationReset(): void {
+function verifierAutorisationReset(dbName: string): void {
   if (process.env.CONFIRM_DB_RESET !== 'true') {
     throw new Error(
-      `Ce seed supprime entièrement ${LINGOTS_DATABASE_NAME}. Définissez CONFIRM_DB_RESET=true pour confirmer explicitement.`,
+      `Ce seed supprime entièrement ${dbName}. Définissez CONFIRM_DB_RESET=true pour confirmer explicitement.`,
     );
   }
 }
@@ -217,7 +215,8 @@ function creerTauxAluminium(
 }
 
 async function seedGestionLingots(): Promise<void> {
-  verifierAutorisationReset();
+  const { uri, dbName } = getLingotsMongoConfig();
+  verifierAutorisationReset(dbName);
   const [fournisseursExemples, tauxExemples, sources] = await Promise.all([
     lireJson<Record<string, unknown>>(
       'gestion-lingots.fournisseurs-lingots.json',
@@ -238,10 +237,17 @@ async function seedGestionLingots(): Promise<void> {
     code: genererCodeFournisseur(codesFournisseurs),
   }));
   const tauxAluminium = creerTauxAluminium(tauxExemples);
-  const zones: Zone[] = zonesDefinies.map((zone) => ({
-    ...zone,
+  const typesZone = TYPES_ZONE.map((type) => ({
     _id: new Types.ObjectId(),
+    ...type,
   }));
+  const zones: Zone[] = zonesDefinies.map((zone) => {
+    const typeOperation = typesZone.find(
+      ({ code }) => code === CODE_TYPE_PAR_ZONE[zone.code],
+    );
+    if (!typeOperation) throw new Error(`Type de zone absent pour ${zone.code}.`);
+    return { ...zone, _id: new Types.ObjectId(), typeOperation };
+  });
   const operateurs = creerOperateurs();
   const zonesInitiales = zones.filter((zone) =>
     ['F', 'S', 'B'].includes(zone.code),
@@ -388,7 +394,7 @@ async function seedGestionLingots(): Promise<void> {
     };
   });
 
-  await mongoose.connect(uri, { dbName: LINGOTS_DATABASE_NAME });
+  await mongoose.connect(uri);
   try {
     await mongoose.connection.dropDatabase();
 
@@ -401,6 +407,7 @@ async function seedGestionLingots(): Promise<void> {
       TauxAluminiumSchema,
     );
     const ZoneModel = mongoose.model(ZoneRecord.name, ZoneSchema);
+    const TypeZoneModel = mongoose.model(TypeZoneRecord.name, TypeZoneSchema);
     const OperateurModel = mongoose.model(
       OperateurRecord.name,
       OperateurSchema,
@@ -419,6 +426,7 @@ async function seedGestionLingots(): Promise<void> {
       FournisseurModel.insertMany(fournisseurs),
       TauxModel.insertMany(tauxAluminium),
       ZoneModel.insertMany(zones),
+      TypeZoneModel.insertMany(typesZone),
       OperateurModel.insertMany(operateurs),
       LingotModel.insertMany(lingots),
       MouvementModel.insertMany(mouvements),
@@ -426,7 +434,7 @@ async function seedGestionLingots(): Promise<void> {
     ]);
 
     console.info(
-      `Base ${LINGOTS_DATABASE_NAME} recréée : ${fournisseurs.length} fournisseurs, ${tauxAluminium.length} taux, ${zones.length} zones, ${operateurs.length} opérateurs, ${lingots.length} lingots, ${mouvements.length} mouvements et ${historiques.length} historiques.`,
+      `Base ${dbName} recréée : ${fournisseurs.length} fournisseurs, ${tauxAluminium.length} taux, ${zones.length} zones, ${operateurs.length} opérateurs, ${lingots.length} lingots, ${mouvements.length} mouvements et ${historiques.length} historiques.`,
     );
   } finally {
     await mongoose.disconnect();
@@ -436,7 +444,7 @@ async function seedGestionLingots(): Promise<void> {
 try {
   await seedGestionLingots();
 } catch (error) {
-  console.error(`Échec du seed ${LINGOTS_DATABASE_NAME} :`, error);
+  console.error('Échec du seed lingots :', error);
   process.exitCode = 1;
   await mongoose.disconnect();
 }

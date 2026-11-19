@@ -27,7 +27,12 @@ const fixe = {
   tauxAluminium: [
     { _id: new Types.ObjectId(), nom: 'AL069', couleur: 'orange' },
   ],
-  zones: [{ _id: new Types.ObjectId(), code: 'S', nom: 'Stock' }],
+  zones: [{
+    _id: new Types.ObjectId(),
+    code: 'S',
+    nom: 'Stock',
+    typeOperation: { _id: new Types.ObjectId(), code: 'ST', nom: 'Stockage' },
+  }],
 };
 
 describe('convertirLingotStock', () => {

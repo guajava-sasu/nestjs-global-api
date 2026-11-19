@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
 import {
@@ -35,6 +35,7 @@ import {
   MouvementRecord,
   OperateurRecord,
   TauxAluminiumRecord,
+  TypeZoneRecord,
   ZoneRecord,
 } from './entities/lingot.entity.js';
 import { genererCodeQrLingot } from './lingot-qr-code.js';
@@ -72,6 +73,8 @@ export class LingotsService {
     private readonly historiques: Model<HistoriqueStockRecord>,
     @InjectModel(ConfigurationRecord.name, LINGOTS_CONNECTION_NAME)
     private readonly configuration: Model<ConfigurationRecord>,
+    @InjectModel(TypeZoneRecord.name, LINGOTS_CONNECTION_NAME)
+    private readonly typesZone: Model<TypeZoneRecord>,
   ) {}
 
   createConfiguration(data: CreateConfigurationDto) {
@@ -170,8 +173,11 @@ export class LingotsService {
     );
   }
 
-  createZone(data: CreateZoneDto) {
-    return this.zones.create(data);
+  findTypesZone() {
+    return this.typesZone.find().sort({ code: 1 }).exec();
+  }
+  async createZone(data: CreateZoneDto) {
+    return this.zones.create(await this.resoudreTypeZone(data));
   }
   findZones() {
     return this.zones.find().sort({ nom: 1 }).exec();
@@ -180,17 +186,17 @@ export class LingotsService {
     return this.findRecord(this.zones, id, 'Zone introuvable');
   }
   async updateZone(id: string, data: UpdateZoneDto) {
-    return this.updateRecord(this.zones, id, data, 'Zone introuvable');
+    const zone = data.typeOperation
+      ? await this.resoudreTypeZone({ typeOperation: data.typeOperation })
+      : {};
+    return this.updateRecord(this.zones, id, { ...data, ...zone }, 'Zone introuvable');
   }
   async removeZone(id: string) {
     return this.removeRecord(this.zones, id, 'Zone introuvable');
   }
 
-  createLingot(data: CreateLingotDto) {
-    return this.lingots.create({
-      ...data,
-      codeQR: genererCodeQrLingot(data),
-    });
+  async createLingot(data: CreateLingotDto) {
+    return this.lingots.create(await this.preparerLingot(data));
   }
   findLingots() {
     return this.lingots.find().sort({ id: 1 }).exec();
@@ -208,7 +214,7 @@ export class LingotsService {
     return this.updateRecord(
       this.lingots,
       id,
-      data,
+      await this.preparerZonesLingot(data),
       `Lingot "${id}" introuvable`,
     );
   }
@@ -216,13 +222,10 @@ export class LingotsService {
     return this.removeRecord(this.lingots, id, `Lingot "${id}" introuvable`);
   }
 
-  createInventaire(data: CreateInventaireDto) {
+  async createInventaire(data: CreateInventaireDto) {
     return this.inventaires.create({
       ...data,
-      lingots: data.lingots.map((lingot) => ({
-        ...lingot,
-        codeQR: genererCodeQrLingot(lingot),
-      })),
+      lingots: await Promise.all(data.lingots.map((lingot) => this.preparerLingot(lingot))),
     });
   }
   findInventaires() {
@@ -235,7 +238,12 @@ export class LingotsService {
     return this.updateRecord(
       this.inventaires,
       id,
-      data,
+      {
+        ...data,
+        ...(data.lingots && {
+          lingots: await Promise.all(data.lingots.map((lingot) => this.preparerLingot(lingot))),
+        }),
+      },
       'Inventaire introuvable',
     );
   }
@@ -266,9 +274,10 @@ export class LingotsService {
 
   async createMouvement(lingotId: string, data: CreateMouvementDto) {
     const lingot = await this.findLingot(lingotId);
+    const mouvement = await this.preparerZonesMouvement(data);
     return this.mouvements.create({
-      ...data,
-      depart: data.depart ?? null,
+      ...mouvement,
+      depart: mouvement.depart ?? null,
       lingot: lingot.toObject() as unknown as Mouvement['lingot'],
     });
   }
@@ -282,11 +291,11 @@ export class LingotsService {
   findMouvementById(id: string) {
     return this.findRecord(this.mouvements, id, 'Mouvement introuvable');
   }
-  updateMouvementById(id: string, data: UpdateMouvementDto) {
+  async updateMouvementById(id: string, data: UpdateMouvementDto) {
     return this.updateRecord(
       this.mouvements,
       id,
-      data,
+      await this.preparerZonesMouvement(data),
       'Mouvement introuvable',
     );
   }
@@ -323,7 +332,7 @@ export class LingotsService {
           ...idFilter(mouvementId),
           'lingot._id': new Types.ObjectId(lingotId),
         },
-        { $set: data },
+        { $set: await this.preparerZonesMouvement(data) },
         { new: true, runValidators: true },
       )
       .exec();
@@ -369,6 +378,42 @@ export class LingotsService {
       id,
       'Historique de stock introuvable',
     );
+  }
+
+  private async resoudreTypeZone<T extends Pick<CreateZoneDto, 'typeOperation'>>(zone: T) {
+    const { _id, code } = zone.typeOperation;
+    const typeOperation = await this.typesZone.findOne({ _id, code }).lean().exec();
+    if (!typeOperation) {
+      throw new BadRequestException('Le type de zone doit correspondre au référentiel TypeZone.');
+    }
+    return {
+      ...zone,
+      typeOperation: { _id: typeOperation._id, code: typeOperation.code, nom: typeOperation.nom },
+    };
+  }
+
+  private async preparerZonesLingot<T extends UpdateLingotDto>(data: T) {
+    return data.zone ? { ...data, zone: await this.resoudreTypeZone(data.zone) } : data;
+  }
+
+  private async preparerLingot(data: CreateLingotDto) {
+    return {
+      ...data,
+      zone: await this.resoudreTypeZone(data.zone),
+      codeQR: genererCodeQrLingot(data),
+    };
+  }
+
+  private async preparerZonesMouvement(data: UpdateMouvementDto) {
+    const [depart, arrivee] = await Promise.all([
+      data.depart ? this.resoudreTypeZone(data.depart) : data.depart,
+      data.arrivee ? this.resoudreTypeZone(data.arrivee) : data.arrivee,
+    ]);
+    return {
+      ...data,
+      ...(depart !== undefined && { depart }),
+      ...(arrivee !== undefined && { arrivee }),
+    };
   }
 
   private async findRecord<T>(model: Model<T>, id: string, message: string) {

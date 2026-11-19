@@ -8,9 +8,12 @@ const app = await NestFactory.create(AppModule, {
   preview: true,
   logger: false,
 });
-const document = createOpenApiDocument(app);
-await writeFile('openapi.json', `${JSON.stringify(document, null, 2)}\n`);
-await app.close();
-console.info(
-  `openapi.json généré : ${Object.keys(document.paths).length} routes.`,
-);
+try {
+  const document = createOpenApiDocument(app);
+  await writeFile('openapi.json', `${JSON.stringify(document, null, 2)}\n`);
+  console.info(
+    `openapi.json généré : ${Object.keys(document.paths).length} routes.`,
+  );
+} finally {
+  await app.close();
+}

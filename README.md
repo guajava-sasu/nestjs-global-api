@@ -29,25 +29,42 @@ API REST NestJS pour les fiches de bobines, le chutage, le parc à bobines et le
 
 Prérequis : Node.js, npm et une instance MongoDB accessible.
 
+Créez un `.env` local à partir de [`.env.example`](./.env.example) et adaptez les
+deux URI MongoDB. Le modèle n'est pas chargé et le `.env` local est ignoré par Git.
+
 ```bash
 npm install
 npm run start:dev
 ```
 
-| Variable      | Valeur par défaut                             | Utilisation        |
-| ------------- | --------------------------------------------- | ------------------ |
-| `PORT`        | `3000`                                        | Port HTTP de l'API |
-| `MONGODB_URI` | `mongodb://localhost:27017/nestjs-global-api` | Connexion MongoDB  |
+L'API, les scripts `db:*` et les tests e2e chargent le `.env` local s'il
+existe, sans option Node à ajouter. Les variables déjà définies dans
+l'environnement priment sur celles du fichier. Sur le VPS, utilisez la
+configuration privée du service.
+
+| Variable                     | Valeur par défaut | Utilisation                           |
+| ---------------------------- | ----------------- | ------------------------------------- |
+| `PORT`                       | `3000`            | Port HTTP de l'API                    |
+| `MONGODB_URI`                | Aucune (requise)  | URI avec le nom de la base principale |
+| `MONGODB_GESTION_LINGOTS_URI` | Aucune (requise)  | URI avec le nom de la base lingots    |
 
 L'API autorise les appels CORS depuis `localhost` et `127.0.0.1` sur tous les ports.
 
 ## Swagger
 
-- Interface : [http://localhost:3000/api](http://localhost:3000/api)
-- Spécification OpenAPI : [http://localhost:3000/api-json](http://localhost:3000/api-json)
+- Interface : [http://localhost:3000/docs](http://localhost:3000/docs) (`/api` reste disponible)
+- Spécification OpenAPI : [http://localhost:3000/docs-json](http://localhost:3000/docs-json) (`/api-json` reste disponible)
 - Vérification de l'API : `GET http://localhost:3000/`
 
 Remplacer `3000` si `PORT` est configuré.
+
+Depuis le backend, `npm run openapi:export` compile l'API et régénère
+[`openapi.json`](./openapi.json) sans démarrer le serveur ni se connecter à
+MongoDB. Utilisez ce fichier comme entrée du générateur Angular.
+
+Les réponses JSON ne renvoient que les champs déclarés par les DTO de réponse.
+Les listes ne sont pas paginées. L'API n'implémente pas d'authentification
+applicative ; les suppressions répondent `403` tant qu'elles sont désactivées.
 
 ## Routes de l'API
 
@@ -109,7 +126,15 @@ De nouvelles cles peuvent etre ajoutees sans modifier le schema.
 
 ## Exemples et données lingots
 
-Les contrats et exemples sont dans [`docs/api-examples/lingots`](docs/api-examples/lingots). Ils ne sont pas chargés au démarrage. Le seed `npm run db:seed:gestion-lingots` remplace toute la base dédiée `nestjs-global-api-lingots` et exige `CONFIRM_DB_RESET=true`; ne l'exécutez pas sur une base contenant des données à conserver.
+Les contrats et exemples sont dans [`docs/api-examples/lingots`](docs/api-examples/lingots). Ils ne sont pas chargés au démarrage. Le seed `npm run db:seed:gestion-lingots` remplace toute la base dédiée configurée par `MONGODB_GESTION_LINGOTS_URI` et exige `CONFIRM_DB_RESET=true`; ne l'exécutez pas sur une base contenant des données à conserver.
+
+`GET /types-zones` liste le référentiel `TypeZone` : `ST` (Stockage), `PR`
+(Preparation) et `BA` (Bain). Les zones, y compris celles intégrées aux lingots
+et aux mouvements, attendent `typeOperation: { _id, code, nom }`. L'API vérifie
+le code et l'identifiant, puis reprend le libellé du référentiel.
+Sur une base existante, lancez `npm run db:migrate:types-zone` avant d'utiliser
+ce nouveau contrat. Cette commande renseigne les types manquants sans effacer
+les documents. Elle signale les zones sans classement connu.
 
 ## Vérification
 

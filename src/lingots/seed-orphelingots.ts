@@ -4,16 +4,11 @@ import {
   type TauxAluminium,
   type Zone,
 } from './entities/lingot.entity.js';
-import { LINGOTS_DATABASE_NAME } from './lingots.constants.js';
-
-const uri =
-  process.env.MONGODB_GESTION_LINGOTS_URI ??
-  process.env.MONGODB_URI ??
-  'mongodb://localhost:27017/nestjs-global-api';
+import { getLingotsMongoConfig } from '../database/mongodb.config.js';
 const nombreLingots = 20;
 
 async function seedOrphelingots(): Promise<void> {
-  await mongoose.connect(uri, { dbName: LINGOTS_DATABASE_NAME });
+  await mongoose.connect(getLingotsMongoConfig().uri);
   try {
     const tauxAluminium = (await mongoose.connection
       .collection('taux-aluminium-lingots')
@@ -43,7 +38,7 @@ async function seedOrphelingots(): Promise<void> {
         fournisseur: {
           _id: new Types.ObjectId('6e0000000000000000000001'),
           nom: 'Démonstration',
-          code: 'DEMO',
+          code: 'AC000000',
         },
         numeroCoulee: 'ORPHE-AL00',
         numeroLingot,

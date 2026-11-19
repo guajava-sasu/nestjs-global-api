@@ -18,10 +18,17 @@ export interface Operateur {
   codeQR: string;
 }
 
+export interface TypeZone {
+  _id: Types.ObjectId;
+  code: string;
+  nom: string;
+}
+
 export interface Zone {
   _id: Types.ObjectId;
   code: string;
   nom: string;
+  typeOperation: TypeZone;
 }
 
 export interface Mouvement {
@@ -159,18 +166,35 @@ export class TauxAluminiumRecord {
 export const TauxAluminiumSchema =
   SchemaFactory.createForClass(TauxAluminiumRecord);
 
+@Schema({ collection: 'TypeZone', versionKey: false })
+export class TypeZoneRecord implements TypeZone {
+  declare _id: Types.ObjectId;
+
+  @Prop({ required: true })
+  code: string;
+
+  @Prop({ required: true })
+  nom: string;
+}
+const TypeZoneSnapshotSchema = SchemaFactory.createForClass(TypeZoneRecord);
+export const TypeZoneSchema = TypeZoneSnapshotSchema.clone();
+TypeZoneSchema.index({ code: 1 }, { unique: true });
+
 @Schema({
   collection: 'zones-lingots',
   timestamps: true,
   versionKey: false,
 })
-export class ZoneRecord {
+export class ZoneRecord implements Zone {
   declare _id: Types.ObjectId;
   @Prop({ required: true })
   code: string;
 
   @Prop({ required: true })
   nom: string;
+
+  @Prop({ type: TypeZoneSnapshotSchema, required: true })
+  typeOperation: TypeZone;
 }
 export const ZoneSchema = SchemaFactory.createForClass(ZoneRecord);
 

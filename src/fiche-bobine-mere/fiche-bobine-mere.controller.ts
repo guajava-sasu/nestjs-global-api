@@ -9,6 +9,7 @@ import {
 } from '@nestjs/swagger';
 import { FicheBobineMereService } from './fiche-bobine-mere.service.js';
 import { DestructiveOperationsGuard } from '../common/guards/destructive-operations.guard.js';
+import { FicheBobineMereResponseDto } from '../common/dto/bobine-response.dto.js';
 import { CreateFicheBobineMereDto } from './dto/create-fiche-bobine-mere.dto.js';
 import { UpdateFicheBobineMereDto } from './dto/update-fiche-bobine-mere.dto.js';
 
@@ -19,14 +20,14 @@ export class FicheBobineMereController {
 
   @Post()
   @ApiOperation({ summary: 'Créer une fiche bobine mère' })
-  @ApiCreatedResponse({ description: 'Fiche créée avec succès' })
+  @ApiCreatedResponse({ type: FicheBobineMereResponseDto, description: 'Fiche créée avec succès' })
   create(@Body() createFicheBobineMereDto: CreateFicheBobineMereDto) {
     return this.ficheBobineMereService.create(createFicheBobineMereDto);
   }
 
   @Get()
   @ApiOperation({ summary: 'Lister toutes les fiches bobine mère' })
-  @ApiOkResponse({ description: 'Liste des fiches bobine mère' })
+  @ApiOkResponse({ type: [FicheBobineMereResponseDto], description: 'Liste des fiches bobine mère' })
   findAll() {
     return this.ficheBobineMereService.findAll();
   }
@@ -34,7 +35,7 @@ export class FicheBobineMereController {
   @Get(':id')
   @ApiOperation({ summary: 'Récupérer une fiche bobine mère par id' })
   @ApiParam({ name: 'id', description: 'Identifiant de la fiche bobine mère' })
-  @ApiOkResponse({ description: 'Fiche trouvée' })
+  @ApiOkResponse({ type: FicheBobineMereResponseDto, description: 'Fiche trouvée' })
   @ApiNotFoundResponse({ description: 'Fiche introuvable' })
   findOne(@Param('id') id: string) {
     return this.ficheBobineMereService.findOne(id);
@@ -43,7 +44,7 @@ export class FicheBobineMereController {
   @Patch(':id')
   @ApiOperation({ summary: 'Mettre à jour une fiche bobine mère' })
   @ApiParam({ name: 'id', description: 'Identifiant de la fiche bobine mère' })
-  @ApiOkResponse({ description: 'Fiche mise à jour' })
+  @ApiOkResponse({ type: FicheBobineMereResponseDto, description: 'Fiche mise à jour' })
   @ApiNotFoundResponse({ description: 'Fiche introuvable' })
   update(@Param('id') id: string, @Body() updateFicheBobineMereDto: UpdateFicheBobineMereDto) {
     return this.ficheBobineMereService.update(id, updateFicheBobineMereDto);
@@ -53,7 +54,7 @@ export class FicheBobineMereController {
   @Delete(':id')
   @ApiOperation({ summary: 'Supprimer une fiche bobine mère' })
   @ApiParam({ name: 'id', description: 'Identifiant de la fiche bobine mère' })
-  @ApiOkResponse({ description: 'Fiche supprimée' })
+  @ApiOkResponse({ type: FicheBobineMereResponseDto, description: 'Fiche supprimée' })
   @ApiNotFoundResponse({ description: 'Fiche introuvable' })
   remove(@Param('id') id: string) {
     return this.ficheBobineMereService.remove(id);

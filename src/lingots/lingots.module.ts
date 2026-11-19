@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
+import { getLingotsMongoConfig } from '../database/mongodb.config.js';
 import {
   ConfigurationRecord,
   ConfigurationSchema,
@@ -20,26 +21,20 @@ import {
   OrphelingotSchema,
   TauxAluminiumRecord,
   TauxAluminiumSchema,
+  TypeZoneRecord,
+  TypeZoneSchema,
   ZoneRecord,
   ZoneSchema,
 } from './entities/lingot.entity.js';
-import {
-  LINGOTS_CONNECTION_NAME,
-  LINGOTS_DATABASE_NAME,
-} from './lingots.constants.js';
+import { LINGOTS_CONNECTION_NAME } from './lingots.constants.js';
 import { LingotsController } from './lingots.controller.js';
 import { LingotsService } from './lingots.service.js';
 
-const mongoUri =
-  process.env.MONGODB_GESTION_LINGOTS_URI ??
-  process.env.MONGODB_URI ??
-  'mongodb://localhost:27017/nestjs-global-api';
-
 @Module({
   imports: [
-    MongooseModule.forRoot(mongoUri, {
+    MongooseModule.forRootAsync({
       connectionName: LINGOTS_CONNECTION_NAME,
-      dbName: LINGOTS_DATABASE_NAME,
+      useFactory: () => ({ uri: getLingotsMongoConfig().uri }),
     }),
     MongooseModule.forFeature(
       [
@@ -50,6 +45,7 @@ const mongoUri =
         { name: FournisseurRecord.name, schema: FournisseurSchema },
         { name: TauxAluminiumRecord.name, schema: TauxAluminiumSchema },
         { name: ZoneRecord.name, schema: ZoneSchema },
+        { name: TypeZoneRecord.name, schema: TypeZoneSchema },
         { name: InventaireRecord.name, schema: InventaireSchema },
         { name: MatteRecord.name, schema: MatteSchema },
         { name: MouvementRecord.name, schema: MouvementSchema },
