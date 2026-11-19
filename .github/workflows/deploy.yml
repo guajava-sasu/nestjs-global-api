@@ -68,7 +68,20 @@ jobs:
           npm ci --omit=dev --prefix artifact
           test -s artifact/node_modules/.package-lock.json
           archive="nestjs-global-api-${RELEASE_VERSION}.tar.gz"
-          tar -czf "$archive" -C artifact .
+          archive_items=(package.json package-lock.json dist node_modules)
+          if [[ -d artifact/public ]]; then archive_items+=(public); fi
+          tar -czf "$archive" -C artifact "${archive_items[@]}"
+          tar -tzf "$archive" > archive-entries.txt
+          awk '
+            NF == 0 || $0 == "." || $0 ~ /^\// || $0 ~ /(^|\/)\.\.(\/|$)/ { exit 1 }
+            { path=$0; sub(/\/$/, "", path); split(path, part, "/")
+              if (part[1] !~ /^(package\.json|package-lock\.json|dist|node_modules|public)$/) exit 1
+            }
+          ' archive-entries.txt
+          grep -Fxq 'package.json' archive-entries.txt
+          grep -Fxq 'package-lock.json' archive-entries.txt
+          grep -Fxq 'dist/main.js' archive-entries.txt
+          grep -Fxq 'node_modules/.package-lock.json' archive-entries.txt
           sha256sum "$archive" > "${archive}.sha256"
           printf 'RELEASE_VERSION=%s\n' "$RELEASE_VERSION" >> "$GITHUB_ENV"
           printf 'RELEASE_ARCHIVE=%s\n' "$archive" >> "$GITHUB_ENV"
@@ -141,7 +154,7 @@ jobs:
           VPS_SSH_KEY: ${{ secrets.GLOBAL_VPS_SSH_KEY }}
           VPS_KNOWN_HOSTS: ${{ secrets.GLOBAL_VPS_KNOWN_HOSTS }}
           VPS_SSH_PORT: ${{ vars.GLOBAL_VPS_SSH_PORT }}
-          VPS_HOST_KEY_FINGERPRINT: SHA256:8kNm9acB4FPL9C7YxG0zyM5DouzK/va0QthWmm5yqsY
+          VPS_HOST_KEY_FINGERPRINT: SHA256:8kNm9acB4FPL9C7YxG0zyM5DouzK/vaOQthWmm5yqsY
         run: |
           set -euo pipefail
           install -m 700 -d "$HOME/.ssh"
@@ -168,7 +181,7 @@ jobs:
         run: |
           set -euo pipefail
           result="$(ssh -i "$HOME/.ssh/global_deploy_key" -o IdentitiesOnly=yes -o BatchMode=yes -o StrictHostKeyChecking=yes -o UserKnownHostsFile="$HOME/.ssh/known_hosts" -p "$VPS_SSH_PORT" "$VPS_USER@$VPS_HOST" ping)"
-          [[ "$result" == *"nestjs-global-api deployment SSH OK."* ]] || { echo '::error::VPS ping response did not match the deployment contract.'; exit 1; }
+          [[ "$result" == "nestjs-global-api deployment SSH OK" ]] || { echo '::error::VPS ping response did not match the deployment contract.'; exit 1; }
 
       - name: Upload and verify versioned release through SSH stdin
         shell: bash
@@ -187,7 +200,7 @@ jobs:
           ssh -i "$HOME/.ssh/global_deploy_key" -o IdentitiesOnly=yes -o BatchMode=yes -o StrictHostKeyChecking=yes -o UserKnownHostsFile="$HOME/.ssh/known_hosts" -p "$VPS_SSH_PORT" "$VPS_USER@$VPS_HOST" verify "$RELEASE_VERSION" "$checksum"
           printf 'RELEASE_SHA256=%s\n' "$checksum" >> "$GITHUB_ENV"
 
-      - name: Deploy through VPS release and rollback mechanism
+      - name: Deploy, verify public health, and conditionally roll back
         shell: bash
         env:
           VPS_HOST: ${{ secrets.GLOBAL_VPS_HOST }}
@@ -201,24 +214,39 @@ jobs:
           [[ "$RELEASE_SHA256" =~ ^[a-f0-9]{64}$ ]] || { echo '::error::Missing or invalid release checksum.'; exit 1; }
           artifact_checksum="$(sha256sum "release-artifact/nestjs-global-api-${RELEASE_VERSION}.tar.gz" | awk '{print $1}')"
           [[ "$RELEASE_SHA256" == "$artifact_checksum" ]] || { echo '::error::Release checksum changed between verify and deploy steps.'; exit 1; }
-          ssh -i "$HOME/.ssh/global_deploy_key" -o IdentitiesOnly=yes -o BatchMode=yes -o StrictHostKeyChecking=yes -o UserKnownHostsFile="$HOME/.ssh/known_hosts" -p "$VPS_SSH_PORT" \
-            "$VPS_USER@$VPS_HOST" deploy "$RELEASE_VERSION" "$RELEASE_SHA256"
-
-      - name: Verify public HTTPS health and readiness
-        shell: bash
-        env:
-          VPS_HOST: ${{ secrets.GLOBAL_VPS_HOST }}
-          VPS_USER: ${{ secrets.GLOBAL_VPS_USER }}
-          VPS_SSH_PORT: ${{ vars.GLOBAL_VPS_SSH_PORT }}
-          RELEASE_VERSION: ${{ github.sha }}-${{ github.run_id }}-${{ github.run_attempt }}
-        run: |
-          set -euo pipefail
-          verify_endpoints() {
-            curl --fail --silent --show-error --connect-timeout 10 --max-time 30 --retry 6 --retry-all-errors --retry-delay 5 "https://${VPS_HOST}/health" || return 1
-            curl --fail --silent --show-error --connect-timeout 10 --max-time 30 --retry 6 --retry-all-errors --retry-delay 5 "https://${VPS_HOST}/health/ready" || return 1
-          }
-          if ! verify_endpoints; then
-            echo '::error::Public health/readiness failed after deploy. No rollback target can be safely inferred from the confirmed command contract; verify VPS deploy rollback behavior and restore the previous release using its exact version.'
+          if ! deploy_output="$(ssh -i "$HOME/.ssh/global_deploy_key" -o IdentitiesOnly=yes -o BatchMode=yes -o StrictHostKeyChecking=yes -o UserKnownHostsFile="$HOME/.ssh/known_hosts" -p "$VPS_SSH_PORT" "$VPS_USER@$VPS_HOST" deploy "$RELEASE_VERSION" "$RELEASE_SHA256" 2>&1)"; then
+            echo '::error::VPS deploy command failed; the controller must complete its configured internal rollback.'
             exit 1
           fi
+          mapfile -t rollback_tokens < <(printf '%s\n' "$deploy_output" | awk '
+            /^ROLLBACK_TOKEN=/ { sub(/^ROLLBACK_TOKEN=/, ""); print; next }
+            /^ROLLBACK_TOKEN: / { sub(/^ROLLBACK_TOKEN: /, ""); print; next }
+            /^ROLLBACK_TOKEN [^[:space:]]+$/ { sub(/^ROLLBACK_TOKEN /, ""); print }
+          ')
+          unset deploy_output
+          if [[ "${#rollback_tokens[@]}" -ne 1 ]]; then
+            echo '::error::VPS deploy succeeded but did not return exactly one rollback token; refusing to report deployment success.'
+            exit 1
+          fi
+          rollback_token="${rollback_tokens[0]}"
+          [[ "$rollback_token" =~ ^[A-Za-z0-9._~+/=-]{16,512}$ ]] || { echo '::error::VPS returned a malformed rollback token.'; exit 1; }
+          printf '::add-mask::%s\n' "$rollback_token"
+          unset rollback_tokens
+
+          verify_endpoints() {
+            curl --fail --silent --show-error --output /dev/null --connect-timeout 10 --max-time 30 --retry 6 --retry-all-errors --retry-delay 5 "https://${VPS_HOST}/health" || return 1
+            curl --fail --silent --show-error --output /dev/null --connect-timeout 10 --max-time 30 --retry 6 --retry-all-errors --retry-delay 5 "https://${VPS_HOST}/health/ready" || return 1
+          }
+          if ! verify_endpoints; then
+            echo '::error::Public HTTPS health/readiness failed; requesting token-protected rollback only if this exact release is still current.'
+            if rollback_output="$(ssh -i "$HOME/.ssh/global_deploy_key" -o IdentitiesOnly=yes -o BatchMode=yes -o StrictHostKeyChecking=yes -o UserKnownHostsFile="$HOME/.ssh/known_hosts" -p "$VPS_SSH_PORT" "$VPS_USER@$VPS_HOST" rollback-if-current "$RELEASE_VERSION" "$rollback_token" 2>&1)"; then
+              unset rollback_output rollback_token
+              echo '::error::Conditional rollback command succeeded. The deployment job remains failed as required.'
+            else
+              unset rollback_output rollback_token
+              echo '::error::Conditional rollback failed or was rejected; inspect VPS release state before retrying.'
+            fi
+            exit 1
+          fi
+          unset rollback_token
           echo 'Deployment and public HTTPS health/readiness checks succeeded.'
