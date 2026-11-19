@@ -1,7 +1,7 @@
 import { Controller, Get, ServiceUnavailableException } from '@nestjs/common';
 import { InjectConnection } from '@nestjs/mongoose';
 import { ApiOperation, ApiOkResponse, ApiTags } from '@nestjs/swagger';
-import { Connection } from 'mongoose';
+import type { Connection } from 'mongoose';
 import { AppService } from './app.service.js';
 import { LINGOTS_CONNECTION_NAME } from './lingots/lingots.constants.js';
 
