@@ -21,6 +21,8 @@ import {
   OrphelingotSchema,
   TauxAluminiumRecord,
   TauxAluminiumSchema,
+  TypeZoneRecord,
+  TypeZoneSchema,
   ZoneRecord,
   ZoneSchema,
 } from './entities/lingot.entity.js';
@@ -43,6 +45,7 @@ import { LingotsService } from './lingots.service.js';
         { name: FournisseurRecord.name, schema: FournisseurSchema },
         { name: TauxAluminiumRecord.name, schema: TauxAluminiumSchema },
         { name: ZoneRecord.name, schema: ZoneSchema },
+        { name: TypeZoneRecord.name, schema: TypeZoneSchema },
         { name: InventaireRecord.name, schema: InventaireSchema },
         { name: MatteRecord.name, schema: MatteSchema },
         { name: MouvementRecord.name, schema: MouvementSchema },

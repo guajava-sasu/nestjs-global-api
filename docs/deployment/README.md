@@ -20,7 +20,7 @@ npm run build
 npm run start:prod
 ```
 
-Le binaire d'entrée compilé est `dist/main.js`. Swagger est servi sous `/api`; l'export statique est produit par `npm run openapi:export`.
+Le binaire d'entrée compilé est `dist/main.js`. Swagger est servi sous `/docs` et `/api`; l'export statique est produit par `npm run openapi:export`.
 
 ## GitHub Actions et rollback
 

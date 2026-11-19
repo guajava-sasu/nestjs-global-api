@@ -50,6 +50,9 @@ try {
       `Les référentiels de ${dbName} doivent être chargés.`,
     );
   }
+  if (zones.some((zone) => !zone.typeOperation)) {
+    throw new Error('Des zones sont sans type. Lancez npm run db:migrate:types-zone avant la conversion.');
+  }
 
   const sources = mongoose.connection
     .collection<LegacyLingotStockReel>(collectionSource)

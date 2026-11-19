@@ -18,6 +18,8 @@ import {
   TauxAluminium,
   TauxAluminiumRecord,
   TauxAluminiumSchema,
+  TypeZoneRecord,
+  TypeZoneSchema,
   Zone,
   ZoneRecord,
   ZoneSchema,
@@ -27,6 +29,7 @@ import {
   type LegacyLingotStockReel,
 } from './lingot-stock-conversion.js';
 import { getLingotsMongoConfig } from '../database/mongodb.config.js';
+import { CODE_TYPE_PAR_ZONE, TYPES_ZONE } from './types-zone.js';
 const codesZonesUniques = ['PO1', 'PO2', 'PM1', 'PM2', 'CO', 'CM'];
 
 function genererCodeFournisseur(codesUtilises: Set<string>): string {
@@ -38,7 +41,7 @@ function genererCodeFournisseur(codesUtilises: Set<string>): string {
   return code;
 }
 
-const zonesDefinies: Omit<Zone, '_id'>[] = [
+const zonesDefinies: Pick<Zone, 'nom' | 'code'>[] = [
   { nom: 'Four', code: 'F' },
   { nom: 'Stock', code: 'S' },
   { nom: 'Bureau', code: 'B' },
@@ -234,10 +237,17 @@ async function seedGestionLingots(): Promise<void> {
     code: genererCodeFournisseur(codesFournisseurs),
   }));
   const tauxAluminium = creerTauxAluminium(tauxExemples);
-  const zones: Zone[] = zonesDefinies.map((zone) => ({
-    ...zone,
+  const typesZone = TYPES_ZONE.map((type) => ({
     _id: new Types.ObjectId(),
+    ...type,
   }));
+  const zones: Zone[] = zonesDefinies.map((zone) => {
+    const typeOperation = typesZone.find(
+      ({ code }) => code === CODE_TYPE_PAR_ZONE[zone.code],
+    );
+    if (!typeOperation) throw new Error(`Type de zone absent pour ${zone.code}.`);
+    return { ...zone, _id: new Types.ObjectId(), typeOperation };
+  });
   const operateurs = creerOperateurs();
   const zonesInitiales = zones.filter((zone) =>
     ['F', 'S', 'B'].includes(zone.code),
@@ -397,6 +407,7 @@ async function seedGestionLingots(): Promise<void> {
       TauxAluminiumSchema,
     );
     const ZoneModel = mongoose.model(ZoneRecord.name, ZoneSchema);
+    const TypeZoneModel = mongoose.model(TypeZoneRecord.name, TypeZoneSchema);
     const OperateurModel = mongoose.model(
       OperateurRecord.name,
       OperateurSchema,
@@ -415,6 +426,7 @@ async function seedGestionLingots(): Promise<void> {
       FournisseurModel.insertMany(fournisseurs),
       TauxModel.insertMany(tauxAluminium),
       ZoneModel.insertMany(zones),
+      TypeZoneModel.insertMany(typesZone),
       OperateurModel.insertMany(operateurs),
       LingotModel.insertMany(lingots),
       MouvementModel.insertMany(mouvements),

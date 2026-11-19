@@ -1,19 +1,6 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-
-// Décrit le JSON renvoyé : les ObjectId MongoDB sont sérialisés en chaînes.
-export class MongoDocumentResponseDto {
-  @ApiProperty({
-    description: '_id MongoDB',
-    example: '6aec5826d7c5208303dc51d8',
-  })
-  _id: string;
-
-  @ApiPropertyOptional({ type: String, format: 'date-time' })
-  createdAt?: Date;
-
-  @ApiPropertyOptional({ type: String, format: 'date-time' })
-  updatedAt?: Date;
-}
+import { MongoDocumentResponseDto } from '../../common/dto/http-response.dto.js';
+import { TypeZoneDto } from './lingot.dto.js';
 
 export class ConfigurationResponseDto extends MongoDocumentResponseDto {
   @ApiProperty({ example: 'nombreLingotsMaximum' }) cle: string;
@@ -56,6 +43,8 @@ export class TauxAluminiumResponseDto extends MongoDocumentResponseDto {
 export class ZoneResponseDto extends MongoDocumentResponseDto {
   @ApiProperty() code: string;
   @ApiProperty() nom: string;
+  @ApiProperty({ type: () => TypeZoneDto })
+  typeOperation: TypeZoneDto;
 }
 
 export class LingotResponseDto extends MongoDocumentResponseDto {

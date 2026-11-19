@@ -39,6 +39,7 @@ import {
   CreateOperateurDto,
   CreateTauxAluminiumDto,
   CreateZoneDto,
+  TypeZoneDto,
   UpdateConfigurationDto,
   UpdateFournisseurDto,
   UpdateHistoriqueStockDto,
@@ -172,6 +173,12 @@ export class LingotsController {
   @Delete('taux-aluminium-lingots/:id')
   removeTauxAluminium(@Param('id') id: string) {
     return this.lingotsService.removeTauxAluminium(id);
+  }
+
+  @ApiListe(TypeZoneDto)
+  @Get('types-zones')
+  findTypesZone() {
+    return this.lingotsService.findTypesZone();
   }
 
   @ApiCreation(ZoneResponseDto)

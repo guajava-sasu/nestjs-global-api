@@ -9,15 +9,99 @@
           "200": {
             "description": "Message de bienvenue",
             "content": {
-              "application/json": {
+              "text/html": {
                 "schema": {
                   "type": "string"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Erreur interne du serveur",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpErrorResponseDto"
                 }
               }
             }
           }
         },
         "summary": "Vérifier que l'API répond",
+        "tags": [
+          "app"
+        ]
+      }
+    },
+    "/health": {
+      "get": {
+        "operationId": "App_getHealth",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "API disponible",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HealthResponseDto"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Erreur interne du serveur",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpErrorResponseDto"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Vérifier la disponibilité HTTP",
+        "tags": [
+          "app"
+        ]
+      }
+    },
+    "/health/ready": {
+      "get": {
+        "operationId": "App_getReadiness",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "API et bases MongoDB disponibles",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HealthResponseDto"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Erreur interne du serveur",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpErrorResponseDto"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Une connexion MongoDB est indisponible",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnavailableResponseDto"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Vérifier les connexions indispensables",
         "tags": [
           "app"
         ]
@@ -39,7 +123,34 @@
         },
         "responses": {
           "201": {
-            "description": "Fiche créée avec succès"
+            "description": "Fiche créée avec succès",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FicheBobineMereResponseDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Corps de requête invalide",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BadRequestResponseDto"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Erreur interne du serveur",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpErrorResponseDto"
+                }
+              }
+            }
           }
         },
         "summary": "Créer une fiche bobine mère",
@@ -52,7 +163,27 @@
         "parameters": [],
         "responses": {
           "200": {
-            "description": "Liste des fiches bobine mère"
+            "description": "Liste des fiches bobine mère",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/FicheBobineMereResponseDto"
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Erreur interne du serveur",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpErrorResponseDto"
+                }
+              }
+            }
           }
         },
         "summary": "Lister toutes les fiches bobine mère",
@@ -77,10 +208,34 @@
         ],
         "responses": {
           "200": {
-            "description": "Fiche trouvée"
+            "description": "Fiche trouvée",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FicheBobineMereResponseDto"
+                }
+              }
+            }
           },
           "404": {
-            "description": "Fiche introuvable"
+            "description": "Fiche introuvable",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpErrorResponseDto"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Erreur interne du serveur",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpErrorResponseDto"
+                }
+              }
+            }
           }
         },
         "summary": "Récupérer une fiche bobine mère par id",
@@ -113,10 +268,44 @@
         },
         "responses": {
           "200": {
-            "description": "Fiche mise à jour"
+            "description": "Fiche mise à jour",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FicheBobineMereResponseDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Corps de requête invalide",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BadRequestResponseDto"
+                }
+              }
+            }
           },
           "404": {
-            "description": "Fiche introuvable"
+            "description": "Fiche introuvable",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpErrorResponseDto"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Erreur interne du serveur",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpErrorResponseDto"
+                }
+              }
+            }
           }
         },
         "summary": "Mettre à jour une fiche bobine mère",
@@ -139,10 +328,44 @@
         ],
         "responses": {
           "200": {
-            "description": "Fiche supprimée"
+            "description": "Fiche supprimée",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FicheBobineMereResponseDto"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Suppressions HTTP désactivées",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpErrorResponseDto"
+                }
+              }
+            }
           },
           "404": {
-            "description": "Fiche introuvable"
+            "description": "Fiche introuvable",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpErrorResponseDto"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Erreur interne du serveur",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpErrorResponseDto"
+                }
+              }
+            }
           }
         },
         "summary": "Supprimer une fiche bobine mère",
@@ -167,7 +390,34 @@
         },
         "responses": {
           "201": {
-            "description": "Fiche créée avec succès"
+            "description": "Fiche créée avec succès",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FicheBobineFilleResponseDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Corps de requête invalide",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BadRequestResponseDto"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Erreur interne du serveur",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpErrorResponseDto"
+                }
+              }
+            }
           }
         },
         "summary": "Créer une fiche bobine fille",
@@ -180,7 +430,27 @@
         "parameters": [],
         "responses": {
           "200": {
-            "description": "Liste des fiches bobine fille"
+            "description": "Liste des fiches bobine fille",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/FicheBobineFilleResponseDto"
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Erreur interne du serveur",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpErrorResponseDto"
+                }
+              }
+            }
           }
         },
         "summary": "Lister toutes les fiches bobine fille",
@@ -205,7 +475,27 @@
         ],
         "responses": {
           "200": {
-            "description": "Liste des fiches filles de la bobine mère"
+            "description": "Liste des fiches filles de la bobine mère",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/FicheBobineFilleResponseDto"
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Erreur interne du serveur",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpErrorResponseDto"
+                }
+              }
+            }
           }
         },
         "summary": "Lister les fiches filles d'une bobine mère",
@@ -230,10 +520,34 @@
         ],
         "responses": {
           "200": {
-            "description": "Fiche trouvée"
+            "description": "Fiche trouvée",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FicheBobineFilleResponseDto"
+                }
+              }
+            }
           },
           "404": {
-            "description": "Fiche introuvable"
+            "description": "Fiche introuvable",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpErrorResponseDto"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Erreur interne du serveur",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpErrorResponseDto"
+                }
+              }
+            }
           }
         },
         "summary": "Récupérer une fiche bobine fille par id",
@@ -266,10 +580,44 @@
         },
         "responses": {
           "200": {
-            "description": "Fiche mise à jour"
+            "description": "Fiche mise à jour",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FicheBobineFilleResponseDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Corps de requête invalide",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BadRequestResponseDto"
+                }
+              }
+            }
           },
           "404": {
-            "description": "Fiche introuvable"
+            "description": "Fiche introuvable",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpErrorResponseDto"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Erreur interne du serveur",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpErrorResponseDto"
+                }
+              }
+            }
           }
         },
         "summary": "Mettre à jour une fiche bobine fille",
@@ -292,10 +640,44 @@
         ],
         "responses": {
           "200": {
-            "description": "Fiche supprimée"
+            "description": "Fiche supprimée",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FicheBobineFilleResponseDto"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Suppressions HTTP désactivées",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpErrorResponseDto"
+                }
+              }
+            }
           },
           "404": {
-            "description": "Fiche introuvable"
+            "description": "Fiche introuvable",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpErrorResponseDto"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Erreur interne du serveur",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpErrorResponseDto"
+                }
+              }
+            }
           }
         },
         "summary": "Supprimer une fiche bobine fille",
@@ -320,7 +702,34 @@
         },
         "responses": {
           "201": {
-            "description": "Entrée créée avec succès"
+            "description": "Entrée créée avec succès",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ParcABobineResponseDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Corps de requête invalide",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BadRequestResponseDto"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Erreur interne du serveur",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpErrorResponseDto"
+                }
+              }
+            }
           }
         },
         "summary": "Créer une entrée du parc à bobines",
@@ -333,7 +742,27 @@
         "parameters": [],
         "responses": {
           "200": {
-            "description": "Liste du parc à bobines"
+            "description": "Liste du parc à bobines",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ParcABobineResponseDto"
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Erreur interne du serveur",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpErrorResponseDto"
+                }
+              }
+            }
           }
         },
         "summary": "Lister le parc à bobines",
@@ -358,10 +787,34 @@
         ],
         "responses": {
           "200": {
-            "description": "Entrée trouvée"
+            "description": "Entrée trouvée",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ParcABobineResponseDto"
+                }
+              }
+            }
           },
           "404": {
-            "description": "Entrée introuvable"
+            "description": "Entrée introuvable",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpErrorResponseDto"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Erreur interne du serveur",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpErrorResponseDto"
+                }
+              }
+            }
           }
         },
         "summary": "Récupérer une entrée du parc à bobines par id",
@@ -394,10 +847,44 @@
         },
         "responses": {
           "200": {
-            "description": "Entrée mise à jour"
+            "description": "Entrée mise à jour",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ParcABobineResponseDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Corps de requête invalide",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BadRequestResponseDto"
+                }
+              }
+            }
           },
           "404": {
-            "description": "Entrée introuvable"
+            "description": "Entrée introuvable",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpErrorResponseDto"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Erreur interne du serveur",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpErrorResponseDto"
+                }
+              }
+            }
           }
         },
         "summary": "Mettre à jour une entrée du parc à bobines",
@@ -420,10 +907,44 @@
         ],
         "responses": {
           "200": {
-            "description": "Entrée supprimée"
+            "description": "Entrée supprimée",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ParcABobineResponseDto"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Suppressions HTTP désactivées",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpErrorResponseDto"
+                }
+              }
+            }
           },
           "404": {
-            "description": "Entrée introuvable"
+            "description": "Entrée introuvable",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpErrorResponseDto"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Erreur interne du serveur",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpErrorResponseDto"
+                }
+              }
+            }
           }
         },
         "summary": "Supprimer une entrée du parc à bobines",
@@ -438,7 +959,27 @@
         "parameters": [],
         "responses": {
           "200": {
-            "description": "Liste des chariots"
+            "description": "Liste des chariots",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ChariotResponseDto"
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Erreur interne du serveur",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpErrorResponseDto"
+                }
+              }
+            }
           }
         },
         "summary": "Lister les chariots",
@@ -453,7 +994,27 @@
         "parameters": [],
         "responses": {
           "200": {
-            "description": "Liste des demandes pontier"
+            "description": "Liste des demandes pontier",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/DemandePontierResponseDto"
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Erreur interne du serveur",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpErrorResponseDto"
+                }
+              }
+            }
           }
         },
         "summary": "Lister les demandes pontier",
@@ -468,7 +1029,27 @@
         "parameters": [],
         "responses": {
           "200": {
-            "description": "Liste des préparations de chargement"
+            "description": "Liste des préparations de chargement",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/PreparationChargementResponseDto"
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Erreur interne du serveur",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpErrorResponseDto"
+                }
+              }
+            }
           }
         },
         "summary": "Lister les préparations de chargement",
@@ -485,7 +1066,7 @@
             "name": "type",
             "required": false,
             "in": "query",
-            "description": "Type de bobine ('N' ou 'S')",
+            "description": "Filtre exact, généralement N ou S. Omis ou vide : aucun filtre.",
             "schema": {
               "type": "string"
             }
@@ -493,7 +1074,27 @@
         ],
         "responses": {
           "200": {
-            "description": "Liste des bobines en stockage"
+            "description": "Liste des bobines en stockage",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/BobineStockageResponseDto"
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Erreur interne du serveur",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpErrorResponseDto"
+                }
+              }
+            }
           }
         },
         "summary": "Lister les bobines en stockage",
@@ -508,7 +1109,27 @@
         "parameters": [],
         "responses": {
           "200": {
-            "description": "Liste des bobines à chuter"
+            "description": "Liste des bobines à chuter",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/BobineAChuterResponseDto"
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Erreur interne du serveur",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpErrorResponseDto"
+                }
+              }
+            }
           }
         },
         "summary": "Lister les bobines à chuter",
@@ -533,7 +1154,27 @@
         ],
         "responses": {
           "200": {
-            "description": "Liste des chutes de la bobine"
+            "description": "Liste des chutes de la bobine",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/DetailChuteBobineResponseDto"
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Erreur interne du serveur",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpErrorResponseDto"
+                }
+              }
+            }
           }
         },
         "summary": "Lister les chutes d'une bobine",
@@ -548,7 +1189,27 @@
         "parameters": [],
         "responses": {
           "200": {
-            "description": "Liste des chutes de la bobine"
+            "description": "Liste de toutes les chutes",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/DetailChuteBobineResponseDto"
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Erreur interne du serveur",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpErrorResponseDto"
+                }
+              }
+            }
           }
         },
         "summary": "Lister toutes les chutes",
@@ -573,7 +1234,27 @@
         ],
         "responses": {
           "200": {
-            "description": "Liste des chutes de rives de la bobine"
+            "description": "Liste des chutes de rives de la bobine",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ChuteRiveResponseDto"
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Erreur interne du serveur",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpErrorResponseDto"
+                }
+              }
+            }
           }
         },
         "summary": "Lister les chutes de rives d'une bobine",
@@ -588,7 +1269,27 @@
         "parameters": [],
         "responses": {
           "200": {
-            "description": "Liste de toutes les chutes de rives"
+            "description": "Liste de toutes les chutes de rives",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ChuteRiveResponseDto"
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Erreur interne du serveur",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpErrorResponseDto"
+                }
+              }
+            }
           }
         },
         "summary": "Lister toutes les chutes de rives",
@@ -603,7 +1304,27 @@
         "parameters": [],
         "responses": {
           "200": {
-            "description": "Liste des états ponts/pinces"
+            "description": "Liste des états ponts/pinces",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/PontEtatPinceResponseDto"
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Erreur interne du serveur",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpErrorResponseDto"
+                }
+              }
+            }
           }
         },
         "summary": "Lister l'état des ponts et pinces",
@@ -638,7 +1359,24 @@
             }
           },
           "400": {
-            "description": "Corps de requête invalide"
+            "description": "Corps de requête invalide",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BadRequestResponseDto"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Erreur interne du serveur",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpErrorResponseDto"
+                }
+              }
+            }
           }
         },
         "tags": [
@@ -661,6 +1399,16 @@
                 }
               }
             }
+          },
+          "500": {
+            "description": "Erreur interne du serveur",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpErrorResponseDto"
+                }
+              }
+            }
           }
         },
         "tags": [
@@ -678,7 +1426,9 @@
             "in": "path",
             "schema": {
               "type": "string"
-            }
+            },
+            "description": "Identifiant MongoDB de la ressource",
+            "example": "6aec5826d7c5208303dc51d8"
           }
         ],
         "responses": {
@@ -693,7 +1443,24 @@
             }
           },
           "404": {
-            "description": "Ressource introuvable ou _id invalide"
+            "description": "Ressource introuvable ou _id invalide",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpErrorResponseDto"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Erreur interne du serveur",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpErrorResponseDto"
+                }
+              }
+            }
           }
         },
         "tags": [
@@ -709,7 +1476,9 @@
             "in": "path",
             "schema": {
               "type": "string"
-            }
+            },
+            "description": "Identifiant MongoDB de la ressource",
+            "example": "6aec5826d7c5208303dc51d8"
           }
         ],
         "requestBody": {
@@ -733,8 +1502,35 @@
               }
             }
           },
+          "400": {
+            "description": "Corps de requête invalide",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BadRequestResponseDto"
+                }
+              }
+            }
+          },
           "404": {
-            "description": "Ressource introuvable ou _id invalide"
+            "description": "Ressource introuvable ou _id invalide",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpErrorResponseDto"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Erreur interne du serveur",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpErrorResponseDto"
+                }
+              }
+            }
           }
         },
         "tags": [
@@ -750,7 +1546,9 @@
             "in": "path",
             "schema": {
               "type": "string"
-            }
+            },
+            "description": "Identifiant MongoDB de la ressource",
+            "example": "6aec5826d7c5208303dc51d8"
           }
         ],
         "responses": {
@@ -764,8 +1562,35 @@
               }
             }
           },
+          "403": {
+            "description": "Suppressions HTTP désactivées",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpErrorResponseDto"
+                }
+              }
+            }
+          },
           "404": {
-            "description": "Ressource introuvable ou _id invalide"
+            "description": "Ressource introuvable ou _id invalide",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpErrorResponseDto"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Erreur interne du serveur",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpErrorResponseDto"
+                }
+              }
+            }
           }
         },
         "tags": [
@@ -799,7 +1624,24 @@
             }
           },
           "400": {
-            "description": "Corps de requête invalide"
+            "description": "Corps de requête invalide",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BadRequestResponseDto"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Erreur interne du serveur",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpErrorResponseDto"
+                }
+              }
+            }
           }
         },
         "tags": [
@@ -822,6 +1664,16 @@
                 }
               }
             }
+          },
+          "500": {
+            "description": "Erreur interne du serveur",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpErrorResponseDto"
+                }
+              }
+            }
           }
         },
         "tags": [
@@ -839,7 +1691,9 @@
             "in": "path",
             "schema": {
               "type": "string"
-            }
+            },
+            "description": "Identifiant MongoDB de la ressource",
+            "example": "6aec5826d7c5208303dc51d8"
           }
         ],
         "responses": {
@@ -854,7 +1708,24 @@
             }
           },
           "404": {
-            "description": "Ressource introuvable ou _id invalide"
+            "description": "Ressource introuvable ou _id invalide",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpErrorResponseDto"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Erreur interne du serveur",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpErrorResponseDto"
+                }
+              }
+            }
           }
         },
         "tags": [
@@ -870,7 +1741,9 @@
             "in": "path",
             "schema": {
               "type": "string"
-            }
+            },
+            "description": "Identifiant MongoDB de la ressource",
+            "example": "6aec5826d7c5208303dc51d8"
           }
         ],
         "requestBody": {
@@ -894,8 +1767,35 @@
               }
             }
           },
+          "400": {
+            "description": "Corps de requête invalide",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BadRequestResponseDto"
+                }
+              }
+            }
+          },
           "404": {
-            "description": "Ressource introuvable ou _id invalide"
+            "description": "Ressource introuvable ou _id invalide",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpErrorResponseDto"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Erreur interne du serveur",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpErrorResponseDto"
+                }
+              }
+            }
           }
         },
         "tags": [
@@ -911,7 +1811,9 @@
             "in": "path",
             "schema": {
               "type": "string"
-            }
+            },
+            "description": "Identifiant MongoDB de la ressource",
+            "example": "6aec5826d7c5208303dc51d8"
           }
         ],
         "responses": {
@@ -925,8 +1827,35 @@
               }
             }
           },
+          "403": {
+            "description": "Suppressions HTTP désactivées",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpErrorResponseDto"
+                }
+              }
+            }
+          },
           "404": {
-            "description": "Ressource introuvable ou _id invalide"
+            "description": "Ressource introuvable ou _id invalide",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpErrorResponseDto"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Erreur interne du serveur",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpErrorResponseDto"
+                }
+              }
+            }
           }
         },
         "tags": [
@@ -960,7 +1889,24 @@
             }
           },
           "400": {
-            "description": "Corps de requête invalide"
+            "description": "Corps de requête invalide",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BadRequestResponseDto"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Erreur interne du serveur",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpErrorResponseDto"
+                }
+              }
+            }
           }
         },
         "tags": [
@@ -983,6 +1929,16 @@
                 }
               }
             }
+          },
+          "500": {
+            "description": "Erreur interne du serveur",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpErrorResponseDto"
+                }
+              }
+            }
           }
         },
         "tags": [
@@ -1000,7 +1956,9 @@
             "in": "path",
             "schema": {
               "type": "string"
-            }
+            },
+            "description": "Identifiant MongoDB de la ressource",
+            "example": "6aec5826d7c5208303dc51d8"
           }
         ],
         "responses": {
@@ -1015,7 +1973,24 @@
             }
           },
           "404": {
-            "description": "Ressource introuvable ou _id invalide"
+            "description": "Ressource introuvable ou _id invalide",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpErrorResponseDto"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Erreur interne du serveur",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpErrorResponseDto"
+                }
+              }
+            }
           }
         },
         "tags": [
@@ -1031,7 +2006,9 @@
             "in": "path",
             "schema": {
               "type": "string"
-            }
+            },
+            "description": "Identifiant MongoDB de la ressource",
+            "example": "6aec5826d7c5208303dc51d8"
           }
         ],
         "requestBody": {
@@ -1055,8 +2032,35 @@
               }
             }
           },
+          "400": {
+            "description": "Corps de requête invalide",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BadRequestResponseDto"
+                }
+              }
+            }
+          },
           "404": {
-            "description": "Ressource introuvable ou _id invalide"
+            "description": "Ressource introuvable ou _id invalide",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpErrorResponseDto"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Erreur interne du serveur",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpErrorResponseDto"
+                }
+              }
+            }
           }
         },
         "tags": [
@@ -1072,7 +2076,9 @@
             "in": "path",
             "schema": {
               "type": "string"
-            }
+            },
+            "description": "Identifiant MongoDB de la ressource",
+            "example": "6aec5826d7c5208303dc51d8"
           }
         ],
         "responses": {
@@ -1086,8 +2092,35 @@
               }
             }
           },
+          "403": {
+            "description": "Suppressions HTTP désactivées",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpErrorResponseDto"
+                }
+              }
+            }
+          },
           "404": {
-            "description": "Ressource introuvable ou _id invalide"
+            "description": "Ressource introuvable ou _id invalide",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpErrorResponseDto"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Erreur interne du serveur",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpErrorResponseDto"
+                }
+              }
+            }
           }
         },
         "tags": [
@@ -1121,7 +2154,24 @@
             }
           },
           "400": {
-            "description": "Corps de requête invalide"
+            "description": "Corps de requête invalide",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BadRequestResponseDto"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Erreur interne du serveur",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpErrorResponseDto"
+                }
+              }
+            }
           }
         },
         "tags": [
@@ -1144,6 +2194,16 @@
                 }
               }
             }
+          },
+          "500": {
+            "description": "Erreur interne du serveur",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpErrorResponseDto"
+                }
+              }
+            }
           }
         },
         "tags": [
@@ -1161,7 +2221,9 @@
             "in": "path",
             "schema": {
               "type": "string"
-            }
+            },
+            "description": "Identifiant MongoDB de la ressource",
+            "example": "6aec5826d7c5208303dc51d8"
           }
         ],
         "responses": {
@@ -1176,7 +2238,24 @@
             }
           },
           "404": {
-            "description": "Ressource introuvable ou _id invalide"
+            "description": "Ressource introuvable ou _id invalide",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpErrorResponseDto"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Erreur interne du serveur",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpErrorResponseDto"
+                }
+              }
+            }
           }
         },
         "tags": [
@@ -1192,7 +2271,9 @@
             "in": "path",
             "schema": {
               "type": "string"
-            }
+            },
+            "description": "Identifiant MongoDB de la ressource",
+            "example": "6aec5826d7c5208303dc51d8"
           }
         ],
         "requestBody": {
@@ -1216,8 +2297,35 @@
               }
             }
           },
+          "400": {
+            "description": "Corps de requête invalide",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BadRequestResponseDto"
+                }
+              }
+            }
+          },
           "404": {
-            "description": "Ressource introuvable ou _id invalide"
+            "description": "Ressource introuvable ou _id invalide",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpErrorResponseDto"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Erreur interne du serveur",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpErrorResponseDto"
+                }
+              }
+            }
           }
         },
         "tags": [
@@ -1233,7 +2341,9 @@
             "in": "path",
             "schema": {
               "type": "string"
-            }
+            },
+            "description": "Identifiant MongoDB de la ressource",
+            "example": "6aec5826d7c5208303dc51d8"
           }
         ],
         "responses": {
@@ -1247,8 +2357,69 @@
               }
             }
           },
+          "403": {
+            "description": "Suppressions HTTP désactivées",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpErrorResponseDto"
+                }
+              }
+            }
+          },
           "404": {
-            "description": "Ressource introuvable ou _id invalide"
+            "description": "Ressource introuvable ou _id invalide",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpErrorResponseDto"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Erreur interne du serveur",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpErrorResponseDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "lingots"
+        ]
+      }
+    },
+    "/types-zones": {
+      "get": {
+        "operationId": "Lingots_findTypesZone",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TypeZoneDto"
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Erreur interne du serveur",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpErrorResponseDto"
+                }
+              }
+            }
           }
         },
         "tags": [
@@ -1282,7 +2453,24 @@
             }
           },
           "400": {
-            "description": "Corps de requête invalide"
+            "description": "Corps de requête invalide",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BadRequestResponseDto"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Erreur interne du serveur",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpErrorResponseDto"
+                }
+              }
+            }
           }
         },
         "tags": [
@@ -1305,6 +2493,16 @@
                 }
               }
             }
+          },
+          "500": {
+            "description": "Erreur interne du serveur",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpErrorResponseDto"
+                }
+              }
+            }
           }
         },
         "tags": [
@@ -1322,7 +2520,9 @@
             "in": "path",
             "schema": {
               "type": "string"
-            }
+            },
+            "description": "Identifiant MongoDB de la ressource",
+            "example": "6aec5826d7c5208303dc51d8"
           }
         ],
         "responses": {
@@ -1337,7 +2537,24 @@
             }
           },
           "404": {
-            "description": "Ressource introuvable ou _id invalide"
+            "description": "Ressource introuvable ou _id invalide",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpErrorResponseDto"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Erreur interne du serveur",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpErrorResponseDto"
+                }
+              }
+            }
           }
         },
         "tags": [
@@ -1353,7 +2570,9 @@
             "in": "path",
             "schema": {
               "type": "string"
-            }
+            },
+            "description": "Identifiant MongoDB de la ressource",
+            "example": "6aec5826d7c5208303dc51d8"
           }
         ],
         "requestBody": {
@@ -1377,8 +2596,35 @@
               }
             }
           },
+          "400": {
+            "description": "Corps de requête invalide",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BadRequestResponseDto"
+                }
+              }
+            }
+          },
           "404": {
-            "description": "Ressource introuvable ou _id invalide"
+            "description": "Ressource introuvable ou _id invalide",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpErrorResponseDto"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Erreur interne du serveur",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpErrorResponseDto"
+                }
+              }
+            }
           }
         },
         "tags": [
@@ -1394,7 +2640,9 @@
             "in": "path",
             "schema": {
               "type": "string"
-            }
+            },
+            "description": "Identifiant MongoDB de la ressource",
+            "example": "6aec5826d7c5208303dc51d8"
           }
         ],
         "responses": {
@@ -1408,8 +2656,35 @@
               }
             }
           },
+          "403": {
+            "description": "Suppressions HTTP désactivées",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpErrorResponseDto"
+                }
+              }
+            }
+          },
           "404": {
-            "description": "Ressource introuvable ou _id invalide"
+            "description": "Ressource introuvable ou _id invalide",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpErrorResponseDto"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Erreur interne du serveur",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpErrorResponseDto"
+                }
+              }
+            }
           }
         },
         "tags": [
@@ -1443,7 +2718,24 @@
             }
           },
           "400": {
-            "description": "Corps de requête invalide"
+            "description": "Corps de requête invalide",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BadRequestResponseDto"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Erreur interne du serveur",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpErrorResponseDto"
+                }
+              }
+            }
           }
         },
         "tags": [
@@ -1463,6 +2755,16 @@
                   "items": {
                     "$ref": "#/components/schemas/LingotResponseDto"
                   }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Erreur interne du serveur",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpErrorResponseDto"
                 }
               }
             }
@@ -1490,6 +2792,16 @@
                 }
               }
             }
+          },
+          "500": {
+            "description": "Erreur interne du serveur",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpErrorResponseDto"
+                }
+              }
+            }
           }
         },
         "summary": "Lister les lingots purs de démonstration (AL00)",
@@ -1508,7 +2820,9 @@
             "in": "path",
             "schema": {
               "type": "string"
-            }
+            },
+            "description": "Identifiant MongoDB de la ressource",
+            "example": "6aec5826d7c5208303dc51d8"
           }
         ],
         "responses": {
@@ -1523,7 +2837,24 @@
             }
           },
           "404": {
-            "description": "Ressource introuvable ou _id invalide"
+            "description": "Ressource introuvable ou _id invalide",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpErrorResponseDto"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Erreur interne du serveur",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpErrorResponseDto"
+                }
+              }
+            }
           }
         },
         "tags": [
@@ -1539,7 +2870,9 @@
             "in": "path",
             "schema": {
               "type": "string"
-            }
+            },
+            "description": "Identifiant MongoDB de la ressource",
+            "example": "6aec5826d7c5208303dc51d8"
           }
         ],
         "requestBody": {
@@ -1563,8 +2896,35 @@
               }
             }
           },
+          "400": {
+            "description": "Corps de requête invalide",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BadRequestResponseDto"
+                }
+              }
+            }
+          },
           "404": {
-            "description": "Ressource introuvable ou _id invalide"
+            "description": "Ressource introuvable ou _id invalide",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpErrorResponseDto"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Erreur interne du serveur",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpErrorResponseDto"
+                }
+              }
+            }
           }
         },
         "tags": [
@@ -1580,7 +2940,9 @@
             "in": "path",
             "schema": {
               "type": "string"
-            }
+            },
+            "description": "Identifiant MongoDB de la ressource",
+            "example": "6aec5826d7c5208303dc51d8"
           }
         ],
         "responses": {
@@ -1594,8 +2956,35 @@
               }
             }
           },
+          "403": {
+            "description": "Suppressions HTTP désactivées",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpErrorResponseDto"
+                }
+              }
+            }
+          },
           "404": {
-            "description": "Ressource introuvable ou _id invalide"
+            "description": "Ressource introuvable ou _id invalide",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpErrorResponseDto"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Erreur interne du serveur",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpErrorResponseDto"
+                }
+              }
+            }
           }
         },
         "tags": [
@@ -1629,7 +3018,34 @@
             }
           },
           "400": {
-            "description": "Corps de requête invalide"
+            "description": "Corps de requête invalide",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BadRequestResponseDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Ressource introuvable ou identifiant invalide",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpErrorResponseDto"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Erreur interne du serveur",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpErrorResponseDto"
+                }
+              }
+            }
           }
         },
         "summary": "Créer un mouvement de lingot",
@@ -1654,6 +3070,16 @@
                 }
               }
             }
+          },
+          "500": {
+            "description": "Erreur interne du serveur",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpErrorResponseDto"
+                }
+              }
+            }
           }
         },
         "summary": "Lister les mouvements de lingots",
@@ -1674,7 +3100,8 @@
             "description": "_id MongoDB du mouvement",
             "schema": {
               "type": "string"
-            }
+            },
+            "example": "6aec5826d7c5208303dc51d8"
           }
         ],
         "responses": {
@@ -1689,7 +3116,24 @@
             }
           },
           "404": {
-            "description": "Ressource introuvable ou _id invalide"
+            "description": "Ressource introuvable ou _id invalide",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpErrorResponseDto"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Erreur interne du serveur",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpErrorResponseDto"
+                }
+              }
+            }
           }
         },
         "summary": "Obtenir un mouvement par son _id MongoDB",
@@ -1708,7 +3152,8 @@
             "description": "_id MongoDB du mouvement",
             "schema": {
               "type": "string"
-            }
+            },
+            "example": "6aec5826d7c5208303dc51d8"
           }
         ],
         "requestBody": {
@@ -1732,8 +3177,35 @@
               }
             }
           },
+          "400": {
+            "description": "Corps de requête invalide",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BadRequestResponseDto"
+                }
+              }
+            }
+          },
           "404": {
-            "description": "Ressource introuvable ou _id invalide"
+            "description": "Ressource introuvable ou _id invalide",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpErrorResponseDto"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Erreur interne du serveur",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpErrorResponseDto"
+                }
+              }
+            }
           }
         },
         "summary": "Modifier un mouvement de lingot",
@@ -1752,7 +3224,8 @@
             "description": "_id MongoDB du mouvement",
             "schema": {
               "type": "string"
-            }
+            },
+            "example": "6aec5826d7c5208303dc51d8"
           }
         ],
         "responses": {
@@ -1766,8 +3239,35 @@
               }
             }
           },
+          "403": {
+            "description": "Suppressions HTTP désactivées",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpErrorResponseDto"
+                }
+              }
+            }
+          },
           "404": {
-            "description": "Ressource introuvable ou _id invalide"
+            "description": "Ressource introuvable ou _id invalide",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpErrorResponseDto"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Erreur interne du serveur",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpErrorResponseDto"
+                }
+              }
+            }
           }
         },
         "summary": "Supprimer un mouvement de lingot",
@@ -1787,7 +3287,9 @@
             "in": "path",
             "schema": {
               "type": "string"
-            }
+            },
+            "description": "Identifiant MongoDB de la ressource",
+            "example": "6aec5826d7c5208303dc51d8"
           }
         ],
         "requestBody": {
@@ -1812,7 +3314,34 @@
             }
           },
           "400": {
-            "description": "Corps de requête invalide"
+            "description": "Corps de requête invalide",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BadRequestResponseDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Ressource introuvable ou identifiant invalide",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpErrorResponseDto"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Erreur interne du serveur",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpErrorResponseDto"
+                }
+              }
+            }
           }
         },
         "tags": [
@@ -1828,7 +3357,9 @@
             "in": "path",
             "schema": {
               "type": "string"
-            }
+            },
+            "description": "Identifiant MongoDB de la ressource",
+            "example": "6aec5826d7c5208303dc51d8"
           }
         ],
         "responses": {
@@ -1841,6 +3372,26 @@
                   "items": {
                     "$ref": "#/components/schemas/MouvementResponseDto"
                   }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Ressource introuvable ou identifiant invalide",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpErrorResponseDto"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Erreur interne du serveur",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpErrorResponseDto"
                 }
               }
             }
@@ -1861,7 +3412,9 @@
             "in": "path",
             "schema": {
               "type": "string"
-            }
+            },
+            "description": "Identifiant MongoDB de la ressource",
+            "example": "6aec5826d7c5208303dc51d8"
           },
           {
             "name": "mouvementId",
@@ -1869,7 +3422,9 @@
             "in": "path",
             "schema": {
               "type": "string"
-            }
+            },
+            "description": "Identifiant MongoDB de la ressource",
+            "example": "6aec5826d7c5208303dc51d8"
           }
         ],
         "responses": {
@@ -1884,7 +3439,24 @@
             }
           },
           "404": {
-            "description": "Ressource introuvable ou _id invalide"
+            "description": "Ressource introuvable ou _id invalide",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpErrorResponseDto"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Erreur interne du serveur",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpErrorResponseDto"
+                }
+              }
+            }
           }
         },
         "tags": [
@@ -1900,7 +3472,9 @@
             "in": "path",
             "schema": {
               "type": "string"
-            }
+            },
+            "description": "Identifiant MongoDB de la ressource",
+            "example": "6aec5826d7c5208303dc51d8"
           },
           {
             "name": "mouvementId",
@@ -1908,7 +3482,9 @@
             "in": "path",
             "schema": {
               "type": "string"
-            }
+            },
+            "description": "Identifiant MongoDB de la ressource",
+            "example": "6aec5826d7c5208303dc51d8"
           }
         ],
         "requestBody": {
@@ -1932,8 +3508,35 @@
               }
             }
           },
+          "400": {
+            "description": "Corps de requête invalide",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BadRequestResponseDto"
+                }
+              }
+            }
+          },
           "404": {
-            "description": "Ressource introuvable ou _id invalide"
+            "description": "Ressource introuvable ou _id invalide",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpErrorResponseDto"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Erreur interne du serveur",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpErrorResponseDto"
+                }
+              }
+            }
           }
         },
         "tags": [
@@ -1949,7 +3552,9 @@
             "in": "path",
             "schema": {
               "type": "string"
-            }
+            },
+            "description": "Identifiant MongoDB de la ressource",
+            "example": "6aec5826d7c5208303dc51d8"
           },
           {
             "name": "mouvementId",
@@ -1957,7 +3562,9 @@
             "in": "path",
             "schema": {
               "type": "string"
-            }
+            },
+            "description": "Identifiant MongoDB de la ressource",
+            "example": "6aec5826d7c5208303dc51d8"
           }
         ],
         "responses": {
@@ -1971,8 +3578,35 @@
               }
             }
           },
+          "403": {
+            "description": "Suppressions HTTP désactivées",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpErrorResponseDto"
+                }
+              }
+            }
+          },
           "404": {
-            "description": "Ressource introuvable ou _id invalide"
+            "description": "Ressource introuvable ou _id invalide",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpErrorResponseDto"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Erreur interne du serveur",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpErrorResponseDto"
+                }
+              }
+            }
           }
         },
         "tags": [
@@ -2006,7 +3640,24 @@
             }
           },
           "400": {
-            "description": "Corps de requête invalide"
+            "description": "Corps de requête invalide",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BadRequestResponseDto"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Erreur interne du serveur",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpErrorResponseDto"
+                }
+              }
+            }
           }
         },
         "tags": [
@@ -2029,6 +3680,16 @@
                 }
               }
             }
+          },
+          "500": {
+            "description": "Erreur interne du serveur",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpErrorResponseDto"
+                }
+              }
+            }
           }
         },
         "tags": [
@@ -2046,7 +3707,9 @@
             "in": "path",
             "schema": {
               "type": "string"
-            }
+            },
+            "description": "Identifiant MongoDB de la ressource",
+            "example": "6aec5826d7c5208303dc51d8"
           }
         ],
         "responses": {
@@ -2061,7 +3724,24 @@
             }
           },
           "404": {
-            "description": "Ressource introuvable ou _id invalide"
+            "description": "Ressource introuvable ou _id invalide",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpErrorResponseDto"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Erreur interne du serveur",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpErrorResponseDto"
+                }
+              }
+            }
           }
         },
         "tags": [
@@ -2077,7 +3757,9 @@
             "in": "path",
             "schema": {
               "type": "string"
-            }
+            },
+            "description": "Identifiant MongoDB de la ressource",
+            "example": "6aec5826d7c5208303dc51d8"
           }
         ],
         "requestBody": {
@@ -2101,8 +3783,35 @@
               }
             }
           },
+          "400": {
+            "description": "Corps de requête invalide",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BadRequestResponseDto"
+                }
+              }
+            }
+          },
           "404": {
-            "description": "Ressource introuvable ou _id invalide"
+            "description": "Ressource introuvable ou _id invalide",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpErrorResponseDto"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Erreur interne du serveur",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpErrorResponseDto"
+                }
+              }
+            }
           }
         },
         "tags": [
@@ -2118,7 +3827,9 @@
             "in": "path",
             "schema": {
               "type": "string"
-            }
+            },
+            "description": "Identifiant MongoDB de la ressource",
+            "example": "6aec5826d7c5208303dc51d8"
           }
         ],
         "responses": {
@@ -2132,8 +3843,35 @@
               }
             }
           },
+          "403": {
+            "description": "Suppressions HTTP désactivées",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpErrorResponseDto"
+                }
+              }
+            }
+          },
           "404": {
-            "description": "Ressource introuvable ou _id invalide"
+            "description": "Ressource introuvable ou _id invalide",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpErrorResponseDto"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Erreur interne du serveur",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpErrorResponseDto"
+                }
+              }
+            }
           }
         },
         "tags": [
@@ -2167,7 +3905,24 @@
             }
           },
           "400": {
-            "description": "Corps de requête invalide"
+            "description": "Corps de requête invalide",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BadRequestResponseDto"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Erreur interne du serveur",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpErrorResponseDto"
+                }
+              }
+            }
           }
         },
         "tags": [
@@ -2190,6 +3945,16 @@
                 }
               }
             }
+          },
+          "500": {
+            "description": "Erreur interne du serveur",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpErrorResponseDto"
+                }
+              }
+            }
           }
         },
         "tags": [
@@ -2207,7 +3972,9 @@
             "in": "path",
             "schema": {
               "type": "string"
-            }
+            },
+            "description": "Identifiant MongoDB de la ressource",
+            "example": "6aec5826d7c5208303dc51d8"
           }
         ],
         "responses": {
@@ -2222,7 +3989,24 @@
             }
           },
           "404": {
-            "description": "Ressource introuvable ou _id invalide"
+            "description": "Ressource introuvable ou _id invalide",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpErrorResponseDto"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Erreur interne du serveur",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpErrorResponseDto"
+                }
+              }
+            }
           }
         },
         "tags": [
@@ -2238,7 +4022,9 @@
             "in": "path",
             "schema": {
               "type": "string"
-            }
+            },
+            "description": "Identifiant MongoDB de la ressource",
+            "example": "6aec5826d7c5208303dc51d8"
           }
         ],
         "requestBody": {
@@ -2262,8 +4048,35 @@
               }
             }
           },
+          "400": {
+            "description": "Corps de requête invalide",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BadRequestResponseDto"
+                }
+              }
+            }
+          },
           "404": {
-            "description": "Ressource introuvable ou _id invalide"
+            "description": "Ressource introuvable ou _id invalide",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpErrorResponseDto"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Erreur interne du serveur",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpErrorResponseDto"
+                }
+              }
+            }
           }
         },
         "tags": [
@@ -2279,7 +4092,9 @@
             "in": "path",
             "schema": {
               "type": "string"
-            }
+            },
+            "description": "Identifiant MongoDB de la ressource",
+            "example": "6aec5826d7c5208303dc51d8"
           }
         ],
         "responses": {
@@ -2293,8 +4108,35 @@
               }
             }
           },
+          "403": {
+            "description": "Suppressions HTTP désactivées",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpErrorResponseDto"
+                }
+              }
+            }
+          },
           "404": {
-            "description": "Ressource introuvable ou _id invalide"
+            "description": "Ressource introuvable ou _id invalide",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpErrorResponseDto"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Erreur interne du serveur",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpErrorResponseDto"
+                }
+              }
+            }
           }
         },
         "tags": [
@@ -2328,7 +4170,24 @@
             }
           },
           "400": {
-            "description": "Corps de requête invalide"
+            "description": "Corps de requête invalide",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BadRequestResponseDto"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Erreur interne du serveur",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpErrorResponseDto"
+                }
+              }
+            }
           }
         },
         "tags": [
@@ -2351,6 +4210,16 @@
                 }
               }
             }
+          },
+          "500": {
+            "description": "Erreur interne du serveur",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpErrorResponseDto"
+                }
+              }
+            }
           }
         },
         "tags": [
@@ -2368,7 +4237,9 @@
             "in": "path",
             "schema": {
               "type": "string"
-            }
+            },
+            "description": "Identifiant MongoDB de la ressource",
+            "example": "6aec5826d7c5208303dc51d8"
           }
         ],
         "responses": {
@@ -2383,7 +4254,24 @@
             }
           },
           "404": {
-            "description": "Ressource introuvable ou _id invalide"
+            "description": "Ressource introuvable ou _id invalide",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpErrorResponseDto"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Erreur interne du serveur",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpErrorResponseDto"
+                }
+              }
+            }
           }
         },
         "tags": [
@@ -2399,7 +4287,9 @@
             "in": "path",
             "schema": {
               "type": "string"
-            }
+            },
+            "description": "Identifiant MongoDB de la ressource",
+            "example": "6aec5826d7c5208303dc51d8"
           }
         ],
         "requestBody": {
@@ -2423,8 +4313,35 @@
               }
             }
           },
+          "400": {
+            "description": "Corps de requête invalide",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BadRequestResponseDto"
+                }
+              }
+            }
+          },
           "404": {
-            "description": "Ressource introuvable ou _id invalide"
+            "description": "Ressource introuvable ou _id invalide",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpErrorResponseDto"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Erreur interne du serveur",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpErrorResponseDto"
+                }
+              }
+            }
           }
         },
         "tags": [
@@ -2440,7 +4357,9 @@
             "in": "path",
             "schema": {
               "type": "string"
-            }
+            },
+            "description": "Identifiant MongoDB de la ressource",
+            "example": "6aec5826d7c5208303dc51d8"
           }
         ],
         "responses": {
@@ -2454,8 +4373,35 @@
               }
             }
           },
+          "403": {
+            "description": "Suppressions HTTP désactivées",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpErrorResponseDto"
+                }
+              }
+            }
+          },
           "404": {
-            "description": "Ressource introuvable ou _id invalide"
+            "description": "Ressource introuvable ou _id invalide",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpErrorResponseDto"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Erreur interne du serveur",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpErrorResponseDto"
+                }
+              }
+            }
           }
         },
         "tags": [
@@ -2466,7 +4412,7 @@
   },
   "info": {
     "title": "NestJS Global API",
-    "description": "BFF custom API documentation",
+    "description": "API sans authentification applicative. Les listes ne sont pas paginées. Les suppressions sont désactivées par défaut.",
     "version": "0.0.1",
     "contact": {}
   },
@@ -2503,6 +4449,34 @@
   "servers": [],
   "components": {
     "schemas": {
+      "HealthResponseDto": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "enum": [
+              "ok"
+            ],
+            "type": "string"
+          }
+        },
+        "required": [
+          "status"
+        ]
+      },
+      "UnavailableResponseDto": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "enum": [
+              "unavailable"
+            ],
+            "type": "string"
+          }
+        },
+        "required": [
+          "status"
+        ]
+      },
       "GeneralitesDto": {
         "type": "object",
         "properties": {
@@ -2822,6 +4796,69 @@
           "defauts"
         ]
       },
+      "FicheBobineMereResponseDto": {
+        "type": "object",
+        "properties": {
+          "_id": {
+            "type": "string",
+            "description": "_id MongoDB",
+            "example": "6aec5826d7c5208303dc51d8"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "bobine": {
+            "type": "string"
+          },
+          "generalites": {
+            "$ref": "#/components/schemas/GeneralitesDto"
+          },
+          "dimensions": {
+            "$ref": "#/components/schemas/DimensionsDto"
+          },
+          "revetements": {
+            "$ref": "#/components/schemas/RevetementsDto"
+          },
+          "vitesseCentre": {
+            "$ref": "#/components/schemas/VitesseCentreDto"
+          },
+          "chutage": {
+            "$ref": "#/components/schemas/ChutageDto"
+          },
+          "formatSortie": {
+            "$ref": "#/components/schemas/FormatSortieDto"
+          },
+          "suggestions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SuggestionDto"
+            }
+          },
+          "defauts": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DefautDto"
+            }
+          }
+        },
+        "required": [
+          "_id",
+          "bobine",
+          "generalites",
+          "dimensions",
+          "revetements",
+          "vitesseCentre",
+          "chutage",
+          "formatSortie",
+          "suggestions",
+          "defauts"
+        ]
+      },
       "UpdateFicheBobineMereDto": {
         "type": "object",
         "properties": {
@@ -3011,6 +5048,67 @@
           "decision"
         ]
       },
+      "FicheBobineFilleResponseDto": {
+        "type": "object",
+        "properties": {
+          "_id": {
+            "type": "string",
+            "description": "_id MongoDB",
+            "example": "6aec5826d7c5208303dc51d8"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "bobine": {
+            "type": "string"
+          },
+          "identiteBobineMere": {
+            "type": "string",
+            "description": "Numéro de la bobine mère associée"
+          },
+          "generalites": {
+            "$ref": "#/components/schemas/FilleGeneralitesDto"
+          },
+          "dimensions": {
+            "$ref": "#/components/schemas/DimensionsDto"
+          },
+          "revetements": {
+            "$ref": "#/components/schemas/FilleRevetementsDto"
+          },
+          "formatSortie": {
+            "$ref": "#/components/schemas/FilleFormatSortieDto"
+          },
+          "vitesseCentre": {
+            "$ref": "#/components/schemas/VitesseCentreDto"
+          },
+          "defauts": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DefautDto"
+            }
+          },
+          "decision": {
+            "$ref": "#/components/schemas/DecisionFilleDto"
+          }
+        },
+        "required": [
+          "_id",
+          "bobine",
+          "identiteBobineMere",
+          "generalites",
+          "dimensions",
+          "revetements",
+          "formatSortie",
+          "vitesseCentre",
+          "defauts",
+          "decision"
+        ]
+      },
       "UpdateFicheBobineFilleDto": {
         "type": "object",
         "properties": {
@@ -3147,6 +5245,101 @@
           "type"
         ]
       },
+      "ParcABobineResponseDto": {
+        "type": "object",
+        "properties": {
+          "_id": {
+            "type": "string",
+            "description": "_id MongoDB",
+            "example": "6aec5826d7c5208303dc51d8"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "bobine": {
+            "type": "string"
+          },
+          "identite": {
+            "type": "string"
+          },
+          "lot": {
+            "type": "number"
+          },
+          "montage": {
+            "type": "number"
+          },
+          "largeur": {
+            "type": "string"
+          },
+          "diametre": {
+            "type": "number"
+          },
+          "epaisseur": {
+            "type": "number"
+          },
+          "poids": {
+            "type": "number"
+          },
+          "cycle": {
+            "type": "string"
+          },
+          "prod": {
+            "type": "string"
+          },
+          "zav": {
+            "type": "number"
+          },
+          "zar": {
+            "type": "number"
+          },
+          "def": {
+            "type": "string"
+          },
+          "client": {
+            "type": "string"
+          },
+          "texteLibre": {
+            "type": "string"
+          },
+          "commandes": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string"
+          },
+          "Transition": {
+            "type": "boolean"
+          },
+          "AlerteTransition": {
+            "$ref": "#/components/schemas/AlerteTransitionDto"
+          }
+        },
+        "required": [
+          "_id",
+          "bobine",
+          "identite",
+          "lot",
+          "montage",
+          "largeur",
+          "diametre",
+          "epaisseur",
+          "poids",
+          "cycle",
+          "prod",
+          "zav",
+          "zar",
+          "def",
+          "client",
+          "texteLibre",
+          "commandes",
+          "type"
+        ]
+      },
       "UpdateParcABobineDto": {
         "type": "object",
         "properties": {
@@ -3208,6 +5401,430 @@
             "$ref": "#/components/schemas/AlerteTransitionDto"
           }
         }
+      },
+      "ChariotResponseDto": {
+        "type": "object",
+        "properties": {
+          "_id": {
+            "type": "string",
+            "description": "_id MongoDB",
+            "example": "6aec5826d7c5208303dc51d8"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "numero": {
+            "type": "number"
+          },
+          "bobine": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "_id",
+          "numero",
+          "bobine"
+        ]
+      },
+      "DemandePontierResponseDto": {
+        "type": "object",
+        "properties": {
+          "_id": {
+            "type": "string",
+            "description": "_id MongoDB",
+            "example": "6aec5826d7c5208303dc51d8"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "sens": {
+            "type": "string",
+            "enum": [
+              "Chargement",
+              "Dechargement"
+            ]
+          },
+          "bobine": {
+            "type": "string"
+          },
+          "halle": {
+            "type": "string"
+          },
+          "chariot": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "_id",
+          "sens",
+          "bobine",
+          "halle",
+          "chariot"
+        ]
+      },
+      "PreparationChargementResponseDto": {
+        "type": "object",
+        "properties": {
+          "_id": {
+            "type": "string",
+            "description": "_id MongoDB",
+            "example": "6aec5826d7c5208303dc51d8"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "bobine": {
+            "type": "string"
+          },
+          "halle": {
+            "type": "string"
+          },
+          "chariot": {
+            "type": "number",
+            "nullable": true
+          }
+        },
+        "required": [
+          "_id",
+          "bobine",
+          "halle",
+          "chariot"
+        ]
+      },
+      "CalculPresetResponseDto": {
+        "type": "object",
+        "properties": {
+          "isValid": {
+            "type": "boolean"
+          },
+          "isCalculated": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "isValid",
+          "isCalculated"
+        ]
+      },
+      "BobineStockageResponseDto": {
+        "type": "object",
+        "properties": {
+          "_id": {
+            "type": "string",
+            "description": "_id MongoDB",
+            "example": "6aec5826d7c5208303dc51d8"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "N",
+              "S"
+            ]
+          },
+          "bobine": {
+            "type": "string"
+          },
+          "lot": {
+            "type": "string"
+          },
+          "montage": {
+            "type": "number"
+          },
+          "largeur": {
+            "type": "string"
+          },
+          "epaisseur": {
+            "type": "number"
+          },
+          "poids": {
+            "type": "number"
+          },
+          "cycle": {
+            "type": "string"
+          },
+          "prod": {
+            "type": "string"
+          },
+          "diametre": {
+            "type": "number"
+          },
+          "halle": {
+            "type": "string"
+          },
+          "client": {
+            "type": "string"
+          },
+          "priorite": {
+            "type": "string"
+          },
+          "reserve": {
+            "type": "boolean"
+          },
+          "calculPreset": {
+            "$ref": "#/components/schemas/CalculPresetResponseDto"
+          },
+          "Transition": {
+            "type": "boolean"
+          },
+          "AlerteTransition": {
+            "$ref": "#/components/schemas/AlerteTransitionDto"
+          }
+        },
+        "required": [
+          "_id",
+          "type",
+          "bobine",
+          "lot",
+          "montage",
+          "largeur",
+          "epaisseur",
+          "poids",
+          "cycle",
+          "prod",
+          "diametre",
+          "halle",
+          "client",
+          "priorite"
+        ]
+      },
+      "BobineAChuterResponseDto": {
+        "type": "object",
+        "properties": {
+          "_id": {
+            "type": "string",
+            "description": "_id MongoDB",
+            "example": "6aec5826d7c5208303dc51d8"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "bobine": {
+            "type": "string"
+          },
+          "lgE": {
+            "type": "number"
+          },
+          "lgS": {
+            "type": "number"
+          },
+          "fini": {
+            "type": "string"
+          },
+          "selected": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "_id",
+          "bobine",
+          "lgE",
+          "lgS",
+          "fini",
+          "selected"
+        ]
+      },
+      "DetailChuteBobineResponseDto": {
+        "type": "object",
+        "properties": {
+          "_id": {
+            "type": "string",
+            "description": "_id MongoDB",
+            "example": "6aec5826d7c5208303dc51d8"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "bobine": {
+            "type": "string"
+          },
+          "lieu": {
+            "type": "string",
+            "enum": [
+              "E",
+              "S"
+            ]
+          },
+          "longueur": {
+            "type": "number"
+          },
+          "defaut": {
+            "type": "string"
+          },
+          "imputation": {
+            "type": "number"
+          },
+          "revAV": {
+            "type": "number"
+          },
+          "revAR": {
+            "type": "number"
+          },
+          "zone": {
+            "type": "number"
+          },
+          "poids": {
+            "type": "number",
+            "nullable": true
+          }
+        },
+        "required": [
+          "_id",
+          "bobine",
+          "lieu",
+          "longueur",
+          "defaut",
+          "imputation",
+          "revAV",
+          "revAR",
+          "zone",
+          "poids"
+        ]
+      },
+      "ChuteRiveResponseDto": {
+        "type": "object",
+        "properties": {
+          "_id": {
+            "type": "string",
+            "description": "_id MongoDB",
+            "example": "6aec5826d7c5208303dc51d8"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "bobine": {
+            "type": "string"
+          },
+          "lieu": {
+            "type": "string",
+            "enum": [
+              "E",
+              "S"
+            ]
+          },
+          "longueur": {
+            "type": "number"
+          },
+          "defaut": {
+            "type": "string"
+          },
+          "imputation": {
+            "type": "number"
+          },
+          "revAV": {
+            "type": "number"
+          },
+          "revAR": {
+            "type": "number"
+          },
+          "largeur": {
+            "type": "number"
+          },
+          "poids": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "_id",
+          "bobine",
+          "lieu",
+          "longueur",
+          "defaut",
+          "imputation",
+          "revAV",
+          "revAR",
+          "largeur",
+          "poids"
+        ]
+      },
+      "EtatPontResponseDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "number"
+          },
+          "name": {
+            "type": "string"
+          },
+          "color": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "color"
+        ]
+      },
+      "PontEtatPinceResponseDto": {
+        "type": "object",
+        "properties": {
+          "_id": {
+            "type": "string",
+            "description": "_id MongoDB",
+            "example": "6aec5826d7c5208303dc51d8"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "pont": {
+            "$ref": "#/components/schemas/EtatPontResponseDto"
+          },
+          "etat": {
+            "$ref": "#/components/schemas/EtatPontResponseDto"
+          },
+          "pince": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "_id",
+          "pont",
+          "etat",
+          "pince"
+        ]
       },
       "CreateConfigurationDto": {
         "type": "object",
@@ -3302,7 +5919,38 @@
       },
       "UpdateConfigurationDto": {
         "type": "object",
-        "properties": {}
+        "properties": {
+          "cle": {
+            "type": "string",
+            "pattern": "\\S",
+            "example": "nombreLingotsMaximum"
+          },
+          "valeur": {
+            "example": 100,
+            "oneOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "string"
+              },
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "object",
+                "additionalProperties": true
+              },
+              {
+                "type": "array",
+                "items": {}
+              }
+            ]
+          },
+          "description": {
+            "type": "string"
+          }
+        }
       },
       "CreateOperateurDto": {
         "type": "object",
@@ -3374,7 +6022,23 @@
       },
       "UpdateOperateurDto": {
         "type": "object",
-        "properties": {}
+        "properties": {
+          "username": {
+            "type": "string"
+          },
+          "entreprise": {
+            "type": "string"
+          },
+          "nom": {
+            "type": "string"
+          },
+          "prenom": {
+            "type": "string"
+          },
+          "codeQR": {
+            "type": "string"
+          }
+        }
       },
       "CreateFournisseurDto": {
         "type": "object",
@@ -3383,7 +6047,9 @@
             "type": "string"
           },
           "code": {
-            "type": "string"
+            "type": "string",
+            "pattern": "^AC\\d{6}$",
+            "example": "AC123456"
           }
         },
         "required": [
@@ -3422,7 +6088,16 @@
       },
       "UpdateFournisseurDto": {
         "type": "object",
-        "properties": {}
+        "properties": {
+          "nom": {
+            "type": "string"
+          },
+          "code": {
+            "type": "string",
+            "pattern": "^AC\\d{6}$",
+            "example": "AC123456"
+          }
+        }
       },
       "CreateTauxAluminiumDto": {
         "type": "object",
@@ -3475,7 +6150,40 @@
       },
       "UpdateTauxAluminiumDto": {
         "type": "object",
-        "properties": {}
+        "properties": {
+          "nom": {
+            "type": "string"
+          },
+          "couleur": {
+            "type": "string",
+            "pattern": "^#[0-9a-f]{6}$",
+            "description": "Couleur hexadécimale issue du design system @n3ga2/design-system",
+            "example": "#0072ce"
+          }
+        }
+      },
+      "TypeZoneDto": {
+        "type": "object",
+        "properties": {
+          "_id": {
+            "type": "string",
+            "description": "_id du type dans le référentiel TypeZone"
+          },
+          "code": {
+            "type": "string",
+            "pattern": "\\S",
+            "example": "ST"
+          },
+          "nom": {
+            "type": "string",
+            "example": "Stockage"
+          }
+        },
+        "required": [
+          "_id",
+          "code",
+          "nom"
+        ]
       },
       "CreateZoneDto": {
         "type": "object",
@@ -3485,11 +6193,15 @@
           },
           "nom": {
             "type": "string"
+          },
+          "typeOperation": {
+            "$ref": "#/components/schemas/TypeZoneDto"
           }
         },
         "required": [
           "code",
-          "nom"
+          "nom",
+          "typeOperation"
         ]
       },
       "ZoneResponseDto": {
@@ -3513,24 +6225,35 @@
           },
           "nom": {
             "type": "string"
+          },
+          "typeOperation": {
+            "$ref": "#/components/schemas/TypeZoneDto"
           }
         },
         "required": [
           "_id",
           "code",
-          "nom"
+          "nom",
+          "typeOperation"
         ]
       },
       "UpdateZoneDto": {
         "type": "object",
-        "properties": {}
+        "properties": {
+          "code": {
+            "type": "string"
+          },
+          "nom": {
+            "type": "string"
+          },
+          "typeOperation": {
+            "$ref": "#/components/schemas/TypeZoneDto"
+          }
+        }
       },
       "CreateLingotDto": {
         "type": "object",
         "properties": {
-          "codeQR": {
-            "type": "string"
-          },
           "fournisseur": {
             "$ref": "#/components/schemas/CreateFournisseurDto"
           },
@@ -3559,7 +6282,6 @@
           }
         },
         "required": [
-          "codeQR",
           "fournisseur",
           "numeroCoulee",
           "numeroLingot",
@@ -3629,7 +6351,34 @@
       },
       "UpdateLingotDto": {
         "type": "object",
-        "properties": {}
+        "properties": {
+          "fournisseur": {
+            "$ref": "#/components/schemas/CreateFournisseurDto"
+          },
+          "numeroCoulee": {
+            "type": "string"
+          },
+          "numeroLingot": {
+            "type": "number"
+          },
+          "poids": {
+            "type": "number"
+          },
+          "tauxAluminium": {
+            "$ref": "#/components/schemas/CreateTauxAluminiumDto"
+          },
+          "dateReception": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "zone": {
+            "$ref": "#/components/schemas/CreateZoneDto"
+          },
+          "dateFusion": {
+            "format": "date-time",
+            "type": "string"
+          }
+        }
       },
       "CreateMouvementCollectionDto": {
         "type": "object",
@@ -3716,7 +6465,27 @@
       },
       "UpdateMouvementDto": {
         "type": "object",
-        "properties": {}
+        "properties": {
+          "date": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "depart": {
+            "nullable": true,
+            "type": "object",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/CreateZoneDto"
+              }
+            ]
+          },
+          "arrivee": {
+            "$ref": "#/components/schemas/CreateZoneDto"
+          },
+          "operateur": {
+            "$ref": "#/components/schemas/CreateOperateurDto"
+          }
+        }
       },
       "CreateMouvementDto": {
         "type": "object",
@@ -3809,7 +6578,21 @@
       },
       "UpdateInventaireDto": {
         "type": "object",
-        "properties": {}
+        "properties": {
+          "date": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "operateur": {
+            "$ref": "#/components/schemas/CreateOperateurDto"
+          },
+          "lingots": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CreateLingotDto"
+            }
+          }
+        }
       },
       "CreateMatteDto": {
         "type": "object",
@@ -3891,7 +6674,28 @@
       },
       "UpdateMatteDto": {
         "type": "object",
-        "properties": {}
+        "properties": {
+          "date": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "quantite": {
+            "type": "number"
+          },
+          "action": {
+            "type": "string",
+            "enum": [
+              "ajout",
+              "suppression"
+            ]
+          },
+          "nouveauTotal": {
+            "type": "number"
+          },
+          "operateur": {
+            "$ref": "#/components/schemas/CreateOperateurDto"
+          }
+        }
       },
       "CreatePoidsParTauxDto": {
         "type": "object",
@@ -4005,7 +6809,78 @@
       },
       "UpdateHistoriqueStockDto": {
         "type": "object",
-        "properties": {}
+        "properties": {
+          "date": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "quantiteMatte": {
+            "type": "number",
+            "nullable": true
+          },
+          "fournisseur": {
+            "nullable": true,
+            "type": "object",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/CreateFournisseurDto"
+              }
+            ]
+          },
+          "quantiteParTaux": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CreatePoidsParTauxDto"
+            }
+          }
+        }
+      },
+      "BadRequestResponseDto": {
+        "type": "object",
+        "properties": {
+          "statusCode": {
+            "type": "number",
+            "example": 400
+          },
+          "message": {
+            "oneOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            ]
+          },
+          "error": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "statusCode",
+          "message"
+        ]
+      },
+      "HttpErrorResponseDto": {
+        "type": "object",
+        "properties": {
+          "statusCode": {
+            "type": "number"
+          },
+          "message": {
+            "type": "string"
+          },
+          "error": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "statusCode",
+          "message"
+        ]
       }
     }
   }

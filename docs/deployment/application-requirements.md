@@ -9,7 +9,7 @@ Branche : `master`. Domaine : `global.orfevrus-api.com` (`72.62.27.74`). Node.js
 - Compilation : `npm run build`.
 - Point d'entrée ESM compilé : `dist/main.js` (`package.json` contient `"type": "module"`).
 - Lancement : `npm run start:prod` (`node dist/main`).
-- Swagger : `/api`; OpenAPI JSON : `/api-json`; export fichier dans un checkout de développement/CI : `npm run openapi:export`.
+- Swagger : `/docs` (alias `/api`); OpenAPI JSON : `/docs-json` (alias `/api-json`); export sans démarrer l'API : `npm run openapi:export`.
 
 L'artefact doit inclure `dist/`, `package.json`, `package-lock.json` et les fichiers `docs/api-examples/lingots/` (les scripts de seed les lisent). Installation de production : `npm ci --omit=dev` dans une release neuve.
 
@@ -30,7 +30,9 @@ Les identifiants doivent être conservés dans un fichier d'environnement VPS no
 
 Sur le VPS, `MONGODB_URI` cible `nestjs-global-api` et `MONGODB_GESTION_LINGOTS_URI` cible `nestjs-global-api-lingots`. Les noms sont lus dans les URI; `lingots` est seulement l'alias d'injection interne à NestJS. La base existante `gestion_lingots` est refusée. Les deux bases dédiées doivent être neuves/vides au premier démarrage.
 
-Collections de `nestjs-global-api-lingots` : `configuration`, `operateurs-lingots`, `fournisseurs-lingots`, `taux-aluminium-lingots`, `zones-lingots`, `lingots`, `orphelingots`, `mouvements-lingots`, `inventaires-lingots`, `matte-lingots`, `historique-stock-lingots`. La base principale utilise `fiches-bobines`, `fiches-bobines-filles`, `parc-a-bobines`, ainsi que les collections Chutage `chariots`, `demandes-pontier`, `preparations-chargement`, `bobines-stockage`, `bobines-chutage`, `chutes-bobines`, `chutes-rives`, `ponts-etat-pince`.
+Collections de `nestjs-global-api-lingots` : `configuration`, `operateurs-lingots`, `fournisseurs-lingots`, `taux-aluminium-lingots`, `TypeZone`, `zones-lingots`, `lingots`, `orphelingots`, `mouvements-lingots`, `inventaires-lingots`, `matte-lingots`, `historique-stock-lingots`. La base principale utilise `fiches-bobines`, `fiches-bobines-filles`, `parc-a-bobines`, ainsi que les collections Chutage `chariots`, `demandes-pontier`, `preparations-chargement`, `bobines-stockage`, `bobines-chutage`, `chutes-bobines`, `chutes-rives`, `ponts-etat-pince`.
+
+Avant de déployer le contrat `TypeZone` sur une base déjà peuplée, exécuter `npm run db:migrate:types-zone` avec les URI de l'environnement cible. La migration ajoute les types manquants sans effacer les documents.
 
 Aucune migration ni seed n'est nécessaire au démarrage. Chutage n'insère plus de données d'exemple automatiquement. L'initialisation des exemples reste disponible via la fonction de maintenance `initializeSampleData`, et `db:update:chutage` n'efface puis ne repeuple les collections qu'après `CONFIRM_DB_RESET=true`. `db:seed:gestion-lingots` réinitialise intégralement la base de `MONGODB_GESTION_LINGOTS_URI` et exige la confirmation; `db:update:all` réinitialise les collections Chutage; `db:sync:taux-aluminium` modifie des documents; `db:convert:lingots-stock` écrit dans la base dédiée; `db:generate:bobines-filles` crée des fiches. Ne les lancer jamais dans le déploiement automatisé. Aucune transformation de production n'a été exécutée.
 
