@@ -2,11 +2,11 @@ import {
   Body,
   Controller,
   Delete,
-  UseGuards,
   Get,
   Param,
   Patch,
   Post,
+  UseGuards,
 } from '@nestjs/common';
 import { ApiOperation, ApiParam, ApiTags } from '@nestjs/swagger';
 import { DestructiveOperationsGuard } from '../common/guards/destructive-operations.guard.js';
@@ -38,7 +38,6 @@ import {
   CreateMouvementDto,
   CreateOperateurDto,
   CreateTauxAluminiumDto,
-  CreateZoneDto,
   TypeZoneDto,
   UpdateConfigurationDto,
   UpdateFournisseurDto,
@@ -50,6 +49,7 @@ import {
   UpdateOperateurDto,
   UpdateTauxAluminiumDto,
   UpdateZoneDto,
+  ZoneDto,
 } from './dto/lingot.dto.js';
 import { LingotsService } from './lingots.service.js';
 
@@ -183,7 +183,7 @@ export class LingotsController {
 
   @ApiCreation(ZoneResponseDto)
   @Post('zones-lingots')
-  createZone(@Body() body: CreateZoneDto) {
+  createZone(@Body() body: ZoneDto) {
     return this.lingotsService.createZone(body);
   }
   @ApiListe(ZoneResponseDto)
@@ -192,6 +192,11 @@ export class LingotsController {
     return this.lingotsService.findZones();
   }
   @ApiElement(ZoneResponseDto)
+  @Get('zones-lingots/type-operation/:operation')
+  findZonesByOperationType(@Param('operation') operation: string) {
+    return this.lingotsService.findZonesByOperationType(operation);
+  }
+    @ApiElement(ZoneResponseDto)
   @Get('zones-lingots/:id')
   findZone(@Param('id') id: string) {
     return this.lingotsService.findZone(id);

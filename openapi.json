@@ -28,9 +28,7 @@
           }
         },
         "summary": "Vérifier que l'API répond",
-        "tags": [
-          "app"
-        ]
+        "tags": ["app"]
       }
     },
     "/health": {
@@ -60,9 +58,7 @@
           }
         },
         "summary": "Vérifier la disponibilité HTTP",
-        "tags": [
-          "app"
-        ]
+        "tags": ["app"]
       }
     },
     "/health/ready": {
@@ -102,9 +98,7 @@
           }
         },
         "summary": "Vérifier les connexions indispensables",
-        "tags": [
-          "app"
-        ]
+        "tags": ["app"]
       }
     },
     "/fiche-bobine-mere": {
@@ -154,9 +148,7 @@
           }
         },
         "summary": "Créer une fiche bobine mère",
-        "tags": [
-          "fiche-bobine-mere"
-        ]
+        "tags": ["fiche-bobine-mere"]
       },
       "get": {
         "operationId": "FicheBobineMere_findAll",
@@ -187,9 +179,7 @@
           }
         },
         "summary": "Lister toutes les fiches bobine mère",
-        "tags": [
-          "fiche-bobine-mere"
-        ]
+        "tags": ["fiche-bobine-mere"]
       }
     },
     "/fiche-bobine-mere/{id}": {
@@ -239,9 +229,7 @@
           }
         },
         "summary": "Récupérer une fiche bobine mère par id",
-        "tags": [
-          "fiche-bobine-mere"
-        ]
+        "tags": ["fiche-bobine-mere"]
       },
       "patch": {
         "operationId": "FicheBobineMere_update",
@@ -309,9 +297,7 @@
           }
         },
         "summary": "Mettre à jour une fiche bobine mère",
-        "tags": [
-          "fiche-bobine-mere"
-        ]
+        "tags": ["fiche-bobine-mere"]
       },
       "delete": {
         "operationId": "FicheBobineMere_remove",
@@ -369,9 +355,7 @@
           }
         },
         "summary": "Supprimer une fiche bobine mère",
-        "tags": [
-          "fiche-bobine-mere"
-        ]
+        "tags": ["fiche-bobine-mere"]
       }
     },
     "/fiche-bobine-fille": {
@@ -421,9 +405,7 @@
           }
         },
         "summary": "Créer une fiche bobine fille",
-        "tags": [
-          "fiche-bobine-fille"
-        ]
+        "tags": ["fiche-bobine-fille"]
       },
       "get": {
         "operationId": "FicheBobineFille_findAll",
@@ -454,9 +436,7 @@
           }
         },
         "summary": "Lister toutes les fiches bobine fille",
-        "tags": [
-          "fiche-bobine-fille"
-        ]
+        "tags": ["fiche-bobine-fille"]
       }
     },
     "/fiche-bobine-fille/bobine-mere/{identiteBobineMere}": {
@@ -499,9 +479,7 @@
           }
         },
         "summary": "Lister les fiches filles d'une bobine mère",
-        "tags": [
-          "fiche-bobine-fille"
-        ]
+        "tags": ["fiche-bobine-fille"]
       }
     },
     "/fiche-bobine-fille/{id}": {
@@ -551,9 +529,7 @@
           }
         },
         "summary": "Récupérer une fiche bobine fille par id",
-        "tags": [
-          "fiche-bobine-fille"
-        ]
+        "tags": ["fiche-bobine-fille"]
       },
       "patch": {
         "operationId": "FicheBobineFille_update",
@@ -621,9 +597,7 @@
           }
         },
         "summary": "Mettre à jour une fiche bobine fille",
-        "tags": [
-          "fiche-bobine-fille"
-        ]
+        "tags": ["fiche-bobine-fille"]
       },
       "delete": {
         "operationId": "FicheBobineFille_remove",
@@ -681,9 +655,7 @@
           }
         },
         "summary": "Supprimer une fiche bobine fille",
-        "tags": [
-          "fiche-bobine-fille"
-        ]
+        "tags": ["fiche-bobine-fille"]
       }
     },
     "/parc-a-bobines": {
@@ -733,9 +705,7 @@
           }
         },
         "summary": "Créer une entrée du parc à bobines",
-        "tags": [
-          "parc-a-bobines"
-        ]
+        "tags": ["parc-a-bobines"]
       },
       "get": {
         "operationId": "ParcABobines_findAll",
@@ -766,9 +736,7 @@
           }
         },
         "summary": "Lister le parc à bobines",
-        "tags": [
-          "parc-a-bobines"
-        ]
+        "tags": ["parc-a-bobines"]
       }
     },
     "/parc-a-bobines/{id}": {
@@ -818,9 +786,7 @@
           }
         },
         "summary": "Récupérer une entrée du parc à bobines par id",
-        "tags": [
-          "parc-a-bobines"
-        ]
+        "tags": ["parc-a-bobines"]
       },
       "patch": {
         "operationId": "ParcABobines_update",
@@ -888,9 +854,7 @@
           }
         },
         "summary": "Mettre à jour une entrée du parc à bobines",
-        "tags": [
-          "parc-a-bobines"
-        ]
+        "tags": ["parc-a-bobines"]
       },
       "delete": {
         "operationId": "ParcABobines_remove",
@@ -948,9 +912,7 @@
           }
         },
         "summary": "Supprimer une entrée du parc à bobines",
-        "tags": [
-          "parc-a-bobines"
-        ]
+        "tags": ["parc-a-bobines"]
       }
     },
     "/chutage/chariots": {
@@ -983,9 +945,7 @@
           }
         },
         "summary": "Lister les chariots",
-        "tags": [
-          "chutage"
-        ]
+        "tags": ["chutage"]
       }
     },
     "/chutage/demandes-pontier": {
@@ -1018,9 +978,7 @@
           }
         },
         "summary": "Lister les demandes pontier",
-        "tags": [
-          "chutage"
-        ]
+        "tags": ["chutage"]
       }
     },
     "/chutage/preparations-chargement": {
@@ -1053,9 +1011,7 @@
           }
         },
         "summary": "Lister les préparations de chargement",
-        "tags": [
-          "chutage"
-        ]
+        "tags": ["chutage"]
       }
     },
     "/chutage/bobines-stockage": {
@@ -1098,9 +1054,7 @@
           }
         },
         "summary": "Lister les bobines en stockage",
-        "tags": [
-          "chutage"
-        ]
+        "tags": ["chutage"]
       }
     },
     "/chutage/bobines-a-chuter": {
@@ -1133,9 +1087,7 @@
           }
         },
         "summary": "Lister les bobines à chuter",
-        "tags": [
-          "chutage"
-        ]
+        "tags": ["chutage"]
       }
     },
     "/chutage/chutes-bobines/{bobine}": {
@@ -1178,9 +1130,7 @@
           }
         },
         "summary": "Lister les chutes d'une bobine",
-        "tags": [
-          "chutage"
-        ]
+        "tags": ["chutage"]
       }
     },
     "/chutage/chutes": {
@@ -1213,9 +1163,7 @@
           }
         },
         "summary": "Lister toutes les chutes",
-        "tags": [
-          "chutage"
-        ]
+        "tags": ["chutage"]
       }
     },
     "/chutage/chutes-rives/{bobine}": {
@@ -1258,9 +1206,7 @@
           }
         },
         "summary": "Lister les chutes de rives d'une bobine",
-        "tags": [
-          "chutage"
-        ]
+        "tags": ["chutage"]
       }
     },
     "/chutage/chutes-rives": {
@@ -1293,9 +1239,7 @@
           }
         },
         "summary": "Lister toutes les chutes de rives",
-        "tags": [
-          "chutage"
-        ]
+        "tags": ["chutage"]
       }
     },
     "/chutage/ponts-etat-pince": {
@@ -1328,9 +1272,7 @@
           }
         },
         "summary": "Lister l'état des ponts et pinces",
-        "tags": [
-          "chutage"
-        ]
+        "tags": ["chutage"]
       }
     },
     "/configuration": {
@@ -1379,9 +1321,7 @@
             }
           }
         },
-        "tags": [
-          "lingots"
-        ]
+        "tags": ["lingots"]
       },
       "get": {
         "operationId": "Lingots_findConfigurations",
@@ -1411,9 +1351,7 @@
             }
           }
         },
-        "tags": [
-          "lingots"
-        ]
+        "tags": ["lingots"]
       }
     },
     "/configuration/{id}": {
@@ -1463,9 +1401,7 @@
             }
           }
         },
-        "tags": [
-          "lingots"
-        ]
+        "tags": ["lingots"]
       },
       "patch": {
         "operationId": "Lingots_updateConfiguration",
@@ -1533,9 +1469,7 @@
             }
           }
         },
-        "tags": [
-          "lingots"
-        ]
+        "tags": ["lingots"]
       },
       "delete": {
         "operationId": "Lingots_removeConfiguration",
@@ -1593,9 +1527,7 @@
             }
           }
         },
-        "tags": [
-          "lingots"
-        ]
+        "tags": ["lingots"]
       }
     },
     "/operateurs-lingots": {
@@ -1644,9 +1576,7 @@
             }
           }
         },
-        "tags": [
-          "lingots"
-        ]
+        "tags": ["lingots"]
       },
       "get": {
         "operationId": "Lingots_findOperateurs",
@@ -1676,9 +1606,7 @@
             }
           }
         },
-        "tags": [
-          "lingots"
-        ]
+        "tags": ["lingots"]
       }
     },
     "/operateurs-lingots/{id}": {
@@ -1728,9 +1656,7 @@
             }
           }
         },
-        "tags": [
-          "lingots"
-        ]
+        "tags": ["lingots"]
       },
       "patch": {
         "operationId": "Lingots_updateOperateur",
@@ -1798,9 +1724,7 @@
             }
           }
         },
-        "tags": [
-          "lingots"
-        ]
+        "tags": ["lingots"]
       },
       "delete": {
         "operationId": "Lingots_removeOperateur",
@@ -1858,9 +1782,7 @@
             }
           }
         },
-        "tags": [
-          "lingots"
-        ]
+        "tags": ["lingots"]
       }
     },
     "/fournisseurs-lingots": {
@@ -1909,9 +1831,7 @@
             }
           }
         },
-        "tags": [
-          "lingots"
-        ]
+        "tags": ["lingots"]
       },
       "get": {
         "operationId": "Lingots_findFournisseurs",
@@ -1941,9 +1861,7 @@
             }
           }
         },
-        "tags": [
-          "lingots"
-        ]
+        "tags": ["lingots"]
       }
     },
     "/fournisseurs-lingots/{id}": {
@@ -1993,9 +1911,7 @@
             }
           }
         },
-        "tags": [
-          "lingots"
-        ]
+        "tags": ["lingots"]
       },
       "patch": {
         "operationId": "Lingots_updateFournisseur",
@@ -2063,9 +1979,7 @@
             }
           }
         },
-        "tags": [
-          "lingots"
-        ]
+        "tags": ["lingots"]
       },
       "delete": {
         "operationId": "Lingots_removeFournisseur",
@@ -2123,9 +2037,7 @@
             }
           }
         },
-        "tags": [
-          "lingots"
-        ]
+        "tags": ["lingots"]
       }
     },
     "/taux-aluminium-lingots": {
@@ -2174,9 +2086,7 @@
             }
           }
         },
-        "tags": [
-          "lingots"
-        ]
+        "tags": ["lingots"]
       },
       "get": {
         "operationId": "Lingots_findTauxAluminium",
@@ -2206,9 +2116,7 @@
             }
           }
         },
-        "tags": [
-          "lingots"
-        ]
+        "tags": ["lingots"]
       }
     },
     "/taux-aluminium-lingots/{id}": {
@@ -2258,9 +2166,7 @@
             }
           }
         },
-        "tags": [
-          "lingots"
-        ]
+        "tags": ["lingots"]
       },
       "patch": {
         "operationId": "Lingots_updateTauxAluminium",
@@ -2328,9 +2234,7 @@
             }
           }
         },
-        "tags": [
-          "lingots"
-        ]
+        "tags": ["lingots"]
       },
       "delete": {
         "operationId": "Lingots_removeTauxAluminium",
@@ -2388,9 +2292,7 @@
             }
           }
         },
-        "tags": [
-          "lingots"
-        ]
+        "tags": ["lingots"]
       }
     },
     "/types-zones": {
@@ -2422,9 +2324,7 @@
             }
           }
         },
-        "tags": [
-          "lingots"
-        ]
+        "tags": ["lingots"]
       }
     },
     "/zones-lingots": {
@@ -2436,7 +2336,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/CreateZoneDto"
+                "$ref": "#/components/schemas/ZoneDto"
               }
             }
           }
@@ -2473,9 +2373,7 @@
             }
           }
         },
-        "tags": [
-          "lingots"
-        ]
+        "tags": ["lingots"]
       },
       "get": {
         "operationId": "Lingots_findZones",
@@ -2505,9 +2403,7 @@
             }
           }
         },
-        "tags": [
-          "lingots"
-        ]
+        "tags": ["lingots"]
       }
     },
     "/zones-lingots/{id}": {
@@ -2557,9 +2453,7 @@
             }
           }
         },
-        "tags": [
-          "lingots"
-        ]
+        "tags": ["lingots"]
       },
       "patch": {
         "operationId": "Lingots_updateZone",
@@ -2627,9 +2521,7 @@
             }
           }
         },
-        "tags": [
-          "lingots"
-        ]
+        "tags": ["lingots"]
       },
       "delete": {
         "operationId": "Lingots_removeZone",
@@ -2687,9 +2579,7 @@
             }
           }
         },
-        "tags": [
-          "lingots"
-        ]
+        "tags": ["lingots"]
       }
     },
     "/lingots": {
@@ -2738,9 +2628,7 @@
             }
           }
         },
-        "tags": [
-          "lingots"
-        ]
+        "tags": ["lingots"]
       },
       "get": {
         "operationId": "Lingots_findLingots",
@@ -2770,9 +2658,7 @@
             }
           }
         },
-        "tags": [
-          "lingots"
-        ]
+        "tags": ["lingots"]
       }
     },
     "/orphelingots": {
@@ -2805,9 +2691,7 @@
           }
         },
         "summary": "Lister les lingots purs de démonstration (AL00)",
-        "tags": [
-          "lingots"
-        ]
+        "tags": ["lingots"]
       }
     },
     "/lingots/{id}": {
@@ -2857,9 +2741,7 @@
             }
           }
         },
-        "tags": [
-          "lingots"
-        ]
+        "tags": ["lingots"]
       },
       "patch": {
         "operationId": "Lingots_updateLingot",
@@ -2927,9 +2809,7 @@
             }
           }
         },
-        "tags": [
-          "lingots"
-        ]
+        "tags": ["lingots"]
       },
       "delete": {
         "operationId": "Lingots_removeLingot",
@@ -2987,9 +2867,7 @@
             }
           }
         },
-        "tags": [
-          "lingots"
-        ]
+        "tags": ["lingots"]
       }
     },
     "/mouvements-lingots": {
@@ -3049,10 +2927,7 @@
           }
         },
         "summary": "Créer un mouvement de lingot",
-        "tags": [
-          "lingots",
-          "mouvements-lingots"
-        ]
+        "tags": ["lingots", "mouvements-lingots"]
       },
       "get": {
         "operationId": "Lingots_findAllMouvements",
@@ -3083,10 +2958,7 @@
           }
         },
         "summary": "Lister les mouvements de lingots",
-        "tags": [
-          "lingots",
-          "mouvements-lingots"
-        ]
+        "tags": ["lingots", "mouvements-lingots"]
       }
     },
     "/mouvements-lingots/{id}": {
@@ -3137,10 +3009,7 @@
           }
         },
         "summary": "Obtenir un mouvement par son _id MongoDB",
-        "tags": [
-          "lingots",
-          "mouvements-lingots"
-        ]
+        "tags": ["lingots", "mouvements-lingots"]
       },
       "patch": {
         "operationId": "Lingots_updateMouvementById",
@@ -3209,10 +3078,7 @@
           }
         },
         "summary": "Modifier un mouvement de lingot",
-        "tags": [
-          "lingots",
-          "mouvements-lingots"
-        ]
+        "tags": ["lingots", "mouvements-lingots"]
       },
       "delete": {
         "operationId": "Lingots_removeMouvementById",
@@ -3271,10 +3137,7 @@
           }
         },
         "summary": "Supprimer un mouvement de lingot",
-        "tags": [
-          "lingots",
-          "mouvements-lingots"
-        ]
+        "tags": ["lingots", "mouvements-lingots"]
       }
     },
     "/lingots/{lingotId}/mouvements": {
@@ -3344,9 +3207,7 @@
             }
           }
         },
-        "tags": [
-          "lingots"
-        ]
+        "tags": ["lingots"]
       },
       "get": {
         "operationId": "Lingots_findMouvements",
@@ -3397,9 +3258,7 @@
             }
           }
         },
-        "tags": [
-          "lingots"
-        ]
+        "tags": ["lingots"]
       }
     },
     "/lingots/{lingotId}/mouvements/{mouvementId}": {
@@ -3459,9 +3318,7 @@
             }
           }
         },
-        "tags": [
-          "lingots"
-        ]
+        "tags": ["lingots"]
       },
       "patch": {
         "operationId": "Lingots_updateMouvement",
@@ -3539,9 +3396,7 @@
             }
           }
         },
-        "tags": [
-          "lingots"
-        ]
+        "tags": ["lingots"]
       },
       "delete": {
         "operationId": "Lingots_removeMouvement",
@@ -3609,9 +3464,7 @@
             }
           }
         },
-        "tags": [
-          "lingots"
-        ]
+        "tags": ["lingots"]
       }
     },
     "/inventaires-lingots": {
@@ -3660,9 +3513,7 @@
             }
           }
         },
-        "tags": [
-          "lingots"
-        ]
+        "tags": ["lingots"]
       },
       "get": {
         "operationId": "Lingots_findInventaires",
@@ -3692,9 +3543,7 @@
             }
           }
         },
-        "tags": [
-          "lingots"
-        ]
+        "tags": ["lingots"]
       }
     },
     "/inventaires-lingots/{id}": {
@@ -3744,9 +3593,7 @@
             }
           }
         },
-        "tags": [
-          "lingots"
-        ]
+        "tags": ["lingots"]
       },
       "patch": {
         "operationId": "Lingots_updateInventaire",
@@ -3814,9 +3661,7 @@
             }
           }
         },
-        "tags": [
-          "lingots"
-        ]
+        "tags": ["lingots"]
       },
       "delete": {
         "operationId": "Lingots_removeInventaire",
@@ -3874,9 +3719,7 @@
             }
           }
         },
-        "tags": [
-          "lingots"
-        ]
+        "tags": ["lingots"]
       }
     },
     "/matte-lingots": {
@@ -3925,9 +3768,7 @@
             }
           }
         },
-        "tags": [
-          "lingots"
-        ]
+        "tags": ["lingots"]
       },
       "get": {
         "operationId": "Lingots_findMattes",
@@ -3957,9 +3798,7 @@
             }
           }
         },
-        "tags": [
-          "lingots"
-        ]
+        "tags": ["lingots"]
       }
     },
     "/matte-lingots/{id}": {
@@ -4009,9 +3848,7 @@
             }
           }
         },
-        "tags": [
-          "lingots"
-        ]
+        "tags": ["lingots"]
       },
       "patch": {
         "operationId": "Lingots_updateMatte",
@@ -4079,9 +3916,7 @@
             }
           }
         },
-        "tags": [
-          "lingots"
-        ]
+        "tags": ["lingots"]
       },
       "delete": {
         "operationId": "Lingots_removeMatte",
@@ -4139,9 +3974,7 @@
             }
           }
         },
-        "tags": [
-          "lingots"
-        ]
+        "tags": ["lingots"]
       }
     },
     "/historique-stock-lingots": {
@@ -4190,9 +4023,7 @@
             }
           }
         },
-        "tags": [
-          "lingots"
-        ]
+        "tags": ["lingots"]
       },
       "get": {
         "operationId": "Lingots_findHistoriquesStock",
@@ -4222,9 +4053,7 @@
             }
           }
         },
-        "tags": [
-          "lingots"
-        ]
+        "tags": ["lingots"]
       }
     },
     "/historique-stock-lingots/{id}": {
@@ -4274,9 +4103,7 @@
             }
           }
         },
-        "tags": [
-          "lingots"
-        ]
+        "tags": ["lingots"]
       },
       "patch": {
         "operationId": "Lingots_updateHistoriqueStock",
@@ -4344,9 +4171,7 @@
             }
           }
         },
-        "tags": [
-          "lingots"
-        ]
+        "tags": ["lingots"]
       },
       "delete": {
         "operationId": "Lingots_removeHistoriqueStock",
@@ -4404,9 +4229,7 @@
             }
           }
         },
-        "tags": [
-          "lingots"
-        ]
+        "tags": ["lingots"]
       }
     }
   },
@@ -4453,29 +4276,21 @@
         "type": "object",
         "properties": {
           "status": {
-            "enum": [
-              "ok"
-            ],
+            "enum": ["ok"],
             "type": "string"
           }
         },
-        "required": [
-          "status"
-        ]
+        "required": ["status"]
       },
       "UnavailableResponseDto": {
         "type": "object",
         "properties": {
           "status": {
-            "enum": [
-              "unavailable"
-            ],
+            "enum": ["unavailable"],
             "type": "string"
           }
         },
-        "required": [
-          "status"
-        ]
+        "required": ["status"]
       },
       "GeneralitesDto": {
         "type": "object",
@@ -4588,11 +4403,7 @@
             "type": "number"
           }
         },
-        "required": [
-          "mini",
-          "vise",
-          "maxi"
-        ]
+        "required": ["mini", "vise", "maxi"]
       },
       "RevetementsDto": {
         "type": "object",
@@ -4607,11 +4418,7 @@
             "$ref": "#/components/schemas/LimitesDto"
           }
         },
-        "required": [
-          "refAuto",
-          "avant",
-          "arriere"
-        ]
+        "required": ["refAuto", "avant", "arriere"]
       },
       "VitesseCentreDto": {
         "type": "object",
@@ -4626,11 +4433,7 @@
             "type": "number"
           }
         },
-        "required": [
-          "n2",
-          "rg",
-          "rgRef"
-        ]
+        "required": ["n2", "rg", "rgRef"]
       },
       "ChutageDto": {
         "type": "object",
@@ -4648,12 +4451,7 @@
             "type": "string"
           }
         },
-        "required": [
-          "debut",
-          "fin",
-          "causeDebut",
-          "causeFin"
-        ]
+        "required": ["debut", "fin", "causeDebut", "causeFin"]
       },
       "FormatSortieLimitesDto": {
         "type": "object",
@@ -4665,10 +4463,7 @@
             "type": "number"
           }
         },
-        "required": [
-          "larg",
-          "epai"
-        ]
+        "required": ["larg", "epai"]
       },
       "FormatSortieDto": {
         "type": "object",
@@ -4683,11 +4478,7 @@
             "$ref": "#/components/schemas/FormatSortieLimitesDto"
           }
         },
-        "required": [
-          "mini",
-          "vise",
-          "maxi"
-        ]
+        "required": ["mini", "vise", "maxi"]
       },
       "SuggestionDto": {
         "type": "object",
@@ -4699,10 +4490,7 @@
             "type": "string"
           }
         },
-        "required": [
-          "ordre",
-          "libelle"
-        ]
+        "required": ["ordre", "libelle"]
       },
       "DefautDto": {
         "type": "object",
@@ -4950,10 +4738,7 @@
             "$ref": "#/components/schemas/RevetementsDto"
           }
         },
-        "required": [
-          "consigne",
-          "reel"
-        ]
+        "required": ["consigne", "reel"]
       },
       "FilleFormatSortieDto": {
         "type": "object",
@@ -4965,10 +4750,7 @@
             "$ref": "#/components/schemas/FormatSortieDto"
           }
         },
-        "required": [
-          "consigne",
-          "reel"
-        ]
+        "required": ["consigne", "reel"]
       },
       "DecisionFilleDto": {
         "type": "object",
@@ -5158,11 +4940,7 @@
             "type": "string"
           }
         },
-        "required": [
-          "BackgroundColor",
-          "ForegroundColor",
-          "Message"
-        ]
+        "required": ["BackgroundColor", "ForegroundColor", "Message"]
       },
       "CreateParcABobineDto": {
         "type": "object",
@@ -5425,11 +5203,7 @@
             "type": "string"
           }
         },
-        "required": [
-          "_id",
-          "numero",
-          "bobine"
-        ]
+        "required": ["_id", "numero", "bobine"]
       },
       "DemandePontierResponseDto": {
         "type": "object",
@@ -5449,10 +5223,7 @@
           },
           "sens": {
             "type": "string",
-            "enum": [
-              "Chargement",
-              "Dechargement"
-            ]
+            "enum": ["Chargement", "Dechargement"]
           },
           "bobine": {
             "type": "string"
@@ -5464,13 +5235,7 @@
             "type": "string"
           }
         },
-        "required": [
-          "_id",
-          "sens",
-          "bobine",
-          "halle",
-          "chariot"
-        ]
+        "required": ["_id", "sens", "bobine", "halle", "chariot"]
       },
       "PreparationChargementResponseDto": {
         "type": "object",
@@ -5499,12 +5264,7 @@
             "nullable": true
           }
         },
-        "required": [
-          "_id",
-          "bobine",
-          "halle",
-          "chariot"
-        ]
+        "required": ["_id", "bobine", "halle", "chariot"]
       },
       "CalculPresetResponseDto": {
         "type": "object",
@@ -5516,10 +5276,7 @@
             "type": "boolean"
           }
         },
-        "required": [
-          "isValid",
-          "isCalculated"
-        ]
+        "required": ["isValid", "isCalculated"]
       },
       "BobineStockageResponseDto": {
         "type": "object",
@@ -5539,10 +5296,7 @@
           },
           "type": {
             "type": "string",
-            "enum": [
-              "N",
-              "S"
-            ]
+            "enum": ["N", "S"]
           },
           "bobine": {
             "type": "string"
@@ -5642,14 +5396,7 @@
             "type": "boolean"
           }
         },
-        "required": [
-          "_id",
-          "bobine",
-          "lgE",
-          "lgS",
-          "fini",
-          "selected"
-        ]
+        "required": ["_id", "bobine", "lgE", "lgS", "fini", "selected"]
       },
       "DetailChuteBobineResponseDto": {
         "type": "object",
@@ -5672,10 +5419,7 @@
           },
           "lieu": {
             "type": "string",
-            "enum": [
-              "E",
-              "S"
-            ]
+            "enum": ["E", "S"]
           },
           "longueur": {
             "type": "number"
@@ -5734,10 +5478,7 @@
           },
           "lieu": {
             "type": "string",
-            "enum": [
-              "E",
-              "S"
-            ]
+            "enum": ["E", "S"]
           },
           "longueur": {
             "type": "number"
@@ -5787,11 +5528,7 @@
             "type": "string"
           }
         },
-        "required": [
-          "id",
-          "name",
-          "color"
-        ]
+        "required": ["id", "name", "color"]
       },
       "PontEtatPinceResponseDto": {
         "type": "object",
@@ -5819,12 +5556,7 @@
             "type": "string"
           }
         },
-        "required": [
-          "_id",
-          "pont",
-          "etat",
-          "pince"
-        ]
+        "required": ["_id", "pont", "etat", "pince"]
       },
       "CreateConfigurationDto": {
         "type": "object",
@@ -5860,10 +5592,7 @@
             "type": "string"
           }
         },
-        "required": [
-          "cle",
-          "valeur"
-        ]
+        "required": ["cle", "valeur"]
       },
       "ConfigurationResponseDto": {
         "type": "object",
@@ -5911,11 +5640,7 @@
             "type": "string"
           }
         },
-        "required": [
-          "_id",
-          "cle",
-          "valeur"
-        ]
+        "required": ["_id", "cle", "valeur"]
       },
       "UpdateConfigurationDto": {
         "type": "object",
@@ -5971,13 +5696,7 @@
             "type": "string"
           }
         },
-        "required": [
-          "username",
-          "entreprise",
-          "nom",
-          "prenom",
-          "codeQR"
-        ]
+        "required": ["username", "entreprise", "nom", "prenom", "codeQR"]
       },
       "OperateurResponseDto": {
         "type": "object",
@@ -6011,14 +5730,7 @@
             "type": "string"
           }
         },
-        "required": [
-          "_id",
-          "username",
-          "entreprise",
-          "nom",
-          "prenom",
-          "codeQR"
-        ]
+        "required": ["_id", "username", "entreprise", "nom", "prenom", "codeQR"]
       },
       "UpdateOperateurDto": {
         "type": "object",
@@ -6052,10 +5764,7 @@
             "example": "AC123456"
           }
         },
-        "required": [
-          "nom",
-          "code"
-        ]
+        "required": ["nom", "code"]
       },
       "FournisseurResponseDto": {
         "type": "object",
@@ -6080,11 +5789,7 @@
             "type": "string"
           }
         },
-        "required": [
-          "_id",
-          "nom",
-          "code"
-        ]
+        "required": ["_id", "nom", "code"]
       },
       "UpdateFournisseurDto": {
         "type": "object",
@@ -6112,10 +5817,7 @@
             "example": "#0072ce"
           }
         },
-        "required": [
-          "nom",
-          "couleur"
-        ]
+        "required": ["nom", "couleur"]
       },
       "TauxAluminiumResponseDto": {
         "type": "object",
@@ -6142,11 +5844,7 @@
             "example": "#0072ce"
           }
         },
-        "required": [
-          "_id",
-          "nom",
-          "couleur"
-        ]
+        "required": ["_id", "nom", "couleur"]
       },
       "UpdateTauxAluminiumDto": {
         "type": "object",
@@ -6179,13 +5877,9 @@
             "example": "Stockage"
           }
         },
-        "required": [
-          "_id",
-          "code",
-          "nom"
-        ]
+        "required": ["_id", "code", "nom"]
       },
-      "CreateZoneDto": {
+      "ZoneDto": {
         "type": "object",
         "properties": {
           "code": {
@@ -6198,11 +5892,7 @@
             "$ref": "#/components/schemas/TypeZoneDto"
           }
         },
-        "required": [
-          "code",
-          "nom",
-          "typeOperation"
-        ]
+        "required": ["code", "nom", "typeOperation"]
       },
       "ZoneResponseDto": {
         "type": "object",
@@ -6230,12 +5920,7 @@
             "$ref": "#/components/schemas/TypeZoneDto"
           }
         },
-        "required": [
-          "_id",
-          "code",
-          "nom",
-          "typeOperation"
-        ]
+        "required": ["_id", "code", "nom", "typeOperation"]
       },
       "UpdateZoneDto": {
         "type": "object",
@@ -6274,7 +5959,7 @@
             "type": "string"
           },
           "zone": {
-            "$ref": "#/components/schemas/CreateZoneDto"
+            "$ref": "#/components/schemas/ZoneDto"
           },
           "dateFusion": {
             "format": "date-time",
@@ -6372,7 +6057,7 @@
             "type": "string"
           },
           "zone": {
-            "$ref": "#/components/schemas/CreateZoneDto"
+            "$ref": "#/components/schemas/ZoneDto"
           },
           "dateFusion": {
             "format": "date-time",
@@ -6392,12 +6077,12 @@
             "type": "object",
             "allOf": [
               {
-                "$ref": "#/components/schemas/CreateZoneDto"
+                "$ref": "#/components/schemas/ZoneDto"
               }
             ]
           },
           "arrivee": {
-            "$ref": "#/components/schemas/CreateZoneDto"
+            "$ref": "#/components/schemas/ZoneDto"
           },
           "operateur": {
             "$ref": "#/components/schemas/CreateOperateurDto"
@@ -6407,12 +6092,7 @@
             "description": "_id MongoDB du lingot associé"
           }
         },
-        "required": [
-          "date",
-          "arrivee",
-          "operateur",
-          "lingotId"
-        ]
+        "required": ["date", "arrivee", "operateur", "lingotId"]
       },
       "MouvementResponseDto": {
         "type": "object",
@@ -6454,14 +6134,7 @@
             "$ref": "#/components/schemas/LingotResponseDto"
           }
         },
-        "required": [
-          "_id",
-          "depart",
-          "arrivee",
-          "date",
-          "operateur",
-          "lingot"
-        ]
+        "required": ["_id", "depart", "arrivee", "date", "operateur", "lingot"]
       },
       "UpdateMouvementDto": {
         "type": "object",
@@ -6475,12 +6148,12 @@
             "type": "object",
             "allOf": [
               {
-                "$ref": "#/components/schemas/CreateZoneDto"
+                "$ref": "#/components/schemas/ZoneDto"
               }
             ]
           },
           "arrivee": {
-            "$ref": "#/components/schemas/CreateZoneDto"
+            "$ref": "#/components/schemas/ZoneDto"
           },
           "operateur": {
             "$ref": "#/components/schemas/CreateOperateurDto"
@@ -6499,22 +6172,18 @@
             "type": "object",
             "allOf": [
               {
-                "$ref": "#/components/schemas/CreateZoneDto"
+                "$ref": "#/components/schemas/ZoneDto"
               }
             ]
           },
           "arrivee": {
-            "$ref": "#/components/schemas/CreateZoneDto"
+            "$ref": "#/components/schemas/ZoneDto"
           },
           "operateur": {
             "$ref": "#/components/schemas/CreateOperateurDto"
           }
         },
-        "required": [
-          "date",
-          "arrivee",
-          "operateur"
-        ]
+        "required": ["date", "arrivee", "operateur"]
       },
       "CreateInventaireDto": {
         "type": "object",
@@ -6533,11 +6202,7 @@
             }
           }
         },
-        "required": [
-          "date",
-          "operateur",
-          "lingots"
-        ]
+        "required": ["date", "operateur", "lingots"]
       },
       "InventaireResponseDto": {
         "type": "object",
@@ -6569,12 +6234,7 @@
             }
           }
         },
-        "required": [
-          "_id",
-          "date",
-          "operateur",
-          "lingots"
-        ]
+        "required": ["_id", "date", "operateur", "lingots"]
       },
       "UpdateInventaireDto": {
         "type": "object",
@@ -6606,10 +6266,7 @@
           },
           "action": {
             "type": "string",
-            "enum": [
-              "ajout",
-              "suppression"
-            ]
+            "enum": ["ajout", "suppression"]
           },
           "nouveauTotal": {
             "type": "number"
@@ -6618,13 +6275,7 @@
             "$ref": "#/components/schemas/CreateOperateurDto"
           }
         },
-        "required": [
-          "date",
-          "quantite",
-          "action",
-          "nouveauTotal",
-          "operateur"
-        ]
+        "required": ["date", "quantite", "action", "nouveauTotal", "operateur"]
       },
       "MatteResponseDto": {
         "type": "object",
@@ -6650,10 +6301,7 @@
             "type": "number"
           },
           "action": {
-            "enum": [
-              "ajout",
-              "suppression"
-            ],
+            "enum": ["ajout", "suppression"],
             "type": "string"
           },
           "nouveauTotal": {
@@ -6684,10 +6332,7 @@
           },
           "action": {
             "type": "string",
-            "enum": [
-              "ajout",
-              "suppression"
-            ]
+            "enum": ["ajout", "suppression"]
           },
           "nouveauTotal": {
             "type": "number"
@@ -6707,10 +6352,7 @@
             "type": "number"
           }
         },
-        "required": [
-          "taux",
-          "poids"
-        ]
+        "required": ["taux", "poids"]
       },
       "CreateHistoriqueStockDto": {
         "type": "object",
@@ -6739,10 +6381,7 @@
             }
           }
         },
-        "required": [
-          "date",
-          "quantiteParTaux"
-        ]
+        "required": ["date", "quantiteParTaux"]
       },
       "PoidsParTauxResponseDto": {
         "type": "object",
@@ -6754,10 +6393,7 @@
             "type": "number"
           }
         },
-        "required": [
-          "taux",
-          "poids"
-        ]
+        "required": ["taux", "poids"]
       },
       "HistoriqueStockResponseDto": {
         "type": "object",
@@ -6859,10 +6495,7 @@
             "type": "string"
           }
         },
-        "required": [
-          "statusCode",
-          "message"
-        ]
+        "required": ["statusCode", "message"]
       },
       "HttpErrorResponseDto": {
         "type": "object",
@@ -6877,10 +6510,7 @@
             "type": "string"
           }
         },
-        "required": [
-          "statusCode",
-          "message"
-        ]
+        "required": ["statusCode", "message"]
       }
     }
   }

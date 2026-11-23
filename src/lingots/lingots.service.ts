@@ -1,4 +1,8 @@
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
 import {
@@ -12,7 +16,6 @@ import {
   CreateMouvementDto,
   CreateOperateurDto,
   CreateTauxAluminiumDto,
-  CreateZoneDto,
   UpdateConfigurationDto,
   UpdateFournisseurDto,
   UpdateHistoriqueStockDto,
@@ -23,6 +26,7 @@ import {
   UpdateOperateurDto,
   UpdateTauxAluminiumDto,
   UpdateZoneDto,
+  ZoneDto,
 } from './dto/lingot.dto.js';
 import {
   ConfigurationRecord,
@@ -176,11 +180,14 @@ export class LingotsService {
   findTypesZone() {
     return this.typesZone.find().sort({ code: 1 }).exec();
   }
-  async createZone(data: CreateZoneDto) {
+  async createZone(data: ZoneDto) {
     return this.zones.create(await this.resoudreTypeZone(data));
   }
   findZones() {
     return this.zones.find().sort({ nom: 1 }).exec();
+  }
+  async findZonesByOperationType(operation:string){
+     return this.findRecord(this.zones, operation, 'Zone introuvable pour cette opération');
   }
   async findZone(id: string) {
     return this.findRecord(this.zones, id, 'Zone introuvable');
@@ -189,7 +196,12 @@ export class LingotsService {
     const zone = data.typeOperation
       ? await this.resoudreTypeZone({ typeOperation: data.typeOperation })
       : {};
-    return this.updateRecord(this.zones, id, { ...data, ...zone }, 'Zone introuvable');
+    return this.updateRecord(
+      this.zones,
+      id,
+      { ...data, ...zone },
+      'Zone introuvable',
+    );
   }
   async removeZone(id: string) {
     return this.removeRecord(this.zones, id, 'Zone introuvable');
@@ -225,7 +237,9 @@ export class LingotsService {
   async createInventaire(data: CreateInventaireDto) {
     return this.inventaires.create({
       ...data,
-      lingots: await Promise.all(data.lingots.map((lingot) => this.preparerLingot(lingot))),
+      lingots: await Promise.all(
+        data.lingots.map((lingot) => this.preparerLingot(lingot)),
+      ),
     });
   }
   findInventaires() {
@@ -241,7 +255,9 @@ export class LingotsService {
       {
         ...data,
         ...(data.lingots && {
-          lingots: await Promise.all(data.lingots.map((lingot) => this.preparerLingot(lingot))),
+          lingots: await Promise.all(
+            data.lingots.map((lingot) => this.preparerLingot(lingot)),
+          ),
         }),
       },
       'Inventaire introuvable',
@@ -380,20 +396,33 @@ export class LingotsService {
     );
   }
 
-  private async resoudreTypeZone<T extends Pick<CreateZoneDto, 'typeOperation'>>(zone: T) {
+  private async resoudreTypeZone<T extends Pick<ZoneDto, 'typeOperation'>>(
+    zone: T,
+  ) {
     const { _id, code } = zone.typeOperation;
-    const typeOperation = await this.typesZone.findOne({ _id, code }).lean().exec();
+    const typeOperation = await this.typesZone
+      .findOne({ _id, code })
+      .lean()
+      .exec();
     if (!typeOperation) {
-      throw new BadRequestException('Le type de zone doit correspondre au référentiel TypeZone.');
+      throw new BadRequestException(
+        'Le type de zone doit correspondre au référentiel TypeZone.',
+      );
     }
     return {
       ...zone,
-      typeOperation: { _id: typeOperation._id, code: typeOperation.code, nom: typeOperation.nom },
+      typeOperation: {
+        _id: typeOperation._id,
+        code: typeOperation.code,
+        nom: typeOperation.nom,
+      },
     };
   }
 
   private async preparerZonesLingot<T extends UpdateLingotDto>(data: T) {
-    return data.zone ? { ...data, zone: await this.resoudreTypeZone(data.zone) } : data;
+    return data.zone
+      ? { ...data, zone: await this.resoudreTypeZone(data.zone) }
+      : data;
   }
 
   private async preparerLingot(data: CreateLingotDto) {

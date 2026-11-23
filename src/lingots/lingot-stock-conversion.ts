@@ -151,7 +151,7 @@ export function convertirLingotStock(
 // Lit les sources par curseur, convertit et upsert par lots sur `id` (idempotent)
 export async function importerLingotsStock(
   sources: AsyncIterable<LegacyLingotStockReel>,
-  modele: Model<LingotRecord>,
+  modele: Pick<Model<LingotRecord>, 'bulkWrite'>,
   options: OptionsConversionLingotStock & {
     taille?: number;
     dateImport?: Date;
@@ -185,7 +185,7 @@ export async function importerLingotsStock(
       lot.push({
         replaceOne: {
           filter: { codeQR: lingot.codeQR },
-          replacement: lingot as LingotRecord,
+          replacement: lingot,
           upsert: true,
         },
       });

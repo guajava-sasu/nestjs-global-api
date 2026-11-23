@@ -9,6 +9,13 @@ export type FournisseurDocument = HydratedDocument<FournisseurRecord>;
 export type TauxAluminiumDocument = HydratedDocument<TauxAluminiumRecord>;
 export type ZoneDocument = HydratedDocument<ZoneRecord>;
 
+export interface Ligne {
+  _id: Types.ObjectId;
+  nom: string;
+  site: string;
+  code: string;
+}
+
 export interface Operateur {
   _id: Types.ObjectId;
   username: string;
@@ -58,12 +65,12 @@ export interface Lingot {
   fournisseur: Fournisseur;
   numeroCoulee: string;
   numeroLingot: number;
-  dateReception: Date;
   tauxAluminium: TauxAluminium;
   poids: number;
+  codeQR: string;
   zone: Zone;
   dateFusion?: Date;
-  codeQR: string;
+  dateReception: Date;
 }
 
 export interface Matte {

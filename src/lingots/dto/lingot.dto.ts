@@ -1,8 +1,4 @@
-import {
-  ApiProperty,
-  ApiPropertyOptional,
-  PartialType,
-} from '@nestjs/swagger';
+import { ApiProperty, ApiPropertyOptional, PartialType } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
 import {
   IsDate,
@@ -95,7 +91,7 @@ export class TypeZoneDto {
   nom: string;
 }
 
-export class CreateZoneDto {
+export class ZoneDto {
   @ApiProperty() @IsString() code: string;
   @ApiProperty() @IsString() nom: string;
   @ApiProperty({ type: TypeZoneDto })
@@ -104,22 +100,22 @@ export class CreateZoneDto {
   @Type(() => TypeZoneDto)
   typeOperation: TypeZoneDto;
 }
-export class UpdateZoneDto extends PartialType(CreateZoneDto, {
+export class UpdateZoneDto extends PartialType(ZoneDto, {
   skipNullProperties: false,
 }) {}
 
 export class CreateMouvementDto {
   @ApiProperty() @Type(() => Date) @IsDate() date: Date;
-  @ApiPropertyOptional({ type: CreateZoneDto, nullable: true })
+  @ApiPropertyOptional({ type: ZoneDto, nullable: true })
   @IsOptional()
   @ValidateNested()
-  @Type(() => CreateZoneDto)
-  depart?: CreateZoneDto | null;
-  @ApiProperty({ type: CreateZoneDto })
+  @Type(() => ZoneDto)
+  depart?: ZoneDto | null;
+  @ApiProperty({ type: ZoneDto })
   @IsDefined()
   @ValidateNested()
-  @Type(() => CreateZoneDto)
-  arrivee: CreateZoneDto;
+  @Type(() => ZoneDto)
+  arrivee: ZoneDto;
   @ApiProperty({ type: CreateOperateurDto })
   @ValidateNested()
   @Type(() => CreateOperateurDto)
@@ -145,11 +141,11 @@ export class CreateLingotDto {
   @Type(() => CreateTauxAluminiumDto)
   tauxAluminium: CreateTauxAluminiumDto;
   @ApiProperty() @Type(() => Date) @IsDate() dateReception: Date;
-  @ApiProperty({ type: CreateZoneDto })
+  @ApiProperty({ type: ZoneDto })
   @IsDefined()
   @ValidateNested()
-  @Type(() => CreateZoneDto)
-  zone: CreateZoneDto;
+  @Type(() => ZoneDto)
+  zone: ZoneDto;
   @ApiPropertyOptional()
   @IsOptional()
   @Type(() => Date)
