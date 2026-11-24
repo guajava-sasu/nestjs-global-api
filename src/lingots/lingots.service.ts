@@ -1,5 +1,8 @@
 import {
   BadRequestException,
+  ConflictException,
+  HttpException,
+  InternalServerErrorException,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
@@ -7,6 +10,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
 import {
   CreateConfigurationDto,
+  DechiffrerLingotDto,
   CreateFournisseurDto,
   CreateHistoriqueStockDto,
   CreateInventaireDto,
@@ -43,6 +47,10 @@ import {
   ZoneRecord,
 } from './entities/lingot.entity.js';
 import { genererCodeQrLingot } from './lingot-qr-code.js';
+import {
+  dechiffrerCodeQrLingot,
+  type InformationsLingotDechiffrees,
+} from './lingot-qr-dechiffrage.js';
 import { LINGOTS_CONNECTION_NAME } from './lingots.constants.js';
 
 function idFilter(id: string) {
@@ -50,6 +58,23 @@ function idFilter(id: string) {
     throw new NotFoundException(`Identifiant MongoDB invalide: ${id}`);
   }
   return { _id: new Types.ObjectId(id) };
+}
+
+function fusionnerValeurDechiffree<T>(
+  champ: keyof InformationsLingotDechiffrees,
+  dechiffree: T | undefined,
+  fournie: T | undefined,
+): T | undefined {
+  if (
+    dechiffree !== undefined &&
+    fournie !== undefined &&
+    dechiffree !== fournie
+  ) {
+    throw new BadRequestException(
+      `La valeur fournie pour "${champ}" ne correspond pas au code QR.`,
+    );
+  }
+  return fournie ?? dechiffree;
 }
 
 @Injectable()
@@ -186,8 +211,12 @@ export class LingotsService {
   findZones() {
     return this.zones.find().sort({ nom: 1 }).exec();
   }
-  async findZonesByOperationType(operation:string){
-     return this.findRecord(this.zones, operation, 'Zone introuvable pour cette opération');
+  async findZonesByOperationType(operation: string) {
+    return this.findRecord(
+      this.zones,
+      operation,
+      'Zone introuvable pour cette opération',
+    );
   }
   async findZone(id: string) {
     return this.findRecord(this.zones, id, 'Zone introuvable');
@@ -209,6 +238,195 @@ export class LingotsService {
 
   async createLingot(data: CreateLingotDto) {
     return this.lingots.create(await this.preparerLingot(data));
+  }
+  async dechiffrerLingot(data: DechiffrerLingotDto) {
+    const { informations: dechiffrees, dateCreation } = dechiffrerCodeQrLingot(
+      data.codeQR,
+    );
+    const informations: InformationsLingotDechiffrees = {
+      fournisseur: fusionnerValeurDechiffree(
+        'fournisseur',
+        dechiffrees.fournisseur,
+        data.informations?.fournisseur,
+      ),
+      numeroCoulee: fusionnerValeurDechiffree(
+        'numeroCoulee',
+        dechiffrees.numeroCoulee,
+        data.informations?.numeroCoulee,
+      ),
+      numeroLingot: fusionnerValeurDechiffree(
+        'numeroLingot',
+        dechiffrees.numeroLingot,
+        data.informations?.numeroLingot,
+      ),
+      poids: fusionnerValeurDechiffree(
+        'poids',
+        dechiffrees.poids,
+        data.informations?.poids,
+      ),
+      tauxAluminium: fusionnerValeurDechiffree(
+        'tauxAluminium',
+        dechiffrees.tauxAluminium,
+        data.informations?.tauxAluminium,
+      ),
+    };
+    const champsObligatoires: (keyof InformationsLingotDechiffrees)[] = [
+      'fournisseur',
+      'numeroCoulee',
+      'numeroLingot',
+      'poids',
+      'tauxAluminium',
+    ];
+    if (champsObligatoires.some((champ) => informations[champ] === undefined)) {
+      return { statut: 'incomplet' as const, lingot: informations };
+    }
+
+    const fournisseurCode = informations.fournisseur;
+    const numeroCoulee = informations.numeroCoulee;
+    const numeroLingot = informations.numeroLingot;
+    const poids = informations.poids;
+    const tauxAluminiumNom = informations.tauxAluminium;
+    if (
+      fournisseurCode === undefined ||
+      numeroCoulee === undefined ||
+      numeroLingot === undefined ||
+      poids === undefined ||
+      tauxAluminiumNom === undefined
+    ) {
+      throw new InternalServerErrorException(
+        'Les informations complètes du lingot sont indisponibles.',
+      );
+    }
+
+    const session = await this.lingots.db.startSession();
+    try {
+      let documentCree: LingotRecord | undefined;
+      await session.withTransaction(async () => {
+        const lingotExistant = await this.lingots
+          .findOne({ codeQR: data.codeQR })
+          .session(session)
+          .exec();
+        if (lingotExistant) {
+          throw new ConflictException('Un lingot avec ce code QR existe déjà.');
+        }
+
+        const fournisseur = await this.fournisseurs
+          .findOne({ code: fournisseurCode })
+          .session(session)
+          .lean()
+          .exec();
+        if (!fournisseur) {
+          throw new BadRequestException(
+            `Le fournisseur "${fournisseurCode}" est introuvable.`,
+          );
+        }
+
+        const tauxAluminium = await this.tauxAluminium
+          .findOne({ nom: tauxAluminiumNom })
+          .session(session)
+          .lean()
+          .exec();
+        if (!tauxAluminium) {
+          throw new BadRequestException(
+            `Le taux d'aluminium "${tauxAluminiumNom}" est introuvable.`,
+          );
+        }
+
+        const zone = await this.zones
+          .findOne({ code: data.zone })
+          .session(session)
+          .lean()
+          .exec();
+        if (!zone) {
+          throw new BadRequestException(
+            `La zone "${data.zone}" est introuvable.`,
+          );
+        }
+
+        const operateur = await this.operateurs
+          .findOne({ codeQR: data.operateur })
+          .session(session)
+          .lean()
+          .exec();
+        if (!operateur) {
+          throw new BadRequestException(
+            `L'opérateur "${data.operateur}" est introuvable.`,
+          );
+        }
+
+        const dateReception = new Date();
+        const [lingot] = await this.lingots.create(
+          [
+            {
+              codeQR: data.codeQR,
+              fournisseur,
+              numeroCoulee,
+              numeroLingot,
+              poids,
+              tauxAluminium,
+              dateReception,
+              zone,
+              ...(dateCreation && { dateFusion: dateCreation }),
+            },
+          ],
+          { session },
+        );
+        if (!lingot) {
+          throw new InternalServerErrorException(
+            'La fiche du lingot n’a pas été créée.',
+          );
+        }
+        await this.mouvements.create(
+          [
+            {
+              depart: null,
+              arrivee: zone,
+              date: dateReception,
+              operateur,
+              lingot: lingot.toObject() as unknown as Mouvement['lingot'],
+            },
+          ],
+          { session },
+        );
+        documentCree = lingot;
+      });
+
+      if (!documentCree) {
+        throw new InternalServerErrorException(
+          'La transaction n’a pas créé la fiche du lingot.',
+        );
+      }
+      return {
+        statut: 'cree' as const,
+        lingot: {
+          _id: documentCree._id.toString(),
+          codeQR: documentCree.codeQR,
+          fournisseur: documentCree.fournisseur.code,
+          numeroCoulee: documentCree.numeroCoulee,
+          numeroLingot: documentCree.numeroLingot,
+          poids: documentCree.poids,
+          tauxAluminium: documentCree.tauxAluminium.nom,
+        },
+      };
+    } catch (error) {
+      if (error instanceof HttpException) throw error;
+      if (
+        typeof error === 'object' &&
+        error !== null &&
+        'code' in error &&
+        error.code === 11000
+      ) {
+        throw new ConflictException('Un lingot avec ce code QR existe déjà.', {
+          cause: error,
+        });
+      }
+      throw new InternalServerErrorException(
+        'Impossible de créer atomiquement le lingot et son mouvement initial.',
+        { cause: error },
+      );
+    } finally {
+      await session.endSession();
+    }
   }
   findLingots() {
     return this.lingots.find().sort({ id: 1 }).exec();

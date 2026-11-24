@@ -9,9 +9,10 @@ export function genererCodeQrLingot(
     | 'poids'
     | 'tauxAluminium'
     | 'dateReception'
+    | 'dateFusion'
   >,
 ): string {
-  const date = lingot.dateReception;
+  const date = lingot.dateFusion ?? lingot.dateReception;
   const dateCode = [
     String(date.getUTCDate()).padStart(2, '0'),
     String(date.getUTCMonth() + 1).padStart(2, '0'),

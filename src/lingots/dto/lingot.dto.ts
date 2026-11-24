@@ -4,11 +4,14 @@ import {
   IsDate,
   IsDefined,
   IsIn,
+  IsInt,
   IsMongoId,
+  IsNotEmpty,
   IsNumber,
   IsOptional,
   IsString,
   Matches,
+  Min,
   ValidateNested,
 } from 'class-validator';
 
@@ -153,6 +156,63 @@ export class CreateLingotDto {
   dateFusion?: Date;
 }
 export class UpdateLingotDto extends PartialType(CreateLingotDto) {}
+
+export class InformationsLingotDechiffreesDto {
+  @ApiPropertyOptional({ example: 'AC359079' })
+  @IsOptional()
+  @IsString()
+  @Matches(/^AC\d{6}$/)
+  fournisseur?: string;
+
+  @ApiPropertyOptional({ example: '178425' })
+  @IsOptional()
+  @IsString()
+  @Matches(/^\d{6}$/)
+  numeroCoulee?: string;
+
+  @ApiPropertyOptional({ example: 19 })
+  @IsOptional()
+  @Type(() => Number)
+  @IsInt()
+  @Min(0)
+  numeroLingot?: number;
+
+  @ApiPropertyOptional({ example: 1919 })
+  @IsOptional()
+  @Type(() => Number)
+  @IsNumber()
+  @Min(0)
+  poids?: number;
+
+  @ApiPropertyOptional({ example: 'AL069' })
+  @IsOptional()
+  @IsString()
+  @Matches(/^AL\d{3}$/)
+  tauxAluminium?: string;
+}
+
+export class DechiffrerLingotDto {
+  @ApiProperty({ example: 'ZN-AC359079-178425-019-1919-AL069-MG300-15102026' })
+  @IsString()
+  @IsNotEmpty()
+  codeQR: string;
+
+  @ApiProperty({ example: 'S' })
+  @IsString()
+  @IsNotEmpty()
+  zone: string;
+
+  @ApiProperty({ example: 'OPERATEUR-001' })
+  @IsString()
+  @IsNotEmpty()
+  operateur: string;
+
+  @ApiPropertyOptional({ type: InformationsLingotDechiffreesDto })
+  @IsOptional()
+  @ValidateNested()
+  @Type(() => InformationsLingotDechiffreesDto)
+  informations?: InformationsLingotDechiffreesDto;
+}
 
 export class CreateInventaireDto {
   @ApiProperty() @Type(() => Date) @IsDate() date: Date;

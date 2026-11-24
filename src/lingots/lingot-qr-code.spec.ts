@@ -14,4 +14,18 @@ describe('genererCodeQrLingot', () => {
       }),
     ).toBe('ZN-AC123456-873033-002-1744-AL049-MG300-27052021');
   });
+
+  it('utilise la date de création si elle est renseignée', () => {
+    expect(
+      genererCodeQrLingot({
+        fournisseur: { nom: 'Boliden', code: 'AC123456' },
+        numeroCoulee: '873033',
+        numeroLingot: 2,
+        poids: 1744,
+        tauxAluminium: { nom: 'AL049', couleur: '#000000' },
+        dateReception: new Date('2021-05-27T00:00:00.000Z'),
+        dateFusion: new Date('2026-10-15T00:00:00.000Z'),
+      }),
+    ).toBe('ZN-AC123456-873033-002-1744-AL049-MG300-15102026');
+  });
 });

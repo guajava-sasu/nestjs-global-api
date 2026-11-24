@@ -64,6 +64,28 @@ export class LingotResponseDto extends MongoDocumentResponseDto {
   dateFusion?: Date;
 }
 
+export class LingotDechiffreResponseDto {
+  @ApiPropertyOptional() _id?: string;
+  @ApiPropertyOptional() codeQR?: string;
+  @ApiPropertyOptional() fournisseur?: string;
+  @ApiPropertyOptional() numeroCoulee?: string;
+  @ApiPropertyOptional() numeroLingot?: number;
+  @ApiPropertyOptional() poids?: number;
+  @ApiPropertyOptional() tauxAluminium?: string;
+}
+
+export class DechiffrerLingotIncompletResponseDto {
+  @ApiProperty({ enum: ['incomplet'] }) statut: 'incomplet';
+  @ApiProperty({ type: () => LingotDechiffreResponseDto })
+  lingot: LingotDechiffreResponseDto;
+}
+
+export class DechiffrerLingotCreeResponseDto {
+  @ApiProperty({ enum: ['cree'] }) statut: 'cree';
+  @ApiProperty({ type: () => LingotDechiffreResponseDto })
+  lingot: LingotDechiffreResponseDto;
+}
+
 export class MouvementResponseDto extends MongoDocumentResponseDto {
   @ApiProperty({
     type: () => ZoneResponseDto,

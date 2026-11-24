@@ -8,7 +8,17 @@ import {
   Post,
   UseGuards,
 } from '@nestjs/common';
-import { ApiOperation, ApiParam, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBadRequestResponse,
+  ApiConflictResponse,
+  ApiCreatedResponse,
+  ApiExtraModels,
+  ApiInternalServerErrorResponse,
+  ApiOperation,
+  ApiParam,
+  ApiTags,
+  getSchemaPath,
+} from '@nestjs/swagger';
 import { DestructiveOperationsGuard } from '../common/guards/destructive-operations.guard.js';
 import {
   ApiCreation,
@@ -17,6 +27,8 @@ import {
 } from './api-reponses.decorators.js';
 import {
   ConfigurationResponseDto,
+  DechiffrerLingotCreeResponseDto,
+  DechiffrerLingotIncompletResponseDto,
   FournisseurResponseDto,
   HistoriqueStockResponseDto,
   InventaireResponseDto,
@@ -29,6 +41,7 @@ import {
 } from './dto/lingot-response.dto.js';
 import {
   CreateConfigurationDto,
+  DechiffrerLingotDto,
   CreateFournisseurDto,
   CreateHistoriqueStockDto,
   CreateInventaireDto,
@@ -196,7 +209,7 @@ export class LingotsController {
   findZonesByOperationType(@Param('operation') operation: string) {
     return this.lingotsService.findZonesByOperationType(operation);
   }
-    @ApiElement(ZoneResponseDto)
+  @ApiElement(ZoneResponseDto)
   @Get('zones-lingots/:id')
   findZone(@Param('id') id: string) {
     return this.lingotsService.findZone(id);
@@ -217,6 +230,35 @@ export class LingotsController {
   @Post('lingots')
   createLingot(@Body() body: CreateLingotDto) {
     return this.lingotsService.createLingot(body);
+  }
+  @ApiOperation({
+    summary:
+      'Déchiffrer un code QR et créer le lingot si ses données sont complètes',
+  })
+  @ApiExtraModels(
+    DechiffrerLingotIncompletResponseDto,
+    DechiffrerLingotCreeResponseDto,
+  )
+  @ApiCreatedResponse({
+    schema: {
+      oneOf: [
+        { $ref: getSchemaPath(DechiffrerLingotIncompletResponseDto) },
+        { $ref: getSchemaPath(DechiffrerLingotCreeResponseDto) },
+      ],
+    },
+  })
+  @ApiBadRequestResponse({
+    description: 'Format QR inconnu ou données invalides.',
+  })
+  @ApiConflictResponse({
+    description: 'Un lingot avec ce code QR existe déjà.',
+  })
+  @ApiInternalServerErrorResponse({
+    description: 'Échec technique de la transaction atomique.',
+  })
+  @Post('lingots/dechiffrer')
+  dechiffrerLingot(@Body() body: DechiffrerLingotDto) {
+    return this.lingotsService.dechiffrerLingot(body);
   }
   @ApiListe(LingotResponseDto)
   @Get('lingots')

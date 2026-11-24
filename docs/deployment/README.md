@@ -10,7 +10,7 @@ Le transfert utilise les commandes restreintes `ping`, `upload <version> <sha256
 
 ## Configuration et build
 
-Copier `.env.example` dans un emplacement privé VPS et remplacer les valeurs d'exemple. `HOST=127.0.0.1`, `PORT=3002` (proposé), `NODE_ENV=production`, `MONGODB_URI` et `MONGODB_GESTION_LINGOTS_URI` obligatoires avec les noms `nestjs-global-api` et `nestjs-global-api-lingots` dans leurs chemins, puis `CORS_ORIGINS` avec les seules origines frontend approuvées. La base existante `gestion_lingots` est exclue. Les bases dédiées démarreront vides; l'application ne les peuple pas automatiquement.
+Copier `.env.example` dans un emplacement privé VPS et remplacer les valeurs d'exemple. `HOST=127.0.0.1`, `PORT=3002` (proposé), `NODE_ENV=production`, `MONGODB_URI` et `MONGODB_GESTION_LINGOTS_URI` obligatoires avec les noms `nestjs-global-api` et `nestjs-global-api-lingots` dans leurs chemins, puis `CORS_ORIGINS` avec les seules origines frontend approuvées. La base existante `gestion_lingots` est exclue. Les bases dédiées démarreront vides; l'application ne les peuple pas automatiquement. MongoDB doit prendre en charge les transactions multi-documents (replica set ou cluster shardé) pour garantir l'écriture atomique d'une fiche lingot et de son mouvement initial.
 
 ```sh
 npm ci
