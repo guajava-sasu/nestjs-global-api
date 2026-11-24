@@ -7,7 +7,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model, Types } from 'mongoose';
+import { Model, Types, type ClientSession } from 'mongoose';
 import {
   CreateConfigurationDto,
   DechiffrerLingotDto,
@@ -48,6 +48,7 @@ import {
 } from './entities/lingot.entity.js';
 import { genererCodeQrLingot } from './lingot-qr-code.js';
 import {
+  type CodeQrLingotDechiffre,
   dechiffrerCodeQrLingot,
   type InformationsLingotDechiffrees,
 } from './lingot-qr-dechiffrage.js';
@@ -240,36 +241,51 @@ export class LingotsService {
     return this.lingots.create(await this.preparerLingot(data));
   }
   async dechiffrerLingot(data: DechiffrerLingotDto) {
-    const { informations: dechiffrees, dateCreation } = dechiffrerCodeQrLingot(
-      data.codeQR,
-    );
-    const informations: InformationsLingotDechiffrees = {
-      fournisseur: fusionnerValeurDechiffree(
-        'fournisseur',
-        dechiffrees.fournisseur,
-        data.informations?.fournisseur,
-      ),
-      numeroCoulee: fusionnerValeurDechiffree(
-        'numeroCoulee',
-        dechiffrees.numeroCoulee,
-        data.informations?.numeroCoulee,
-      ),
-      numeroLingot: fusionnerValeurDechiffree(
-        'numeroLingot',
-        dechiffrees.numeroLingot,
-        data.informations?.numeroLingot,
-      ),
-      poids: fusionnerValeurDechiffree(
-        'poids',
-        dechiffrees.poids,
-        data.informations?.poids,
-      ),
-      tauxAluminium: fusionnerValeurDechiffree(
-        'tauxAluminium',
-        dechiffrees.tauxAluminium,
-        data.informations?.tauxAluminium,
-      ),
-    };
+    let codeQrDechiffre: CodeQrLingotDechiffre;
+    try {
+      codeQrDechiffre = dechiffrerCodeQrLingot(data.codeQR);
+    } catch (error) {
+      console.error('[lingots.dechiffrer] Échec du déchiffrage QR', error);
+      throw error;
+    }
+
+    const { informations: dechiffrees, dateCreation } = codeQrDechiffre;
+    let informations: InformationsLingotDechiffrees;
+    try {
+      informations = {
+        fournisseur: fusionnerValeurDechiffree(
+          'fournisseur',
+          dechiffrees.fournisseur,
+          data.informations?.fournisseur,
+        ),
+        numeroCoulee: fusionnerValeurDechiffree(
+          'numeroCoulee',
+          dechiffrees.numeroCoulee,
+          data.informations?.numeroCoulee,
+        ),
+        numeroLingot: fusionnerValeurDechiffree(
+          'numeroLingot',
+          dechiffrees.numeroLingot,
+          data.informations?.numeroLingot,
+        ),
+        poids: fusionnerValeurDechiffree(
+          'poids',
+          dechiffrees.poids,
+          data.informations?.poids,
+        ),
+        tauxAluminium: fusionnerValeurDechiffree(
+          'tauxAluminium',
+          dechiffrees.tauxAluminium,
+          data.informations?.tauxAluminium,
+        ),
+      };
+    } catch (error) {
+      console.error(
+        '[lingots.dechiffrer] Échec de fusion des informations',
+        error,
+      );
+      throw error;
+    }
     const champsObligatoires: (keyof InformationsLingotDechiffrees)[] = [
       'fournisseur',
       'numeroCoulee',
@@ -277,7 +293,10 @@ export class LingotsService {
       'poids',
       'tauxAluminium',
     ];
-    if (champsObligatoires.some((champ) => informations[champ] === undefined)) {
+    const champsManquants = champsObligatoires.filter(
+      (champ) => informations[champ] === undefined,
+    );
+    if (champsManquants.length > 0) {
       return { statut: 'incomplet' as const, lingot: informations };
     }
 
@@ -298,7 +317,20 @@ export class LingotsService {
       );
     }
 
-    const session = await this.lingots.db.startSession();
+    let session: ClientSession;
+    try {
+      session = await this.lingots.db.startSession();
+    } catch (error) {
+      console.error(
+        '[lingots.dechiffrer] Échec de l’ouverture de session MongoDB',
+        error,
+      );
+      throw new InternalServerErrorException(
+        'Impossible d’ouvrir une session MongoDB pour le lingot.',
+        { cause: error },
+      );
+    }
+
     try {
       let documentCree: LingotRecord | undefined;
       await session.withTransaction(async () => {
@@ -409,6 +441,7 @@ export class LingotsService {
         },
       };
     } catch (error) {
+      console.error('[lingots.dechiffrer] Échec pendant la transaction', error);
       if (error instanceof HttpException) throw error;
       if (
         typeof error === 'object' &&
